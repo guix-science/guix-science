@@ -1,0 +1,33 @@
+diff '--exclude=*.swp' -Naur jupyterlab-1.2.6.orig/jupyterlab/commands.py jupyterlab-1.2.6/jupyterlab/commands.py
+--- jupyterlab-1.2.6.orig/jupyterlab/commands.py	2020-01-24 17:25:16.238353500 +0100
++++ jupyterlab-1.2.6/jupyterlab/commands.py	2020-01-31 12:36:10.497375982 +0100
+@@ -1100,7 +1100,7 @@
+                       'webpack.prod.minimize.config.js',
+                       '.yarnrc', 'yarn.js']:
+             target = pjoin(staging, fname)
+-            shutil.copy(pjoin(HERE, 'staging', fname), target)
++            shutil.copyfile(pjoin(HERE, 'staging', fname), target)
+ 
+         # Ensure a clean templates directory
+         templates = pjoin(staging, 'templates')
+@@ -1108,7 +1108,10 @@
+             _rmtree(templates, self.logger)
+ 
+         try:
+-            shutil.copytree(pjoin(HERE, 'staging', 'templates'), templates)
++            shutil.copytree(pjoin(HERE, 'staging', 'templates'), templates,
++                    copy_function=shutil.copyfile)
++            # cannot replace or disable copytree’s call to .copystat
++            os.chmod (templates, 0o755)
+         except shutil.Error as error:
+             # `copytree` throws an error if copying to + from NFS even though
+             # the copy is successful (see https://bugs.python.org/issue24564
+@@ -1178,7 +1181,7 @@
+             with open(lock_path, 'w', encoding='utf-8') as f:
+                 f.write(template)
+         elif not osp.exists(lock_path):
+-            shutil.copy(lock_template, lock_path)
++            shutil.copyfile(lock_template, lock_path)
+ 
+     def _get_package_template(self, silent=False):
+         """Get the template the for staging package.json file.
