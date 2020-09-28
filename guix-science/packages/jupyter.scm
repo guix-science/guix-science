@@ -14,6 +14,12 @@
 ;;; You should have received a copy of the GNU General Public License
 ;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
+;; How to deal with packages that are available here, but have older versions
+;; in guix proper:
+;; Rewrite entire graph of packages with local updates. This avoids having
+;; multiple versions of the same package in the graph. Define packages with the
+;; version guix proper provides and then rewrite it.
+
 (define-module (guix-science packages jupyter)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages)
@@ -106,7 +112,8 @@
     (license #f)))
 
 (define python-terminado-0.8.3
-  (package/inherit python-terminado
+  (package
+    (inherit python-terminado)
     (name "python-terminado")
     (version "0.8.3")
     (source
@@ -169,7 +176,7 @@
      "Jupyter core package. A base package on which Jupyter projects rely.")
     (license license:bsd-3)))
 
-(define-public python-jupyter-client-6.1
+(define python-jupyter-client-6.1-proper
   (package
     (name "python-jupyter-client")
     (version "6.1.6")
@@ -206,14 +213,14 @@
                (invoke "pytest" "-vv"))))))))
     (propagated-inputs
      `(("python-dateutil" ,python-dateutil)
-       ("python-jupyter-core" ,python-jupyter-core-4.6)
+       ("python-jupyter-core" ,python-jupyter-core)
        ("python-pyzmq" ,python-pyzmq)
        ("python-tornado" ,python-tornado)
        ("python-traitlets" ,python-traitlets)))
     (native-inputs
      `(("python-async-generator"
         ,python-async-generator)
-       ("python-ipykernel" ,python-ipykernel-5.3-bootstrap)
+       ("python-ipykernel" ,python-ipykernel)
        ("python-ipython" ,python-ipython)
        ("python-mock" ,python-mock)
        ("python-msgpack" ,python-msgpack)
@@ -227,26 +234,27 @@
      "Jupyter protocol implementation and client libraries")
     (license license:bsd-3)))
 
-(define python-jupyter-client-6.1-bootstrap
-  (package/inherit python-jupyter-client-6.1
-    (arguments
-     `(#:tests? #f
-       ,@(package-arguments python-jupyter-client-6.1)))
-    ;; Remove loop ipykernel <-> jupyter-client
-    (native-inputs `())))
+;; Upstream version with dep to ipykernel removed.
+(define python-jupyter-client-6.1-bootstrap-proper
+  (let ((base python-jupyter-client-6.1-proper))
+    (package
+      (inherit base)
+      (name "python-jupyter-client-bootstrap")
+      (arguments
+       `(#:tests? #f
+         ,@(package-arguments base)))
+      ;; Remove loop ipykernel <-> jupyter-client
+      (native-inputs `()))))
 
-;; How to deal with packages that are available here, but have older versions
-;; in guix proper:
-;; Rewrite entire graph of packages with local updates. This avoids having
-;; multiple versions of the same package in the graph. Define packages with the
-;; version guix proper provides and then rewrite it.
+;; Bootstrap version with correct package versions.
+(define-public python-jupyter-client-6.1-bootstrap
+  ((package-input-rewriting
+   `((,python-jupyter-core . ,python-jupyter-core-4.6)))
+   python-jupyter-client-6.1-bootstrap-proper))
 
-(define rewrite-ipykernel
-  (package-input-rewriting
-   `((,python-jupyter-client . ,python-jupyter-client-6.1))))
-
-(define-public python-ipykernel-5.3
-  (rewrite-ipykernel (package/inherit python-ipykernel
+(define python-ipykernel-5.3-proper
+  (package
+    (inherit python-ipykernel)
     (name "python-ipykernel")
     (version "5.3.4")
     (source
@@ -265,13 +273,28 @@
      `(("python-flaky" ,python-flaky)
        ("python-nose" ,python-nose)
        ("python-pytest" ,python-pytest)
-       ("python-pytest-cov" ,python-pytest-cov))))))
+       ("python-pytest-cov" ,python-pytest-cov)))))
 
 ;; Create a bootstrap variant, which can be used in python-jupyter-client-6.1’s
 ;; native-arguments
 (define python-ipykernel-5.3-bootstrap
+  (let ((rewritten ((package-input-rewriting
+    `((,python-jupyter-client . ,python-jupyter-client-6.1-bootstrap)))
+   python-ipykernel-5.3-proper)))
+    (package
+      (inherit rewritten)
+      (name "python-ipykernel-bootstrap"))))
+
+(define-public python-jupyter-client-6.1
   ((package-input-rewriting
-    `((,python-jupyter-client-6.1 . ,python-jupyter-client-6.1-bootstrap))) python-ipykernel-5.3))
+   `((,python-ipykernel . ,python-ipykernel-5.3-bootstrap)
+     (,python-jupyter-core . ,python-jupyter-core-4.6)))
+   python-jupyter-client-6.1-proper))
+
+(define-public python-ipykernel-5.3
+  ((package-input-rewriting
+   `((,python-jupyter-client . ,python-jupyter-client-6.1)))
+   python-ipykernel-5.3-proper))
 
 (define rewrite-notebook
   (package-input-rewriting
