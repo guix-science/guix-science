@@ -1,4 +1,6 @@
 (authorizations
  (version 0)
  (("CA4F8CF437D7478FDA055FD4421377011A378446"
-   (name "ldb@leibniz-psychology.org"))))
+   (name "ldb@leibniz-psychology.org")))
+ ("BCA6 89B6 3655 3801 C3C6  2150 197A 5888 235F ACAC"
+   (name "rekado")))
