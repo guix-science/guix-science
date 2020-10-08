@@ -24,6 +24,7 @@
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages)
   #:use-module (gnu packages check)
+  #:use-module (gnu packages haskell-xyz)
   #:use-module (gnu packages monitoring)
   #:use-module (gnu packages node)
   #:use-module (gnu packages sphinx)
@@ -31,7 +32,10 @@
   #:use-module (gnu packages python-crypto)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages textutils)
+  #:use-module (gnu packages tex)
   #:use-module (gnu packages time)
+  #:use-module (gnu packages xml)
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix git-download)
@@ -124,6 +128,27 @@
         (base32
          "1hmjdxpd9w8fl61f0adlmfh1s3rrqn9j2cppk9ynlc02z1saf128"))))))
 
+(define-public python-testpath-0.4
+  (package
+    (name "python-testpath")
+    (version "0.4.4")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "testpath" version))
+        (sha256
+          (base32
+            "0zpcmq22dz79ipvvsfnw1ykpjcaj6xyzy7ws77s5b5ql3hka7q30"))))
+    (build-system python-build-system)
+    (propagated-inputs
+      `(("python-pathlib2" ,python-pathlib2)))
+    (home-page "https://github.com/jupyter/testpath")
+    (synopsis
+      "Test utilities for code working with files and commands")
+    (description
+      "Test utilities for code working with files and commands")
+    (license license:bsd-3)))
+
 (define-public python-jupyter-core-4.6
   (package
     (name "python-jupyter-core")
@@ -174,6 +199,41 @@
      "Jupyter core package. A base package on which Jupyter projects rely.")
     (description
      "Jupyter core package. A base package on which Jupyter projects rely.")
+    (license license:bsd-3)))
+
+(define-public python-nbformat-5.0
+  (package
+    (name "python-nbformat")
+    (version "5.0.7")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "nbformat" version))
+        (sha256
+          (base32
+            "0h5k8d1qa10f143a7rgyxl6dr8rw036js678syx3da9m90sxdm2l"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           (lambda* (#:key inputs outputs tests? #:allow-other-keys)
+            (if tests?
+             (begin
+              (invoke "pytest" "-vv"))))))))
+    (propagated-inputs
+      `(("python-ipython-genutils"
+         ,python-ipython-genutils)
+        ("python-jsonschema" ,python-jsonschema)
+        ("python-jupyter-core" ,python-jupyter-core-4.6)
+        ("python-traitlets" ,python-traitlets)))
+    (native-inputs
+      `(("python-pytest" ,python-pytest)
+        ("python-pytest-cov" ,python-pytest-cov)
+        ("python-testpath" ,python-testpath-0.4)))
+    (home-page "http://jupyter.org")
+    (synopsis "The Jupyter Notebook format")
+    (description "The Jupyter Notebook format")
     (license license:bsd-3)))
 
 (define python-jupyter-client-6.1-proper
@@ -279,7 +339,10 @@
 ;; native-arguments
 (define python-ipykernel-5.3-bootstrap
   (let ((rewritten ((package-input-rewriting
-    `((,python-jupyter-client . ,python-jupyter-client-6.1-bootstrap)))
+    `((,python-jupyter-client . ,python-jupyter-client-6.1-bootstrap)
+     ;; Indirect through IPython.
+     (,python-testpath . ,python-testpath-0.4)
+     (,python-nbformat . ,python-nbformat-5.0)))
    python-ipykernel-5.3-proper)))
     (package
       (inherit rewritten)
@@ -288,20 +351,150 @@
 (define-public python-jupyter-client-6.1
   ((package-input-rewriting
    `((,python-ipykernel . ,python-ipykernel-5.3-bootstrap)
-     (,python-jupyter-core . ,python-jupyter-core-4.6)))
+     (,python-jupyter-core . ,python-jupyter-core-4.6)
+     ;; Indirect through IPython.
+     (,python-testpath . ,python-testpath-0.4)
+     (,python-nbformat . ,python-nbformat-5.0)))
    python-jupyter-client-6.1-proper))
 
 (define-public python-ipykernel-5.3
   ((package-input-rewriting
-   `((,python-jupyter-client . ,python-jupyter-client-6.1)))
+   `((,python-jupyter-client . ,python-jupyter-client-6.1)
+     ;; Indirect through IPython.
+     (,python-testpath . ,python-testpath-0.4)
+     (,python-nbformat . ,python-nbformat-5.0)))
    python-ipykernel-5.3-proper))
+
+(define-public python-jupyterlab-pygments
+  (package
+    (name "python-jupyterlab-pygments")
+    (version "0.1.2")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "jupyterlab_pygments" version))
+        (sha256
+          (base32
+            "0ij14mmnc39nmf84i0av6j9glazjic7wzv1qyhr0j5966s3s1kfg"))))
+    (build-system python-build-system)
+    (propagated-inputs
+      `(("python-pygments" ,python-pygments)))
+    (home-page "http://jupyter.org")
+    (synopsis
+      "Pygments theme using JupyterLab CSS variables")
+    (description
+      "Pygments theme using JupyterLab CSS variables")
+    (license license:bsd-3)))
+
+(define rewrite-for-nbconvert
+  (package-input-rewriting
+   `((,python-jupyter-client . ,python-jupyter-client-6.1)
+     (,python-jupyter-core . ,python-jupyter-core-4.6)
+     (,python-ipykernel . ,python-ipykernel-5.3)
+     (,python-testpath . ,python-testpath-0.4)
+     (,python-nbformat . ,python-nbformat-5.0))))
+
+(define-public python-nbconvert-6.0
+  (rewrite-for-nbconvert (package
+    (name "python-nbconvert")
+    (version "6.0.7")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "nbconvert" version))
+        (sha256
+          (base32
+            "00lhqaxn481qvk2w5568asqlsnvrw2fm61p1vssx3m7vdnl17g6b"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'fix-paths-and-tests
+           (lambda* (#:key inputs outputs #:allow-other-keys)
+             (let* ((pandoc (string-append (assoc-ref inputs "pandoc") "/bin/pandoc"))
+                   (texlive-root (string-append (assoc-ref inputs "texlive")))
+                   (xelatex (string-append texlive-root "/bin/xelatex"))
+                   (bibtex (string-append texlive-root "/bin/bibtex")))
+               ;; Use pandoc binary from input.
+               (substitute* "nbconvert/utils/pandoc.py"
+                 (("'pandoc'") (string-append "'" pandoc "'")))
+               ;; Same for LaTeX.
+               (substitute* "nbconvert/exporters/pdf.py"
+                 (("\"xelatex\"") (string-append "\"" xelatex "\""))
+                 (("\"bibtex\"") (string-append "\"" bibtex "\"")))
+               ;; Make sure tests are not skipped.
+               (substitute* (find-files "." "test_.+\\.py$")
+                 (("@onlyif_cmds_exist\\(('(pandoc|xelatex)'(, )?)+\\)") ""))
+              ;; Pandoc is never missing, disable test.
+              (substitute* "nbconvert/utils/tests/test_pandoc.py"
+                (("import os" all) (string-append all "\nimport pytest"))
+                (("(.+)(def test_pandoc_available)" all indent def)
+                (string-append indent "@pytest.mark.skip('disabled by guix')\n"
+                               indent def)))
+              ; Not installing pyppeteer, delete test.
+              (delete-file "nbconvert/exporters/tests/test_webpdf.py")
+              (substitute* "nbconvert/tests/test_nbconvertapp.py"
+                (("(.+)(def test_webpdf_with_chromium)" all indent def)
+                (string-append indent "@pytest.mark.skip('disabled by guix')\n"
+                               indent def)))
+             #t)))
+         (replace 'check
+           (lambda* (#:key inputs outputs tests? #:allow-other-keys)
+            (if tests?
+             (begin
+              ; Some tests write to $HOME.
+              (setenv "HOME" "/tmp")
+              ; Tests depend on templates installed to output.
+              (setenv "JUPYTER_PATH"
+                      (string-append
+                        (assoc-ref outputs "out")
+                        "/share/jupyter:"
+                        (getenv "JUPYTER_PATH")))
+              ; Some tests invoke the installed nbconvert binary.
+              (add-installed-pythonpath inputs outputs)
+              (invoke "pytest" "-vv"))))))))
+    (inputs
+      `(("pandoc" ,pandoc)
+        ; XXX: Disabled, needs substitute*.
+        ;("inkscape" ,inkscape)
+        ("texlive" ,texlive)))
+    (propagated-inputs
+      `(("python-bleach" ,python-bleach)
+        ("python-defusedxml" ,python-defusedxml)
+        ("python-entrypoints" ,python-entrypoints)
+        ("python-jinja2" ,python-jinja2)
+        ("python-jupyter-core" ,python-jupyter-core)
+        ("python-jupyterlab-pygments"
+         ,python-jupyterlab-pygments)
+        ("python-mistune" ,python-mistune)
+        ("python-nbclient" ,python-nbclient-0.5)
+        ("python-nbformat" ,python-nbformat)
+        ("python-pandocfilters" ,python-pandocfilters)
+        ("python-pygments" ,python-pygments)
+        ("python-testpath" ,python-testpath)
+        ("python-traitlets" ,python-traitlets)))
+    (native-inputs
+      `(("python-ipykernel" ,python-ipykernel)
+        ("python-ipywidgets" ,python-ipywidgets)
+        ; XXX: Disabled, not in guix.
+        ;("python-pyppeteer" ,python-pyppeteer)
+        ("python-pytest" ,python-pytest)
+        ("python-pytest-cov" ,python-pytest-cov)
+        ("python-pytest-dependency"
+         ,python-pytest-dependency)))
+    (home-page "https://jupyter.org")
+    (synopsis "Converting Jupyter Notebooks")
+    (description "Converting Jupyter Notebooks")
+    (license license:bsd-3))))
 
 (define rewrite-notebook
   (package-input-rewriting
    `((,python-jupyter-client . ,python-jupyter-client-6.1)
      (,python-jupyter-core . ,python-jupyter-core-4.6)
      (,python-ipykernel . ,python-ipykernel-5.3)
-     (,python-terminado . ,python-terminado-0.8.3))))
+     (,python-terminado . ,python-terminado-0.8.3)
+     (,python-nbformat . ,python-nbformat-5.0)
+     (,python-nbconvert . ,python-nbconvert-6.0))))
 
 (define-public python-notebook-6.1
   (rewrite-notebook (package
@@ -415,7 +608,9 @@
      (,python-ipykernel . ,python-ipykernel-5.3)
      (,python-terminado . ,python-terminado-0.8.3)
      (,python-notebook . ,python-notebook-6.1)
-     (,python-json5 . ,python-json5-0.9.4))))
+     (,python-json5 . ,python-json5-0.9.4)
+     (,python-nbformat . ,python-nbformat-5.0)
+     (,python-nbconvert . ,python-nbconvert-6.0))))
 
 (define-public python-jupyterlab-server
   (rewrite-jupyterlab (package
@@ -504,4 +699,99 @@ applications")
      "An extensible environment for interactive and reproducible computing,
 based on the Jupyter Notebook and Architecture.")
     (license license:bsd-3))))
+
+(define-public python-pytest-dependency
+  (package
+    (name "python-pytest-dependency")
+    (version "0.5.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "pytest-dependency" version))
+        (sha256
+          (base32
+            "0swl3mxca7nnjbb5grfzrm3fa2750h9vjsha0f2kyrljc6895a62"))))
+    (build-system python-build-system)
+    (propagated-inputs
+      `(("python-pytest" ,python-pytest)))
+    (home-page
+      "https://github.com/RKrahl/pytest-dependency")
+    (synopsis "Manage dependencies of tests")
+    (description "Manage dependencies of tests")
+    (license #f)))
+
+(define-public python-nest-asyncio
+  (package
+    (name "python-nest-asyncio")
+    (version "1.4.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "nest_asyncio" version))
+        (sha256
+          (base32
+            "00afn4h0gh2aa5lb1x3ql5lh6s0wqx5qjyccrzn2wnysmf9k2v5q"))))
+    (build-system python-build-system)
+    (home-page
+      "https://github.com/erdewit/nest_asyncio")
+    (synopsis
+      "Patch asyncio to allow nested event loops")
+    (description
+      "Patch asyncio to allow nested event loops")
+    (license license:bsd-3)))
+
+(define-public python-nbclient-0.5
+  (package
+    (name "python-nbclient")
+    (version "0.5.0")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "nbclient" version))
+        (sha256
+          (base32
+            "07arsrb3lk6pm5nfcys05x58cniwwmblh0fv08aclkqlp8kjvmca"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           (lambda* (#:key inputs outputs tests? #:allow-other-keys)
+            (if tests?
+             (begin
+              ;; Some tests write to homedir. IPython prints an unexpected
+              ;; warning, which causes tests to fail.
+              (setenv "HOME" "/tmp")
+              (invoke "pytest" "-vv"))))))))
+    (propagated-inputs
+      `(("python-async-generator"
+         ,python-async-generator)
+        ("python-jupyter-client" ,python-jupyter-client-6.1)
+        ("python-nbformat" ,python-nbformat-5.0)
+        ("python-nest-asyncio" ,python-nest-asyncio)
+        ("python-traitlets" ,python-traitlets)))
+    (native-inputs
+      `(("python-black" ,python-black)
+        ("python-bumpversion" ,python-bumpversion)
+        ("python-check-manifest" ,python-check-manifest)
+        ("python-codecov" ,python-codecov)
+        ("python-coverage" ,python-coverage)
+        ("python-flake8" ,python-flake8)
+        ("python-ipykernel" ,python-ipykernel)
+        ("python-ipython" ,python-ipython)
+        ("python-ipywidgets" ,python-ipywidgets)
+        ("python-mypy" ,python-mypy)
+        ("python-pytest" ,python-pytest)
+        ("python-pytest-cov" ,python-pytest-cov)
+        ("python-testpath" ,python-testpath-0.4) ; missing from setup.py
+        ("python-tox" ,python-tox)
+        ("python-twine" ,python-twine)
+        ("python-wheel" ,python-wheel)
+        ("python-xmltodict" ,python-xmltodict)))
+    (home-page "https://jupyter.org")
+    (synopsis
+      "A client library for executing notebooks. Formally nbconvert's ExecutePreprocessor.")
+    (description
+      "A client library for executing notebooks. Formally nbconvert's ExecutePreprocessor.")
+    (license license:bsd-3)))
 
