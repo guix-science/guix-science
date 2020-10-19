@@ -1,0 +1,25 @@
+Disable auto-update and known issues checker.
+
+--- a/JASP-Desktop/gui/jaspversionchecker.cpp	2020-10-16 13:43:43.215811978 +0200
++++ b/JASP-Desktop/gui/jaspversionchecker.cpp   2020-10-16 13:44:51.777626010 +0200
+@@ -31,16 +31,20 @@
+ 
+ void JASPVersionChecker::checkForJaspUpdate()
+ {
++#if 0
+ 	QNetworkRequest request(_urlVersion);
+ 	_networkReply = _networkManager.get(request);
+ 	connect(_networkReply, &QNetworkReply::finished, this, &JASPVersionChecker::downloadVersionFinished);
++#endif
+ }
+ 
+ void JASPVersionChecker::downloadKnownIssues()
+ {
++#if 0
+ 	QNetworkRequest request(_urlKnownIssues);
+ 	_networkReply = _networkManager.get(request);
+ 	connect(_networkReply, &QNetworkReply::finished, this, &JASPVersionChecker::downloadIssuesFinished);
++#endif
+ }
+ 
+ void JASPVersionChecker::downloadVersionFinished()

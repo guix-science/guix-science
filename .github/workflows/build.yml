@@ -18,6 +18,7 @@ jobs:
           - python-jupyterlab
           - rstudio-server
           - rstudio
+          - jasp
     steps:
       - name: Guix cache
         uses: actions/cache@v2
