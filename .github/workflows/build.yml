@@ -1,6 +1,10 @@
 name: build
 on:
   push:
+    paths-ignore:
+    - 'README.rst'
+    - '.guix-authorizations'
+    - '.guix-channel'
   pull_request:
   schedule:
     # weekly builds, making sure everything still works with guix-proper
