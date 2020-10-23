@@ -2,17 +2,24 @@ Guix science packages
 =====================
 
 .. image:: https://github.com/guix-science/guix-science/workflows/build/badge.svg
+   :target: https://github.com/guix-science/guix-science/actions
 
 This GNU Guix_ channel provides recent versions of scientific software, which
 cannot be included upstream. Currently the following software is packaged:
 
+- JASP_ (``jasp``)
 - Jupyter Notebook (``python-notebook``)
-- JupyterLab (``python-jupyterlab``)
-- RStudio Desktop (``rstudio``)
-- RStudio Web (``rstudio-server``)
+- JupyterLab_ (``python-jupyterlab``)
+- `RStudio Desktop`_ (``rstudio``)
+- RStudio Server (``rstudio-server``)
 
-See `Using a Custom Guix Channel`_ for instructions how to add it to your
-installation or simply add the following snippet to your ``channels.scm``:
+.. _JASP: https://jasp-stats.org/
+.. _JupyterLab: https://jupyterlab.readthedocs.io/
+.. _RStudio Desktop: https://rstudio.com/products/rstudio/
+
+See `Specifying Additional Channels`_ in the Guix manual for instructions how
+to add it to your installation or simply add the following snippet to your
+``channels.scm``:
 
 .. code:: scheme
 
@@ -26,6 +33,20 @@ installation or simply add the following snippet to your ``channels.scm``:
 		 "CA4F 8CF4 37D7 478F DA05  5FD4 4213 7701 1A37 8446"))))
 
 .. _Guix: https://guix.gnu.org/
-.. _Using a Custom Guix Channel: https://guix.gnu.org/manual/en/guix.html#Using-a-Custom-Guix-Channel
+.. _Specifying Additional Channels: https://guix.gnu.org/manual/en/guix.html#Specifying-Additional-Channels
 
+Contributing
+------------
+
+We accept software fulfilling the following criteria:
+
+- `Free and open source`_. Use guix-science-nonfree_ otherwise.
+- Related to scientific research or teaching.
+- Not upstreamable to Guix proper per their rules. For example: Some parts
+  cannot be built from source without major efforts, excessive vendoring,
+  prebuilt JavaScript, … Dependencies are exempt from this rule, although we
+  prefer to have them upstreamed if possible.
+
+.. _Free and open source: https://opensource.org/osd
+.. _guix-science-nonfree: https://github.com/guix-science/guix-science-nonfree
 
