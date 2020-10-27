@@ -196,17 +196,71 @@
      "Jupyter core package. A base package on which Jupyter projects rely.")
     (license license:bsd-3)))
 
+(define-public python-json-spec
+  (package
+    (name "python-json-spec")
+    (version "0.10.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "json-spec" version))
+        (sha256
+          (base32
+            "06dpbsq61ja9r89wpa2pzdii47qh3xri9ajdrgn1awfl102znchb"))))
+    (build-system python-build-system)
+    (propagated-inputs
+      `(("python-pathlib" ,python-pathlib)
+        ("python-six" ,python-six)))
+    (native-inputs
+      `(("python-pytest" ,python-pytest)))
+    (home-page "http://py.errorist.io/json-spec")
+    (synopsis
+      "Implements JSON Schema, JSON Pointer and JSON Reference.")
+    (description
+      "Implements JSON Schema, JSON Pointer and JSON Reference.")
+    (license license:bsd-3)))
+
+(define-public python-fastjsonschema
+  (package
+    (name "python-fastjsonschema")
+    (version "2.14.5")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "fastjsonschema" version))
+        (sha256
+          (base32
+            "1550bxk4r9z53c25da5cpwm25ng4282ik05adkj5cqzhamb27g5g"))))
+    (build-system python-build-system)
+    (native-inputs
+      `(("python-colorama" ,python-colorama)
+        ("python-json-spec" ,python-json-spec)
+        ("python-jsonschema" ,python-jsonschema)
+        ("python-pylint" ,python-pylint)
+        ("python-pytest" ,python-pytest)
+        ("python-pytest-benchmark"
+         ,python-pytest-benchmark)
+        ("python-pytest-cache" ,python-pytest-cache)
+        ("python-validictory" ,python-validictory)))
+    (home-page
+      "https://github.com/seznam/python-fastjsonschema")
+    (synopsis
+      "Fastest Python implementation of JSON schema")
+    (description
+      "Fastest Python implementation of JSON schema")
+    (license license:bsd-3)))
+
 (define-public python-nbformat-5.0
   (package
     (name "python-nbformat")
-    (version "5.0.7")
+    (version "5.0.8")
     (source
       (origin
         (method url-fetch)
         (uri (pypi-uri "nbformat" version))
         (sha256
           (base32
-            "0h5k8d1qa10f143a7rgyxl6dr8rw036js678syx3da9m90sxdm2l"))))
+            "1y1h59q6z3hdlqn6z1zysk2jv3ibbbnqkzhzdg6gnnw670hv4igm"))))
     (build-system python-build-system)
     (arguments
      `(#:phases
@@ -225,6 +279,9 @@
     (native-inputs
       `(("python-pytest" ,python-pytest)
         ("python-pytest-cov" ,python-pytest-cov)
+        ("python-fastjsonschema" ,python-fastjsonschema) ; This is only active
+        ; when setting NBFORMAT_VALIDATOR="fastjsonschema", so include it for
+        ; testing only.
         ("python-testpath" ,python-testpath-0.4)))
     (home-page "http://jupyter.org")
     (synopsis "The Jupyter Notebook format")
@@ -234,14 +291,14 @@
 (define-public python-jupyter-client-6.1
   (package
     (name "python-jupyter-client")
-    (version "6.1.6")
+    (version "6.1.7")
     (source
      (origin
        (method url-fetch)
        (uri (pypi-uri "jupyter_client" version))
        (sha256
         (base32
-         "15d5sz2s0pf0dwzpdp4qa28myxfvk1igi4vfcnj7gicbcgaghq5k"))))
+         "18bpjg81q8h567784s0vc2iz20xrky6s4kkh4ikj5d74dyrr1qs9"))))
     (build-system python-build-system)
     (arguments
      '(#:phases
@@ -476,14 +533,14 @@
 (define-public python-notebook-6.1
   (package
     (name "python-notebook")
-    (version "6.1.1")
+    (version "6.1.4")
     (source
      (origin
        (method url-fetch)
        (uri (pypi-uri "notebook" version))
        (sha256
         (base32
-         "1mcq2f7bbha4krg06h8wwnkz64cwwjcpalhn8dvnwrw87f7isfa2"))))
+         "0cnyi4zd3byh7zixdj2q71axm31xgjiyfklh1c63c87acgwh2zb8"))))
     (build-system python-build-system)
     (arguments
      `(#:phases
@@ -615,14 +672,14 @@ applications")
 (define-public python-jupyterlab
   (package
     (name "python-jupyterlab")
-    (version "2.2.4")
+    (version "2.2.9")
     (source
      (origin
        (method url-fetch)
        (uri (pypi-uri "jupyterlab" version))
        (sha256
         (base32
-         "0jydvzjvbyxjvdk7fb7jcwksw9shxbakzkcwz86pdxzl3i66rlp9"))
+         "1iixsfhvdh95f13lm0hz280wixdnphxns6wchgfm6dqpxbnzis1v"))
        (patches (search-patches "python-jupyterlab-copy-nometa.patch"))))
     (build-system python-build-system)
     (propagated-inputs
@@ -709,14 +766,14 @@ based on the Jupyter Notebook and Architecture.")
 (define-public python-nbclient-0.5
   (package
     (name "python-nbclient")
-    (version "0.5.0")
+    (version "0.5.1")
     (source
       (origin
         (method url-fetch)
         (uri (pypi-uri "nbclient" version))
         (sha256
           (base32
-            "07arsrb3lk6pm5nfcys05x58cniwwmblh0fv08aclkqlp8kjvmca"))))
+            "0l02zvadrzbj7zvl5l9ji1z58lql8pi8fjmpdpg2rbvfs4kdgqh1"))))
     (build-system python-build-system)
     (arguments
      `(#:phases
