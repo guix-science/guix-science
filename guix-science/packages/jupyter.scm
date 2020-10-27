@@ -14,12 +14,6 @@
 ;;; You should have received a copy of the GNU General Public License
 ;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-;; How to deal with packages that are available here, but have older versions
-;; in guix proper:
-;; Rewrite entire graph of packages with local updates. This avoids having
-;; multiple versions of the same package in the graph. Define packages with the
-;; version guix proper provides and then rewrite it.
-
 (define-module (guix-science packages jupyter)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages)
@@ -41,7 +35,8 @@
   #:use-module (guix git-download)
   #:use-module (guix hg-download)
   #:use-module (guix utils)
-  #:use-module (guix build-system python))
+  #:use-module (guix build-system python)
+  #:use-module (srfi srfi-1))
 
 (define-public python-requests-unixsocket
   (package
@@ -115,7 +110,7 @@
      "Allow to inject warning filters during ``nosetest``.")
     (license #f)))
 
-(define python-terminado-0.8.3
+(define-public python-terminado-0.8.3
   (package
     (inherit python-terminado)
     (name "python-terminado")
@@ -236,7 +231,7 @@
     (description "The Jupyter Notebook format")
     (license license:bsd-3)))
 
-(define python-jupyter-client-6.1-proper
+(define-public python-jupyter-client-6.1
   (package
     (name "python-jupyter-client")
     (version "6.1.6")
@@ -273,15 +268,15 @@
                (invoke "pytest" "-vv"))))))))
     (propagated-inputs
      `(("python-dateutil" ,python-dateutil)
-       ("python-jupyter-core" ,python-jupyter-core)
+       ("python-jupyter-core" ,python-jupyter-core-4.6)
        ("python-pyzmq" ,python-pyzmq)
        ("python-tornado" ,python-tornado)
        ("python-traitlets" ,python-traitlets)))
     (native-inputs
      `(("python-async-generator"
         ,python-async-generator)
-       ("python-ipykernel" ,python-ipykernel)
-       ("python-ipython" ,python-ipython)
+       ("python-ipykernel" ,python-ipykernel-5.3-bootstrap)
+       ("python-ipython" ,python-ipython-with-updates)
        ("python-mock" ,python-mock)
        ("python-msgpack" ,python-msgpack)
        ("python-pytest" ,python-pytest)
@@ -295,8 +290,8 @@
     (license license:bsd-3)))
 
 ;; Upstream version with dep to ipykernel removed.
-(define python-jupyter-client-6.1-bootstrap-proper
-  (let ((base python-jupyter-client-6.1-proper))
+(define-public python-jupyter-client-6.1-bootstrap
+  (let ((base python-jupyter-client-6.1))
     (package
       (inherit base)
       (name "python-jupyter-client-bootstrap")
@@ -306,13 +301,21 @@
       ;; Remove loop ipykernel <-> jupyter-client
       (native-inputs `()))))
 
-;; Bootstrap version with correct package versions.
-(define-public python-jupyter-client-6.1-bootstrap
-  ((package-input-rewriting
-   `((,python-jupyter-core . ,python-jupyter-core-4.6)))
-   python-jupyter-client-6.1-bootstrap-proper))
+(define-public python-ipython-with-updates
+  (let ((parent python-ipython))
+    (package
+    (inherit parent)
+    (propagated-inputs
+      `(("python-terminado" ,python-terminado-0.8.3)
+        ("python-nbformat" ,python-nbformat-5.0)
+        ,@(fold alist-delete (package-propagated-inputs parent)
+                 '("python-terminado" "python-nbformat"))))
+    (native-inputs
+      `(("python-testpath" ,python-testpath-0.4)
+        ,@(fold alist-delete (package-native-inputs parent)
+                 '("python-testpath")))))))
 
-(define python-ipykernel-5.3-proper
+(define-public python-ipykernel-5.3
   (package
     (inherit python-ipykernel)
     (name "python-ipykernel")
@@ -325,8 +328,8 @@
         (base32
          "17g8pfmvj38kkmfklfacar7m7h0b0wnk0qhw4cdnm6072spm49lv"))))
     (propagated-inputs
-     `(("python-ipython" ,python-ipython)
-       ("python-jupyter-client" ,python-jupyter-client)
+     `(("python-ipython" ,python-ipython-with-updates)
+       ("python-jupyter-client" ,python-jupyter-client-6.1)
        ("python-tornado" ,python-tornado)
        ("python-traitlets" ,python-traitlets)))
     (native-inputs
@@ -337,33 +340,15 @@
 
 ;; Create a bootstrap variant, which can be used in python-jupyter-client-6.1’s
 ;; native-arguments
-(define python-ipykernel-5.3-bootstrap
-  (let ((rewritten ((package-input-rewriting
-    `((,python-jupyter-client . ,python-jupyter-client-6.1-bootstrap)
-     ;; Indirect through IPython.
-     (,python-testpath . ,python-testpath-0.4)
-     (,python-nbformat . ,python-nbformat-5.0)))
-   python-ipykernel-5.3-proper)))
+(define-public python-ipykernel-5.3-bootstrap
+  (let ((parent python-ipykernel-5.3))
     (package
-      (inherit rewritten)
-      (name "python-ipykernel-bootstrap"))))
-
-(define-public python-jupyter-client-6.1
-  ((package-input-rewriting
-   `((,python-ipykernel . ,python-ipykernel-5.3-bootstrap)
-     (,python-jupyter-core . ,python-jupyter-core-4.6)
-     ;; Indirect through IPython.
-     (,python-testpath . ,python-testpath-0.4)
-     (,python-nbformat . ,python-nbformat-5.0)))
-   python-jupyter-client-6.1-proper))
-
-(define-public python-ipykernel-5.3
-  ((package-input-rewriting
-   `((,python-jupyter-client . ,python-jupyter-client-6.1)
-     ;; Indirect through IPython.
-     (,python-testpath . ,python-testpath-0.4)
-     (,python-nbformat . ,python-nbformat-5.0)))
-   python-ipykernel-5.3-proper))
+    (inherit parent)
+    (name "python-ipykernel-bootstrap")
+    (propagated-inputs
+      `(("python-jupyter-client" ,python-jupyter-client-6.1-bootstrap)
+        ,@(fold alist-delete (package-propagated-inputs parent)
+               '("python-jupyter-client")))))))
 
 (define-public python-jupyterlab-pygments
   (package
@@ -386,16 +371,8 @@
       "Pygments theme using JupyterLab CSS variables")
     (license license:bsd-3)))
 
-(define rewrite-for-nbconvert
-  (package-input-rewriting
-   `((,python-jupyter-client . ,python-jupyter-client-6.1)
-     (,python-jupyter-core . ,python-jupyter-core-4.6)
-     (,python-ipykernel . ,python-ipykernel-5.3)
-     (,python-testpath . ,python-testpath-0.4)
-     (,python-nbformat . ,python-nbformat-5.0))))
-
 (define-public python-nbconvert-6.0
-  (rewrite-for-nbconvert (package
+  (package
     (name "python-nbconvert")
     (version "6.0.7")
     (source
@@ -463,18 +440,18 @@
         ("python-defusedxml" ,python-defusedxml)
         ("python-entrypoints" ,python-entrypoints)
         ("python-jinja2" ,python-jinja2)
-        ("python-jupyter-core" ,python-jupyter-core)
+        ("python-jupyter-core" ,python-jupyter-core-4.6)
         ("python-jupyterlab-pygments"
          ,python-jupyterlab-pygments)
         ("python-mistune" ,python-mistune)
         ("python-nbclient" ,python-nbclient-0.5)
-        ("python-nbformat" ,python-nbformat)
+        ("python-nbformat" ,python-nbformat-5.0)
         ("python-pandocfilters" ,python-pandocfilters)
         ("python-pygments" ,python-pygments)
-        ("python-testpath" ,python-testpath)
+        ("python-testpath" ,python-testpath-0.4)
         ("python-traitlets" ,python-traitlets)))
     (native-inputs
-      `(("python-ipykernel" ,python-ipykernel)
+      `(("python-ipykernel" ,python-ipykernel-5.3)
         ("python-ipywidgets" ,python-ipywidgets)
         ; XXX: Disabled, not in guix.
         ;("python-pyppeteer" ,python-pyppeteer)
@@ -485,19 +462,19 @@
     (home-page "https://jupyter.org")
     (synopsis "Converting Jupyter Notebooks")
     (description "Converting Jupyter Notebooks")
-    (license license:bsd-3))))
+    (license license:bsd-3)))
 
-(define rewrite-notebook
-  (package-input-rewriting
-   `((,python-jupyter-client . ,python-jupyter-client-6.1)
-     (,python-jupyter-core . ,python-jupyter-core-4.6)
-     (,python-ipykernel . ,python-ipykernel-5.3)
-     (,python-terminado . ,python-terminado-0.8.3)
-     (,python-nbformat . ,python-nbformat-5.0)
-     (,python-nbconvert . ,python-nbconvert-6.0))))
+(define-public python-nbval-for-notebook
+  (package
+    (inherit python-nbval)
+    (propagated-inputs
+     `(("python-ipykernel" ,python-ipykernel-5.3)
+       ("python-jupyter-client" ,python-jupyter-client-6.1)
+       ("python-nbformat" ,python-nbformat-5.0)
+       ("python-six" ,python-six)))))
 
 (define-public python-notebook-6.1
-  (rewrite-notebook (package
+  (package
     (name "python-notebook")
     (version "6.1.1")
     (source
@@ -553,24 +530,24 @@
              )))))))
     (propagated-inputs
      `(("python-argon2-cffi" ,python-argon2-cffi)
-       ("python-ipykernel" ,python-ipykernel)
+       ("python-ipykernel" ,python-ipykernel-5.3)
        ("python-ipython-genutils"
         ,python-ipython-genutils)
        ("python-jinja2" ,python-jinja2)
-       ("python-jupyter-client" ,python-jupyter-client)
-       ("python-jupyter-core" ,python-jupyter-core)
-       ("python-nbconvert" ,python-nbconvert)
-       ("python-nbformat" ,python-nbformat)
+       ("python-jupyter-client" ,python-jupyter-client-6.1)
+       ("python-jupyter-core" ,python-jupyter-core-4.6)
+       ("python-nbconvert" ,python-nbconvert-6.0)
+       ("python-nbformat" ,python-nbformat-5.0)
        ("python-prometheus-client"
         ,python-prometheus-client)
        ("python-pyzmq" ,python-pyzmq)
        ("python-send2trash" ,python-send2trash)
-       ("python-terminado" ,python-terminado)
+       ("python-terminado" ,python-terminado-0.8.3)
        ("python-tornado" ,python-tornado)
        ("python-traitlets" ,python-traitlets)))
     (native-inputs
      `(("python-coverage" ,python-coverage)
-       ("python-nbval" ,python-nbval)
+       ("python-nbval" ,python-nbval-for-notebook)
        ("python-nose" ,python-nose)
        ("python-nose-exclude" ,python-nose-exclude)
        ("python-nose-warnings-filters"
@@ -583,7 +560,7 @@
      "A web-based notebook environment for interactive computing")
     (description
      "A web-based notebook environment for interactive computing")
-    (license license:bsd-3))))
+    (license license:bsd-3)))
 
 (define-public python-json5-0.9.4
   (package
@@ -601,19 +578,8 @@
        (sha256
         (base32 "14878npsn7f344pwkxcnw40lc0waqgpi8j25akd7qxlwd7nchy40"))))))
 
-(define rewrite-jupyterlab
-  (package-input-rewriting
-   `((,python-jupyter-client . ,python-jupyter-client-6.1)
-     (,python-jupyter-core . ,python-jupyter-core-4.6)
-     (,python-ipykernel . ,python-ipykernel-5.3)
-     (,python-terminado . ,python-terminado-0.8.3)
-     (,python-notebook . ,python-notebook-6.1)
-     (,python-json5 . ,python-json5-0.9.4)
-     (,python-nbformat . ,python-nbformat-5.0)
-     (,python-nbconvert . ,python-nbconvert-6.0))))
-
 (define-public python-jupyterlab-server
-  (rewrite-jupyterlab (package
+  (package
     (name "python-jupyterlab-server")
     (version "1.2.0")
     (source
@@ -628,11 +594,11 @@
      `(("python-jinja2" ,python-jinja2)
        ("python-json5" ,python-json5)
        ("python-jsonschema" ,python-jsonschema)
-       ("python-notebook" ,python-notebook)
+       ("python-notebook" ,python-notebook-6.1)
        ("python-requests" ,python-requests)))
     (native-inputs
      `(("python-pytest" ,python-pytest)
-       ("python-ipykernel" ,python-ipykernel)))
+       ("python-ipykernel" ,python-ipykernel-5.3)))
     (arguments
      `(#:phases
        (modify-phases %standard-phases
@@ -644,10 +610,10 @@
     (synopsis "JupyterLab Server")
     (description "A set of server components for JupyterLab and JupyterLab like
 applications")
-    (license license:bsd-3))))
+    (license license:bsd-3)))
 
 (define-public python-jupyterlab
-  (rewrite-jupyterlab (package
+  (package
     (name "python-jupyterlab")
     (version "2.2.4")
     (source
@@ -663,7 +629,7 @@ applications")
      `(("python-jinja2" ,python-jinja2)
        ("python-jupyterlab-server"
         ,python-jupyterlab-server)
-       ("python-notebook" ,python-notebook)
+       ("python-notebook" ,python-notebook-6.1)
        ("python-tornado" ,python-tornado)
        ;; Required to rebuild assets.
        ("node" ,node)))
@@ -672,7 +638,7 @@ applications")
        ("python-pytest-check-links"
         ,python-pytest-check-links)
        ("python-requests" ,python-requests)
-       ("python-ipykernel" ,python-ipykernel)))
+       ("python-ipykernel" ,python-ipykernel-5.3)))
     (arguments
      ;; testing requires npm, so disabled for now
      '(#:tests? #f
@@ -698,7 +664,7 @@ applications")
     (description
      "An extensible environment for interactive and reproducible computing,
 based on the Jupyter Notebook and Architecture.")
-    (license license:bsd-3))))
+    (license license:bsd-3)))
 
 (define-public python-pytest-dependency
   (package
