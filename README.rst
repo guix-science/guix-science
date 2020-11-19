@@ -35,6 +35,23 @@ to add it to your installation or simply add the following snippet to your
 .. _Guix: https://guix.gnu.org/
 .. _Specifying Additional Channels: https://guix.gnu.org/manual/en/guix.html#Specifying-Additional-Channels
 
+Binary substitutes for ``x86_64-linux`` are available from
+https://substitutes.guix.psychnotebook.org/, see `Getting Substitutes from
+Other Servers`_ in the official manual. The signing key can be imported using:
+
+.. code:: console
+
+	$ guix archive --authorize <<EOF
+	(public-key
+	 (ecc
+	  (curve Ed25519)
+	  (q #D4E1CAFAB105581122B326E89804E3546EF905C0D9B39F161BBD8ABB4B11D14A#)
+	  )
+	 )
+	EOF
+
+.. _Getting Substitutes from Other Servers: https://guix.gnu.org/manual/en/guix.html#Getting-Substitutes-from-Other-Servers
+
 Contributing
 ------------
 
