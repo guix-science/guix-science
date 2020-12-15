@@ -1,6 +1,8 @@
 (authorizations
  (version 0)
- (("CA4F8CF437D7478FDA055FD4421377011A378446"
-   (name "ldb@leibniz-psychology.org")))
- ("BCA6 89B6 3655 3801 C3C6  2150 197A 5888 235F ACAC"
-   (name "rekado")))
+ (("CA4F 8CF4 37D7 478F DA05  5FD4 4213 7701 1A37 8446"
+   (name "ldb@leibniz-psychology.org"))
+  ("BCA6 89B6 3655 3801 C3C6  2150 197A 5888 235F ACAC"
+   (name "rekado"))
+  ("F556 FD94 FB8F 8B87 79E3  6832 CBD0 CD51 38C1 9AFC"
+   (name "roelj"))))
