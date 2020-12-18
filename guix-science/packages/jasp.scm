@@ -313,16 +313,16 @@ popular stats packages like SAS, Stata and SPSS.")
 (define-public jasp
   (package
     (name "jasp")
-    (version "0.14.0.0")
+    (version "0.14.1")
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url "https://github.com/jasp-stats/jasp-desktop.git")
-                    (commit (string-append "v" version))))
+                    (commit (string-append version))))
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "04z08a03pcqqpflvfdmlmf55qrbrmkvj61frzdm1a7x3mwnnna3i"))
+                "05r2gdq7lxmndxzg5h8nmahvrksv9v4xh40ls0azn0wfrpcsnrlq"))
               (patches
                (search-patches "jasp-0.14.0.0-noupdate.patch"))))
     (build-system qt-build-system)
