@@ -22,6 +22,7 @@
   #:use-module (gnu packages monitoring)
   #:use-module (gnu packages node)
   #:use-module (gnu packages sphinx)
+  #:use-module (gnu packages python-build)
   #:use-module (gnu packages python-check)
   #:use-module (gnu packages python-crypto)
   #:use-module (gnu packages python-web)
