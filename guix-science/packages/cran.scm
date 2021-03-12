@@ -125,3 +125,52 @@ diagrams via Graphviz, and these functions make it easy to generate these
 diagrams from a lavaan path model without having to write the DOT language
 graph specification.")
     (license license:gpl2+)))
+
+;; Not upstreamable, contains precompiled jars.
+(define-public r-xlsxjars
+  (package
+    (name "r-xlsxjars")
+    (version "0.6.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (cran-uri "xlsxjars" version))
+        (sha256
+          (base32
+            "1rka5smm7yqnhhlblpihhciydfap4i6kjaa4a7isdg7qjmzm3h9p"))))
+    (properties `((upstream-name . "xlsxjars")))
+    (build-system r-build-system)
+    (propagated-inputs `(("r-rjava" ,r-rjava)))
+    (home-page
+      "https://cran.r-project.org/web/packages/xlsxjars")
+    (synopsis
+      "Package required POI jars for the xlsx package")
+    (description
+      "The xlsxjars package collects all the external jars required for the
+xlxs package.  This release corresponds to POI 3.10.1.")
+    (license license:gpl3)))
+
+;; Depends on r-xlsxjars
+(define-public r-xlsx
+  (package
+    (name "r-xlsx")
+    (version "0.6.5")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (cran-uri "xlsx" version))
+        (sha256
+          (base32
+            "01r1ngdm51w18bdan8h94r91m731knkf04zal4g67mx3fpa5x31p"))))
+    (properties `((upstream-name . "xlsx")))
+    (build-system r-build-system)
+    (propagated-inputs
+      `(("r-rjava" ,r-rjava) ("r-xlsxjars" ,r-xlsxjars)))
+    (native-inputs `(("r-knitr" ,r-knitr)))
+    (home-page "https://github.com/colearendt/xlsx")
+    (synopsis
+      "Read, Write, Format Excel 2007 and Excel 97/2000/XP/2003 Files")
+    (description
+      "Provide R functions to read/write/format Excel 2007 and Excel
+97/2000/XP/2003 file formats.")
+    (license license:gpl3)))
