@@ -174,3 +174,44 @@ xlxs package.  This release corresponds to POI 3.10.1.")
       "Provide R functions to read/write/format Excel 2007 and Excel
 97/2000/XP/2003 file formats.")
     (license license:gpl3)))
+
+;; Bundles udpipe, which is very hard to build, because it bundles many
+;; libraries itself.
+(define-public r-udpipe
+  (package
+    (name "r-udpipe")
+    (version "0.8.5")
+    (source
+     (origin
+      (method url-fetch)
+      (uri (cran-uri "udpipe" version))
+      (sha256
+       (base32 "021n28jncfiv7492dj1ik6ylkhb3s2hpgjpc0y2zv4cdnl362zcx"))))
+    (properties `((upstream-name . "udpipe")))
+    (build-system r-build-system)
+    ;(inputs `(("udpipe" ,udpipe)))
+    (propagated-inputs
+      `(("r-data-table" ,r-data-table)
+        ("r-matrix" ,r-matrix)
+        ("r-rcpp" ,r-rcpp)))
+    (native-inputs `(("r-knitr" ,r-knitr)))
+    (home-page
+      "https://bnosac.github.io/udpipe/en/index.html")
+    (synopsis
+      "R bindings for UDPipe NLP toolkit")
+    (description
+      "This natural language processing toolkit provides language-agnostic
+'tokenization', 'parts of speech tagging', 'lemmatization' and 'dependency
+parsing' of raw text.  Next to text parsing, the package also allows you to
+train annotation models based on data of 'treebanks' in 'CoNLL-U' format as
+provided at @url{https://universaldependencies.org/format.html}.  The techniques
+are explained in detail in the paper: 'Tokenizing, POS Tagging, Lemmatizing and
+Parsing UD 2.0 with UDPipe', available at @url{doi:10.18653/v1/K17-3009}.  The
+toolkit also contains functionalities for commonly used data manipulations on
+texts which are enriched with the output of the parser.  Namely functionalities
+and algorithms for collocations, token co-occurrence, document term matrix
+handling, term frequency inverse document frequency calculations, information
+retrieval metrics (Okapi BM25), handling of multi-word expressions, keyword
+detection (Rapid Automatic Keyword Extraction, noun phrase extraction,
+syntactical patterns) sentiment scoring and semantic similarity analysis.")
+    (license license:mpl2.0)))
