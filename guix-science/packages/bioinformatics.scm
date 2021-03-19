@@ -20,6 +20,7 @@
   #:use-module (gnu packages base)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages gcc)
+  #:use-module (gnu packages java)
   #:use-module (gnu packages time)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages perl)
@@ -186,4 +187,54 @@ programs for performing some common and uncommon tasks with FASTQ files.")
 Oxford Nanopore Technologies sequencing data.")
    (license license:expat)))
 
-
+(define-public fastqc-bin
+  (package
+    (name "fastqc")
+    (version "0.11.9")
+    (source (origin
+      (method url-fetch)
+      (uri (string-append
+            "http://www.bioinformatics.babraham.ac.uk/projects/fastqc/fastqc_v"
+            version ".zip"))
+      (sha256
+       (base32 "0s8k6ac68xx6bsivkzcc4qcb57shav2wl5xp4l1y967pdqbhll8m"))))
+    (build-system gnu-build-system)
+    (arguments
+     `(#:tests? #f ; No tests for binary release.
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'configure) ; No configure phase for binary release.
+         (delete 'build) ; No build phase for binary release.
+         (replace 'install
+           (lambda _
+             (let* ((out (assoc-ref %outputs "out"))
+                    (bin (string-append out "/bin"))
+                    (create-and-copy
+                     (lambda (dir)
+                       (mkdir (string-append bin "/" dir))
+                       (copy-recursively dir (string-append bin "/" dir)))))
+               (install-file "cisd-jhdf5.jar" bin)
+               (install-file "jbzip2-0.9.jar" bin)
+               (install-file "sam-1.103.jar" bin)
+               (map create-and-copy '("net" "org" "uk" "Templates" "Help"
+                                      "Configuration"))
+               (install-file "fastqc" bin)
+               ;; Make the script executable.
+               (chmod (string-append bin "/fastqc") #o555)))))))
+    (propagated-inputs
+     `(("perl" ,perl) ; Used for a runner script for the Java program.
+       ("jdk" ,icedtea-7)))
+    (native-inputs
+     `(("unzip" ,unzip)))
+    (home-page "http://www.bioinformatics.babraham.ac.uk/projects/fastqc/")
+    (synopsis "A quality control tool for high throughput sequence data")
+    (description
+     "FastQC aims to provide a QC report which can spot problems which originate
+either in the sequencer or in the starting library material.  It can either run
+as a stand alone interactive application for the immediate analysis of small
+numbers of FastQ files, or it can be run in a non-interactive mode where it
+would be suitable for integrating into a larger analysis pipeline for the
+systematic processing of large numbers of files.")
+    ;; FastQC is licensed GPLv3+, but one of its dependencies (JHDF5) is
+    ;; licensed ASL2.0.
+    (license (list license:gpl3+ license:asl2.0))))
