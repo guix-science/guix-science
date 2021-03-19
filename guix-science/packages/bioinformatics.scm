@@ -243,7 +243,7 @@ systematic processing of large numbers of files.")
 (define-public freec
   (package
     (name "freec")
-    (version "10.5")
+    (version "11.6")
     (source
      (origin
        (method url-fetch)
@@ -251,7 +251,7 @@ systematic processing of large numbers of files.")
                            version ".tar.gz"))
        (file-name (string-append "freec-" version ".tar.gz"))
        (sha256
-        (base32 "0z657hbpnc76pkli7g1ka07q4bpl41zarjhq6fwh6g9s368id15j"))))
+        (base32 "0d0prnix9cpdk5df9fpmf1224kxjgvl809s1rwhffdhjl234ymin"))))
     (build-system gnu-build-system)
     (arguments
      `(#:tests? #f
