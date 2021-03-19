@@ -18,6 +18,7 @@
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages)
   #:use-module (gnu packages base)
+  #:use-module (gnu packages bioinformatics)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages java)
@@ -238,3 +239,48 @@ systematic processing of large numbers of files.")
     ;; FastQC is licensed GPLv3+, but one of its dependencies (JHDF5) is
     ;; licensed ASL2.0.
     (license (list license:gpl3+ license:asl2.0))))
+
+(define-public freec
+  (package
+    (name "freec")
+    (version "10.5")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "https://github.com/BoevaLab/FREEC/archive/v"
+                           version ".tar.gz"))
+       (file-name (string-append "freec-" version ".tar.gz"))
+       (sha256
+        (base32 "0z657hbpnc76pkli7g1ka07q4bpl41zarjhq6fwh6g9s368id15j"))))
+    (build-system gnu-build-system)
+    (arguments
+     `(#:tests? #f
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'configure)
+         (add-before 'build 'move-to-src-dir
+           (lambda _
+             (chdir "src")))
+         (replace 'install
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let* ((out (assoc-ref outputs "out"))
+                    (bin (string-append out "/bin"))
+                    (share (string-append out "/share/freec")))
+               (mkdir-p bin)
+               (mkdir-p share)
+               (copy-recursively "../scripts" share)
+               (install-file "freec" bin)))))))
+    (inputs
+     `(("perl" ,perl)))
+    (propagated-inputs
+     `(("r-rtracklayer" ,r-rtracklayer)))
+    (home-page "http://bioinfo-out.curie.fr/projects/freec/")
+    (synopsis "Tool for detection of copy-number changes and allelic imbalances
+(including LOH) using deep-sequencing data")
+    (description "Control-FREEC automatically computes, normalizes, segments
+copy number and beta allele frequency (BAF) profiles, then calls copy number
+alterations and LOH.  The control (matched normal) sample is optional for whole
+genome sequencing data but mandatory for whole exome or targeted sequencing
+data.  For whole genome sequencing data analysis, the program can also use
+mappability data (files created by GEM).")
+    (license license:gpl2+)))
