@@ -22,12 +22,14 @@
   #:use-module (gnu packages compression)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages java)
-  #:use-module (gnu packages time)
   #:use-module (gnu packages maths)
+  #:use-module (gnu packages pcre)
   #:use-module (gnu packages perl)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
-  #:use-module (gnu packages pcre)
+  #:use-module (gnu packages rsync)
+  #:use-module (gnu packages time)
+  #:use-module (gnu packages wget)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
   #:use-module (guix download)
@@ -284,3 +286,59 @@ genome sequencing data but mandatory for whole exome or targeted sequencing
 data.  For whole genome sequencing data analysis, the program can also use
 mappability data (files created by GEM).")
     (license license:gpl2+)))
+
+(define-public kraken2
+  (package
+   (name "kraken2")
+   (version "2.1.1")
+   (source (origin
+	          (method url-fetch)
+	          (uri "https://github.com/DerrickWood/kraken2/archive/v2.1.1.tar.gz")
+	          (file-name (string-append name "-" version ".tar.gz"))
+	          (sha256
+	           (base32 "1r6yh6df2rg42s6kxxih7zyabcjp2lyp0i2vypkfif9jvf694glg"))
+	          (patches (list (search-patch "kraken2-fix-link-error.patch")))))
+   (build-system cmake-build-system)
+   (arguments
+    `(#:tests? #f
+      #:phases
+      (modify-phases %standard-phases
+        (replace 'install
+	        (lambda* (#:key inputs outputs #:allow-other-keys)
+	          (let* ((out           (assoc-ref outputs "out"))
+		               (bin           (string-append out "/bin"))
+		               (wget          (string-append (assoc-ref inputs "wget") "/bin/wget"))
+		               (rsync         (string-append (assoc-ref inputs "rsync") "/bin/rsync"))
+		               (local-scripts (string-append "../" ,name "-" ,version "/scripts")))
+	            (with-directory-excursion local-scripts
+	              (substitute* '("download_taxonomy.sh"
+			                         "download_genomic_library.sh"
+			                         "rsync_from_ncbi.pl")
+		                         (("rsync -") (string-append rsync " -")))
+		            (substitute* '("16S_gg_installation.sh"
+			                         "16S_rdp_installation.sh"
+			                         "16S_silva_installation.sh"
+			                         "download_genomic_library.sh"
+			                         "download_taxonomy.sh")
+		                         (("wget ") (string-append wget " "))))
+
+	            (copy-recursively local-scripts bin)
+	            (with-directory-excursion "src"
+		            (for-each (lambda (file) (install-file file bin))
+			                    '("build_db"
+			                      "classify"
+			                      "dump_table"
+			                      "estimate_capacity"
+			                      "lookup_accession_numbers"))))
+	          #t)))))
+   (native-inputs
+    `(("gcc" ,gcc-10)))
+   (inputs
+    `(("perl" ,perl)
+      ("rsync" ,rsync)
+      ("wget" ,wget)))
+   (home-page "https://github.com/DerrickWood/kraken2")
+   (synopsis "Taxonomic sequence classification system")
+   (description "Kraken is an ultrafast and highly accurate program for
+assigning taxonomic labels to metagenomic DNA sequences.")
+   (license license:expat)))
