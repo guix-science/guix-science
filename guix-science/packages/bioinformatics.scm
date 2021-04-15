@@ -32,6 +32,7 @@
   #:use-module (gnu packages wget)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
+  #:use-module (guix build-system python)
   #:use-module (guix download)
   #:use-module (guix packages))
 
@@ -342,3 +343,24 @@ mappability data (files created by GEM).")
    (description "Kraken is an ultrafast and highly accurate program for
 assigning taxonomic labels to metagenomic DNA sequences.")
    (license license:expat)))
+
+(define-public python-pyvcf
+  (package
+    (name "python-pyvcf")
+    (version "0.6.8")
+    (source (origin
+              (method url-fetch)
+              (uri (pypi-uri "PyVCF" version))
+              (sha256
+               (base32
+                "1ngryr12d3izmhmwplc46xhyj9i7yhrpm90xnsd2578p7m8p5n79"))))
+    (build-system python-build-system)
+    (arguments `(#:tests? #f)) ; The tests cannot find its files.
+    (propagated-inputs
+     `(("python-setuptools" ,python-setuptools)
+       ("python-psutil" ,python-psutil)))
+    (home-page "https://github.com/jamescasbon/PyVCF")
+    (synopsis "Variant Call Format parser for Python")
+    (description "This package provides a Variant Call Format (VCF) parser
+for Python.")
+    (license license:expat)))
