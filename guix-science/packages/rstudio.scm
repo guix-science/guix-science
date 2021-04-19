@@ -33,26 +33,32 @@
   #:use-module (guix build-system copy)
   #:use-module (guix build-system ant)
   #:use-module (gnu packages)
+  #:use-module (gnu packages base)
   #:use-module (gnu packages boost)
   #:use-module (gnu packages compression)
-  #:use-module (gnu packages linux)
-  #:use-module (gnu packages statistics)
-  #:use-module (gnu packages tls)
+  #:use-module (gnu packages cran)
+  #:use-module (gnu packages databases)
   #:use-module (gnu packages haskell-xyz)
   #:use-module (gnu packages java)
+  #:use-module (gnu packages linux)
+  #:use-module (gnu packages node)
   #:use-module (gnu packages qt)
-  #:use-module (gnu packages base))
+  #:use-module (gnu packages statistics)
+  #:use-module (gnu packages sqlite)
+  #:use-module (gnu packages tls)
+  #:use-module (gnu packages web)
+  #:use-module (guix-science packages rstudio-node))
 
 (define-public mathjax
   (package
     (name "mathjax")
-    (version "2.7.8")
+    (version "2.7.9")
     ( source (origin
                (method url-fetch)
                (uri (string-append "https://github.com/mathjax/MathJax/archive/" version ".tar.gz"))
                (sha256
                 (base32
-                 "0pfkybf95a3s3v17rfb7cy598hlswkpi2g0lhnpnvlwcbj1z9p11"))))
+                 "1pv51xiy31pbd3jhli2rrda07s9cl1rxa2lizzr4983xr1wp45n9"))))
     (build-system copy-build-system)
     (arguments
      '(#:install-plan
@@ -68,7 +74,7 @@ for assistive technology like screen readers.")
 (define-public rstudio-server
   (package
     (name "rstudio-server")
-    (version "1.3.1093")
+    (version "1.4.1106")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -77,22 +83,30 @@ for assistive technology like screen readers.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0zarhsm3cghz4fn4c53y2zy05z3cxqzp87h16ya8v7hyxapaqfy6"))
+                "1brd93hy8254frx98zj1vpkbfj90chkky57z7iinp97wgslink8n"))
               (patches
-               (search-patches "rstudio-server-1.3.959-unbundle.patch"))
+               (search-patches "rstudio-server-1.4.1106-unbundle.patch"
+                               "rstudio-server-1.4.1103-soci-searchpath.patch"))
               (modules '((guix build utils)))
               (snippet
                '(begin
-                  ;; de-blob: windows tools
-                  delete-file-recursively "dependencies/windows/tools"
+                  (for-each delete-file-recursively
+                    ;; de-blob: windows tools
+                    '("dependencies/windows/tools"
+                      ;; auto-generated files
+                      "src/cpp/session/include/session/SessionOptions.gen.hpp"
+                      "src/cpp/server/include/server/ServerOptions.gen.hpp"))
                   #t))))
     (build-system cmake-build-system)
     (arguments
-     `(#:configure-flags
-       '("-DRSTUDIO_TARGET=Server"
+     `(#:out-of-source? #f ; required by 'make-writable
+       #:configure-flags
+       (list
+         "-DRSTUDIO_TARGET=Server"
          "-DCMAKE_BUILD_TYPE=Release"
          ;; auto-detection seems to be broken with boost 1.72
-         "-DRSTUDIO_BOOST_SIGNALS_VERSION=2")
+         "-DRSTUDIO_BOOST_SIGNALS_VERSION=2"
+         (string-append "-DSOCI_LIBRARY_DIR=" (assoc-ref %build-inputs "soci") "/lib"))
        #:tests? #f ; no tests exist
        #:modules ((guix build cmake-build-system)
                   (guix build utils)
@@ -107,21 +121,43 @@ for assistive technology like screen readers.")
              #t))
          ;; change the default paths for mathjax and pandoc and a hardcoded call to `which`
          (add-after 'unpack 'patch-paths
-           (lambda* (#:key inputs native-inputs #:allow-other-keys)
-             (substitute* "src/cpp/session/SessionOptions.cpp"
+           (lambda* (#:key inputs #:allow-other-keys)
+             (substitute* "src/cpp/session/session-options.json"
                (("resources/mathjax-27") (assoc-ref inputs "mathjax")))
-             (substitute* "src/cpp/session/SessionOptions.cpp"
-               (("bin/pandoc") (string-append (assoc-ref inputs "pandoc") "/bin/pandoc")))
+             (substitute* "src/cpp/session/include/session/SessionConstants.hpp"
+               ;; XXX: It looks like there’s a bug in RStudio right now, which
+               ;; appends the binary name “pandoc” to this path, if it is an
+               ;; absolute path.
+               (("bin/pandoc") (string-append (assoc-ref inputs "pandoc") "/bin")))
              (substitute* "src/cpp/core/r_util/REnvironmentPosix.cpp"
                (("runCommand\\(\"which") (string-append "runCommand(\"" (assoc-ref inputs "which") "/bin/which")))
+             (substitute* "src/cpp/session/modules/clang/CodeCompletion.cpp"
+               (("/usr/bin/which") (string-append (assoc-ref inputs "which") "/bin/which")))
              (substitute* '("src/cpp/session/SessionConsoleProcess.cpp" "src/cpp/session/modules/SessionTerminalShell.cpp")
                (("/usr/bin/env") (string-append (assoc-ref inputs "coreutils") "/bin/env")))
              (substitute* '("src/cpp/session/modules/SessionFiles.R")
                (("\"zip\"") (string-append "\"" (assoc-ref inputs "zip") "/bin/zip\"")))
              (substitute* '("src/cpp/session/modules/SessionFiles.cpp")
                (("\"unzip ") (string-append "\"" (assoc-ref inputs "unzip") "/bin/unzip ")))
+             (substitute* "src/gwt/build.xml"
+               ;; Fix path to node binary
+               (("\"[^\"]+/bin/node\"")
+                (string-append "\"" (assoc-ref inputs "node") "/bin/node\""))
+               ;; For some reason this interferes with Guix’s NODE_PATH, so
+               ;; remove it.
+               (("<env key=\"NODE_PATH\" path=\"[^\"]+\"/>") ""))
+             (substitute* "src/gwt/panmirror/src/editor/fuse.js"
+               ;; This path is only used to copy prosemirror
+               (("/opt/rstudio-tools/panmirror/node_modules")
+                (string-append (assoc-ref inputs "node-prosemirror-dev-tools") "/lib/node_modules"))
+               ;; Replace with current NODE_PATH, since there seems to be no
+               ;; other way to make fuse-box respect that path.
+               ;; (setenv "PROJECT_NODE_MODULES" (getenv "NODE_PATH"))
+               ;; does not work, since that path does not support :-delimited strings
+               (("\"\\./node_modules\"")
+                (string-append "\"" (string-join (string-split (getenv "NODE_PATH") #\:) "\", \"") "\"")))
              #t))
-         (add-after 'unpack 'set-JAVA_HOME
+         (add-after 'unpack 'set-environment-variables
            (lambda* (#:key inputs #:allow-other-keys)
              (setenv "JAVA_HOME" (assoc-ref inputs "jdk"))
              ;; set proper version information
@@ -131,12 +167,39 @@ for assistive technology like screen readers.")
                 (setenv "RSTUDIO_VERSION_MINOR" minor)
                 (setenv "RSTUDIO_VERSION_PATCH" patch)))
              (setenv "PACKAGE_OS" "GNU Guix")
+             ;; Otherwise fuse-box will try to write to /gnu/store/…/.fusebox.
+             (setenv "FUSEBOX_TEMP_FOLDER" "/tmp/")
+             #t))
+         ;; Must be run after patch-source-shebangs, which changes
+         ;; report-option.sh’s interpreter line.
+         (add-before 'configure 'generate-server-options
+           (lambda _
+             ;; Generate *.gen.hpp files deleted by source snippet.
+             (with-directory-excursion "src/cpp"
+               (invoke "./generate-options.R"))))
+         (add-before 'install 'make-writable
+           (lambda _
+             ;; This file is copied with permission bits from the store during
+             ;; 'build and overwriting fails during 'install if not
+             ;; writable.
+             (make-file-writable "src/gwt/www/js/panmirror/prosemirror-dev-tools.min.js")
              #t)))))
     (native-inputs
      `(("unzip" ,unzip)
        ;; gwt-components are built using ant
        ("ant" ,ant)
-       ("jdk" ,icedtea "jdk")))
+       ("jdk" ,icedtea "jdk")
+       ;; For building panmirror. XXX: Maybe put panmirror into its own package?
+       ("node" ,node)
+       ("node-fuse-box" ,node-fuse-box-3.7.1)
+       ;; Copied to output
+       ("node-prosemirror-dev-tools" ,node-prosemirror-dev-tools-2.1.1)
+       ;; For src/cpp/generate-options.R
+       ("r-jsonlite" ,r-jsonlite)
+       ("r-stringi" ,r-stringi)
+       ("r-stringr" ,r-stringr)
+       ("r-tibble" ,r-tibble)
+       ("jq" ,jq)))
     (inputs
      `(("boost" ,boost)
        ("zlib" ,zlib)
@@ -155,20 +218,56 @@ for assistive technology like screen readers.")
        ("zip" ,zip)
        ;; File panel -> Upload -> Upload zip file
        ("unzip" ,unzip)
+       ;; For database support, uses only client library.
+       ("postgresql" ,postgresql)
+       ("sqlite" ,sqlite)
+       ("soci" ,soci)
+       ;; For panmirror.
+       ("node-biblatex-csl-converter-1.9.5" ,node-biblatex-csl-converter-1.9.5)
+       ("node-clipboard-2.0.6" ,node-clipboard-2.0.6)
+       ("node-diff-match-patch-1.0.5" ,node-diff-match-patch-1.0.5)
+       ("node-fuse-js-6.4.6" ,node-fuse-js-6.4.6)
+       ("node-js-yaml-3.14.1" ,node-js-yaml-3.14.1)
+       ("node-lodash-debounce-3.1.1" ,node-lodash-debounce-3.1.1)
+       ("node-lodash-debounce-4.0.8" ,node-lodash-debounce-4.0.8)
+       ("node-lodash-uniqby-4.7.0" ,node-lodash-uniqby-4.7.0)
+       ("node-orderedmap-1.1.1" ,node-orderedmap-1.1.1)
+       ("node-prosemirror-changeset-2.1.2" ,node-prosemirror-changeset-2.1.2)
+       ("node-prosemirror-commands-1.1.6" ,node-prosemirror-commands-1.1.6)
+       ("node-prosemirror-dev-tools-2.1.1" ,node-prosemirror-dev-tools-2.1.1)
+       ("node-prosemirror-dropcursor-1.3.3" ,node-prosemirror-dropcursor-1.3.3)
+       ("node-prosemirror-gapcursor-1.1.5" ,node-prosemirror-gapcursor-1.1.5)
+       ("node-prosemirror-history-1.1.3" ,node-prosemirror-history-1.1.3)
+       ("node-prosemirror-inputrules-1.1.3" ,node-prosemirror-inputrules-1.1.3)
+       ("node-prosemirror-keymap-1.1.4" ,node-prosemirror-keymap-1.1.4)
+       ("node-prosemirror-model-1.13.3" ,node-prosemirror-model-1.13.3)
+       ("node-prosemirror-schema-list-1.1.4" ,node-prosemirror-schema-list-1.1.4)
+       ("node-prosemirror-state-1.3.4" ,node-prosemirror-state-1.3.4)
+       ("node-prosemirror-tables-1.1.1" ,node-prosemirror-tables-1.1.1)
+       ("node-prosemirror-transform-1.2.11" ,node-prosemirror-transform-1.2.11)
+       ("node-prosemirror-utils-0.9.6" ,node-prosemirror-utils-0.9.6)
+       ("node-prosemirror-view-1.17.6" ,node-prosemirror-view-1.17.6)
+       ("node-react-16.14.0" ,node-react-16.14.0)
+       ("node-react-base16-styling-0.5.3" ,node-react-base16-styling-0.5.3)
+       ("node-react-dock-0.2.4" ,node-react-dock-0.2.4)
+       ("node-react-dom-16.14.0" ,node-react-dom-16.14.0)
+       ("node-react-emotion-9.2.12" ,node-react-emotion-9.2.12)
+       ("node-react-is-16.13.1" ,node-react-is-16.13.1)
+       ("node-react-json-tree-0.11.2" ,node-react-json-tree-0.11.2)
+       ("node-react-window-1.8.6" ,node-react-window-1.8.6)
+       ("node-sentence-splitter-3.2.0" ,node-sentence-splitter-3.2.0)
+       ("node-thenby-1.3.4" ,node-thenby-1.3.4)
+       ("node-tlite-0.1.9" ,node-tlite-0.1.9)
+       ("node-typescript-3.8.3" ,node-typescript-3.8.3)
+       ("node-zenscroll-4.0.2" ,node-zenscroll-4.0.2)
+       ;; External resources.
        ("dict-source-tarball"
         ,(origin
            (method url-fetch)
            (uri "https://s3.amazonaws.com/rstudio-buildtools/dictionaries/core-dictionaries.zip")
            (sha256
             (base32
-             "153lg3ai97qzbqp6zjg10dh3sfvz80v42cjw45zwz7gv1risjha3"))))
-       ("junit-source-tarball"
-        ,(origin
-           (method url-fetch)
-           (uri "https://s3.amazonaws.com/rstudio-buildtools/junit-4.9b3.jar")
-           (sha256
-            (base32
-             "0l850yfbq0cgycp8n0r0a1b7xznd37pgfd656vzdwim4blznqmnw"))))))
+             "153lg3ai97qzbqp6zjg10dh3sfvz80v42cjw45zwz7gv1risjha3"))))))
     (home-page "https://rstudio.com/products/rstudio/#rstudio-server")
     (synopsis "Integrated development environment (IDE) for R")
     (description "RStudio is an integrated development environment (IDE) for the R

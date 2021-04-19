@@ -1,0 +1,33 @@
+From d413e0ba6e5b265cad6c787ab8ddf9660a12923e Mon Sep 17 00:00:00 2001
+From: Lars-Dominik Braun <lars@6xq.net>
+Date: Wed, 10 Feb 2021 09:44:29 +0100
+Subject: [PATCH] Use default library path for soci library
+
+---
+ src/cpp/CMakeLists.txt | 10 +++-------
+ 1 file changed, 3 insertions(+), 7 deletions(-)
+
+diff --git a/src/cpp/CMakeLists.txt b/src/cpp/CMakeLists.txt
+index df5499439c..9128963396 100644
+--- a/src/cpp/CMakeLists.txt
++++ b/src/cpp/CMakeLists.txt
+@@ -405,13 +405,9 @@ endif()
+ 
+ # find SOCI libraries
+ if(UNIX)
+-   set(SOCI_LIBRARY_DIR "${RSTUDIO_TOOLS_SOCI}/build/lib")
+-   if(NOT APPLE AND RSTUDIO_USE_SYSTEM_SOCI)
+-      set(SOCI_LIBRARY_DIR "/usr/lib")
+-   endif()
+-   find_library(SOCI_CORE_LIB NAMES "libsoci_core.a" "soci_core" PATHS "${SOCI_LIBRARY_DIR}" NO_DEFAULT_PATH)
+-   find_library(SOCI_SQLITE_LIB NAMES "libsoci_sqlite3.a" "soci_sqlite3" PATHS "${SOCI_LIBRARY_DIR}" NO_DEFAULT_PATH)
+-   find_library(SOCI_POSTGRESQL_LIB NAMES "libsoci_postgresql.a" "soci_postgresql" PATHS "${SOCI_LIBRARY_DIR}" NO_DEFAULT_PATH)
++   find_library(SOCI_CORE_LIB "soci_core")
++   find_library(SOCI_SQLITE_LIB "soci_sqlite3")
++   find_library(SOCI_POSTGRESQL_LIB "soci_postgresql")
+    find_library(DL_LIB "dl")
+    find_library(SQLITE_LIB "sqlite3")
+    get_filename_component(SQLITE_LIB "${SQLITE_LIB}" REALPATH)
+-- 
+2.26.2
+
