@@ -1,0 +1,115 @@
+diff -urB manta-1.6.0-orig/CMakeLists.txt manta-1.6.0/CMakeLists.txt
+--- a/CMakeLists.txt	2019-06-24 22:02:16.000000000 +0200
++++ b/CMakeLists.txt	2020-07-07 12:44:01.246483878 +0200
+@@ -53,7 +53,7 @@
+ #
+ # if true, build with very strict error checking (disabled in src release tarballs)
+ #
+-set(DEVELOPER_MODE true)
++set(DEVELOPER_MODE false)
+ 
+ #
+ # set WIN specific cache values
+@@ -205,7 +205,8 @@
+ add_custom_target(${THIS_OPT} ALL)
+ 
+ # redist includes
+-include ("${THIS_MODULE_DIR}/boost.cmake")
++set(Boost_LIBRARIES "-lboost_chrono -lboost_date_time -lboost_filesystem -lboost_program_options -lboost_regex -lboost_serialization -lboost_system -lboost_timer -lboost_unit_test_framework")
++ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK)
+ 
+ if (NOT WIN32)
+     # global source QC -- don't allow non-ascii chars in source files:
+diff -urB manta-1.6.0-orig/redist/CMakeLists.txt manta-1.6.0/redist/CMakeLists.txt
+--- a/redist/CMakeLists.txt	2019-06-24 22:02:16.000000000 +0200
++++ b/redist/CMakeLists.txt	2020-07-07 11:21:43.665094771 +0200
+@@ -71,87 +71,14 @@
+ #
+ # htslib
+ #
+-set(HTSLIB_PREFIX "htslib-1.9")
+-superset(HTSLIB_DIR "${CMAKE_CURRENT_BINARY_DIR}/${HTSLIB_PREFIX}")
+-superset(HTSLIB_LIBRARY "${HTSLIB_DIR}/libhts.a")
+-
+-## It is occasionally useful to extend debug/asan build options from manta all the way down through htslib,
+-## the flags below can be uncommented to do so.
+-##
+-## Addresss sanitizer build options for htslib/samtools
+-#set(HTSLIB_CFLAGS '-O0 -g -fsanitize=address -fno-omit-frame-pointer -fno-optimize-sibling-calls')
+-## Debug build optoins for htslib/samtools
+-#set(HTSLIB_CFLAGS '-O0 -g')
+-#set(HTSLIB_CONFIGOPT CFLAGS=${HTSLIB_CFLAGS} LDFLAGS=${HTSLIB_CFLAGS})
+-
+-add_custom_command(
+-    OUTPUT ${HTSLIB_DIR}
+-    COMMAND ${CMAKE_COMMAND} -E remove_directory "${HTSLIB_DIR}"
+-    COMMAND ${CMAKE_COMMAND} -E tar xjf "${THIS_REDIST_DIR}/${HTSLIB_PREFIX}.tar.bz2"
+-    COMMENT "Unpacking htslib library")
+-
+-set (HTSLIB_FINAL_TASK ${HTSLIB_DIR})
+-
+-if (NOT WIN32)
+-    add_custom_command(
+-        OUTPUT ${HTSLIB_LIBRARY}
+-        COMMAND ./configure CC=${CMAKE_C_COMPILER} ${HTSLIB_CONFIGOPT} --disable-libcurl --disable-bz2 --disable-lzma >htslib.config.log 2>htslib.config.error.log || \(echo "Failed to configure htslib, see ${HTSLIB_DIR}/htslib.config.error.log for details." && exit 1\)
+-        COMMAND $(MAKE) lib-static bgzip htsfile tabix >htslib.build.log 2>htslib.build.error.log || \(echo "Failed to build htslib, see ${HTSLIB_DIR}/htslib.build.error.log for details." && exit 1\)
+-        WORKING_DIRECTORY ${HTSLIB_DIR}
+-        DEPENDS ${HTSLIB_DIR}
+-        COMMENT "Building htslib library")
+-
+-    set (HTSLIB_FINAL_TASK ${HTSLIB_LIBRARY})
+-endif ()
+-
+-set(THIS_HTSLIB "${THIS_PROJECT_NAME}_htslib")
+-add_custom_target(${THIS_HTSLIB} DEPENDS "${HTSLIB_FINAL_TASK}")
+-
+-
+-if (NOT WIN32)
+-    install(PROGRAMS "${HTSLIB_DIR}/bgzip" DESTINATION "${THIS_LIBEXECDIR}")
+-    install(PROGRAMS "${HTSLIB_DIR}/htsfile" DESTINATION "${THIS_LIBEXECDIR}")
+-    install(PROGRAMS "${HTSLIB_DIR}/tabix" DESTINATION "${THIS_LIBEXECDIR}")
+-endif ()
++superset(HTSLIB_LIBRARY "-fPIC -lhts")
+ 
+ #
+ # samtools
+ #
+-set(SAMTOOLS_PREFIX "samtools-1.9")
+-set(SAMTOOLS_DIR "${CMAKE_CURRENT_BINARY_DIR}/${SAMTOOLS_PREFIX}")
+-set(SAMTOOLS_LIBRARY "${SAMTOOLS_DIR}/libbam.a")
++set(SAMTOOLS_DIR "/usr/bin")
+ superset(SAMTOOLS_PROG "${SAMTOOLS_DIR}/samtools")
+ 
+-# final directory copy below would ideally be a soft-link, copy is for windows build
+-add_custom_command(
+-    OUTPUT ${SAMTOOLS_DIR}
+-    COMMAND ${CMAKE_COMMAND} -E remove_directory "${SAMTOOLS_DIR}"
+-    COMMAND ${CMAKE_COMMAND} -E tar xjf "${THIS_REDIST_DIR}/${SAMTOOLS_PREFIX}.tar.bz2"
+-    DEPENDS ${HTSLIB_FINAL_TASK}
+-    COMMENT "Unpacking samtools package")
+-
+-set (SAMTOOLS_FINAL_TASK ${SAMTOOLS_DIR})
+-
+-if (NOT WIN32)
+-    add_custom_command(
+-        OUTPUT ${SAMTOOLS_PROG}
+-        COMMAND ./configure CC=${CMAKE_C_COMPILER} ${HTSLIB_CONFIGOPT} --without-curses --with-htslib=${HTSLIB_DIR} >samtools.config.log 2>samtools.config.error.log || \(echo "Failed to configure samtools, see ${SAMTOOLS_DIR}/samtools.config.error.log for details." && exit 1\)
+-        COMMAND $(MAKE) all >samtools.build.log 2>samtools.build.error.log  || \(echo "Failed to build samtools, see ${SAMTOOLS_DIR}/samtools.build.error.log for details." && exit 1\)
+-        DEPENDS ${HTSLIB_LIBRARY}
+-        DEPENDS ${SAMTOOLS_DIR}
+-        WORKING_DIRECTORY ${SAMTOOLS_DIR}
+-        COMMENT "Building samtools package")
+-
+-    set (SAMTOOLS_FINAL_TASK ${SAMTOOLS_PROG})
+-endif ()
+-
+-set(THIS_SAMTOOLS "${THIS_PROJECT_NAME}_samtools")
+-add_custom_target(${THIS_SAMTOOLS} DEPENDS "${SAMTOOLS_FINAL_TASK}")
+-
+-if (NOT WIN32)
+-    install(PROGRAMS "${SAMTOOLS_PROG}" DESTINATION "${THIS_LIBEXECDIR}")
+-endif ()
+-
+ #
+ # pyflow
+ #

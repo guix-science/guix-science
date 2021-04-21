@@ -18,9 +18,15 @@
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages)
   #:use-module (gnu packages base)
+  #:use-module (gnu packages bash)
   #:use-module (gnu packages bioinformatics)
+  #:use-module (gnu packages boost)
+  #:use-module (gnu packages check)
+  #:use-module (gnu packages cmake)
   #:use-module (gnu packages compression)
+  #:use-module (gnu packages documentation)
   #:use-module (gnu packages gcc)
+  #:use-module (gnu packages graphviz)
   #:use-module (gnu packages java)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages pcre)
@@ -364,3 +370,122 @@ assigning taxonomic labels to metagenomic DNA sequences.")
     (description "This package provides a Variant Call Format (VCF) parser
 for Python.")
     (license license:expat)))
+
+;; This is a dependency for manta.
+(define-public pyflow
+  (package
+    (name "pyflow")
+    (version "1.1.12")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://github.com/Illumina/pyflow/releases/download/v"
+                    version "/pyflow-" version ".tar.gz"))
+              (sha256
+               (base32
+                "14zw8kf24c7xiwxg0q98s2dlifc4fzrjwzx1dhb99zvdihnx5bg7"))))
+    (build-system python-build-system)
+    (arguments `(#:tests? #f)) ; There is no test suite.
+    (home-page "https://illumina.github.io/pyflow")
+    (synopsis "Tool to manage tasks in the context of a task dependency graph")
+    (description "This package is a Python module to manage tasks in the context
+of a task dependency graph.  It has some similarities to make.")
+    (license license:bsd-2)))
+
+(define-public pyflow-2
+  (package-with-python2 pyflow))
+
+(define-public manta-1.6.0
+  (package
+   (name "manta")
+   (version "1.6.0")
+   (source (origin
+            (method url-fetch)
+            (uri (string-append
+                  "https://github.com/Illumina/manta/archive/v"
+                  version ".tar.gz"))
+            (file-name (string-append name "-" version ".tar.gz"))
+            (sha256
+              (base32 "08b440hrxm5v5ac2iw76iaa398mgj6qa7yc1cfqjrfd3jm57rkkn"))
+            (patches (list (search-patch "manta-relax-dependency-checking.patch")))))
+   (build-system cmake-build-system)
+   (arguments
+    `(#:phases
+      (modify-phases %standard-phases
+        ;; The 'manta-relax-dependency-checking.patch' sets the samtools path to
+        ;; '/usr/bin'.  This allows us to substitute it for the actual path
+        ;; of samtools in the store.
+        (add-before 'configure 'patch-samtools-path
+          (lambda* (#:key inputs #:allow-other-keys)
+            (substitute* "redist/CMakeLists.txt"
+             (("set\\(SAMTOOLS_DIR \"/usr/bin\"\\)")
+              (string-append "set(SAMTOOLS_DIR \""
+                             (assoc-ref inputs "samtools") "/bin\")")))
+            #t))
+        (add-before 'configure 'fix-tool-paths
+          (lambda* (#:key inputs outputs #:allow-other-keys)
+            (substitute* "src/python/lib/mantaOptions.py"
+              (("bgzipBin=joinFile\\(libexecDir,exeFile\\(\"bgzip\"\\)\\)")
+               (string-append "bgzipBin=\"" (string-append
+                                             (assoc-ref inputs "htslib")
+                                             "/bin/bgzip") "\""))
+              (("htsfileBin=joinFile\\(libexecDir,exeFile\\(\"htsfile\"\\)\\)")
+               (string-append "htsfileBin=\"" (string-append
+                                               (assoc-ref inputs "htslib")
+                                               "/bin/htsfile") "\""))
+              (("tabixBin=joinFile\\(libexecDir,exeFile\\(\"tabix\"\\)\\)")
+               (string-append "tabixBin=\"" (string-append
+                                           (assoc-ref inputs "htslib")
+                                           "/bin/tabix" "\"")))
+              (("samtoolsBin=joinFile\\(libexecDir,exeFile\\(\"samtools\"\\)\\)")
+               (string-append "samtoolsBin=\"" (string-append
+                                              (assoc-ref inputs "samtools")
+                                              "/bin/samtools" "\""))))
+            (substitute* '("src/demo/runMantaWorkflowDemo.py"
+                           "src/python/bin/configManta.py"
+                           "src/python/lib/makeRunScript.py"
+                           "src/python/libexec/cat.py"
+                           "src/python/libexec/convertInversion.py"
+                           "src/python/libexec/denovo_scoring.py"
+                           "src/python/libexec/extractSmallIndelCandidates.py"
+                           "src/python/libexec/mergeBam.py"
+                           "src/python/libexec/mergeChromDepth.py"
+                           "src/python/libexec/ploidyFilter.py"
+                           "src/python/libexec/sortBam.py"
+                           "src/python/libexec/sortEdgeLogs.py"
+                           "src/python/libexec/sortVcf.py"
+                           "src/python/libexec/updateSampleFTFilter.py"
+                           "src/python/libexec/vcfCmdlineSwapper.py"
+                           "src/srcqc/run_cppcheck.py")
+                         (("/usr/bin/env python") (string-append
+                                                    (assoc-ref inputs "python")
+                                                    "/bin/python")))
+            #t))
+        (add-after 'install 'fix-pyflow-shebang
+          (lambda* (#:key inputs outputs #:allow-other-keys)
+            (substitute* (string-append (assoc-ref outputs "out")
+                                        "/lib/python/pyflow/pyflow.py")
+              (("#!/usr/bin/env python")
+               (string-append "#!" (assoc-ref inputs "python")
+                              "/bin/python")))
+            #t)))))
+    (inputs
+     `(("cmake" ,cmake)
+       ("boost" ,boost)
+       ("pyflow" ,pyflow-2)
+       ("python" ,python-2)
+       ("cppcheck" ,cppcheck)
+       ("doxygen" ,doxygen)
+       ("graphviz" ,graphviz)
+       ("htslib" ,htslib-1.9)
+       ("samtools" ,samtools-1.9)
+       ("zlib" ,zlib)
+       ("bash" ,bash)))
+    (home-page "https://github.com/Illumina/manta")
+   (synopsis "Structural variant and indel caller for mapped sequencing data")
+   (description "Manta calls structural variants (SVs) and indels from mapped
+paired-end sequencing reads.  It is optimized for analysis of germline variation
+in small sets of individuals and somatic variation in tumor/normal sample pairs.
+Manta discovers, assembles and scores large-scale SVs, medium-sized indels and
+large insertions within a single efficient workflow.")
+   (license license:gpl3)))
