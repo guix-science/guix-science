@@ -613,3 +613,150 @@ contamination in the normal sample.  A final empirical variant re-scoring step
 using random forest models trained on various call quality features has been
 added to both callers to further improve precision.")
    (license license:gpl3+)))
+
+(define-public star-2.4.2a
+  (package
+    (name "star")
+    (version "2.4.2a")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "https://github.com/alexdobin/STAR/archive/"
+                                  "STAR_" version ".tar.gz"))
+              (file-name (string-append name "-" version ".tar.gz"))
+              (sha256
+               (base32
+                "1c3rnm7r5l0kl3d04gl1g7938xqf1c2l0mla87rlplqg1hcns5mc"))
+              (modules '((guix build utils)))
+              (snippet
+               '(begin
+                  (substitute* "source/Makefile"
+                    (("/bin/rm") "rm"))
+                  ;; Remove pre-built binaries and bundled htslib sources.
+                  (delete-file-recursively "bin/MacOSX_x86_64")
+                  (delete-file-recursively "bin/Linux_x86_64")
+                  (delete-file-recursively "source/htslib")
+                  #t))))
+    (build-system gnu-build-system)
+    (arguments
+     '(#:tests? #f ;no check target
+       #:make-flags '("STAR")
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'enter-source-dir
+           (lambda _ (chdir "source") #t))
+         (add-after 'enter-source-dir 'do-not-use-bundled-htslib
+           (lambda _
+             (substitute* "Makefile"
+               (("(Depend.list: \\$\\(SOURCES\\) parametersDefault\\.xxd) htslib"
+                 _ prefix) prefix))
+             (substitute* '("BAMfunctions.cpp"
+                            "signalFromBAM.h"
+                            ;"bam_cat.h"
+                            "bam_cat.c"
+                            "STAR.cpp"
+                            "bamRemoveDuplicates.cpp")
+               (("#include \"htslib/([^\"]+\\.h)\"" _ header)
+                (string-append "#include <" header ">")))
+             (substitute* "IncludeDefine.h"
+               (("\"htslib/(htslib/[^\"]+.h)\"" _ header)
+                (string-append "<" header ">")))
+             #t))
+         (replace 'install
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let ((bin (string-append (assoc-ref outputs "out") "/bin/")))
+               (install-file "STAR" bin))
+             #t))
+         (delete 'configure))))
+    (native-inputs
+     `(("vim" ,vim))) ; for xxd
+    (inputs
+     `(("htslib" ,htslib)
+       ("zlib" ,zlib)))
+    (home-page "https://github.com/alexdobin/STAR")
+    (synopsis "Universal RNA-seq aligner")
+    (description
+     "The Spliced Transcripts Alignment to a Reference (STAR) software is
+based on a previously undescribed RNA-seq alignment algorithm that uses
+sequential maximum mappable seed search in uncompressed suffix arrays followed
+by seed clustering and stitching procedure.  In addition to unbiased de novo
+detection of canonical junctions, STAR can discover non-canonical splices and
+chimeric (fusion) transcripts, and is also capable of mapping full-length RNA
+sequences.")
+    ;; STAR is licensed under GPLv3 or later; htslib is MIT-licensed.
+    (license license:gpl3+)))
+
+(define-public star-fusion
+  (package
+   (name "star-fusion")
+   (version "1.0.0")
+   (source (origin
+            (method url-fetch)
+            (uri (string-append
+                  "https://github.com/STAR-Fusion/STAR-Fusion/releases/"
+                  "download/v" version "/STAR-Fusion-v" version
+                  ".FULL.tar.gz"))
+            (sha256
+             (base32 "19p5lwq2f95hgii7fdidz03845nkhf3pjfvp8v3midrsb0s6p7df"))))
+   (build-system gnu-build-system)
+   (arguments
+    `(#:tests? #f ; There is no test phase.
+      #:phases
+      (modify-phases %standard-phases
+        (delete 'configure) ; There is nothing to configure.
+        (delete 'build) ; There is nothing to compile/build.
+        (add-before 'install 'patch-external-tools
+          (lambda* (#:key inputs outputs #:allow-other-keys)
+            (let ((samtools (string-append (assoc-ref inputs "samtools") "/bin/samtools"))
+                  (gunzip (string-append (assoc-ref inputs "gzip") "/bin/gunzip"))
+                  (zcat (string-append (assoc-ref inputs "gzip") "/bin/zcat"))
+                  (cat (string-append (assoc-ref inputs "coreutils") "/bin/cat"))
+                  (wc (string-append (assoc-ref inputs "coreutils") "/bin/wc"))
+                  (sort (string-append (assoc-ref inputs "coreutils") "/bin/sort"))
+                  (mkdir (string-append (assoc-ref inputs "coreutils") "/bin/mkdir")))
+              (substitute* "util/append_breakpoint_junction_info.pl"
+                (("samtools") samtools))
+              (substitute* "util/incorporate_FFPM_into_final_report.pl"
+                (("gunzip") gunzip))
+              (substitute* "util/STAR-Fusion.predict" (("gunzip") gunzip))
+              (substitute* "util/incorporate_FFPM_into_final_report.pl" (("wc") wc))
+              (substitute* "util/convert_to_FFPM.pl" (("wc") wc))
+              (substitute* "util/incorporate_FFPM_into_final_report.pl"
+                (("cat \\$fq_file") (string-append cat " $fq_file")))
+              (substitute* "util/partition_FUSION_EVIDENCE_fastqs_by_fusion.pl"
+                (("sort \\$tmp_paired") (string-append sort " $tmp_paired")))
+              (substitute* "util/convert_to_FFPM.pl"
+                (("\"cat \\$fq_filename") (string-append "\"" cat " $fq_filename")))
+              (substitute* "util/convert_to_FFPM.pl"
+                (("zcat \\$fq_filename") (string-append zcat " $fq_filename")))
+              (substitute* "util/partition_FUSION_EVIDENCE_fastqs_by_fusion.pl"
+                (("mkdir") mkdir))
+              (substitute* "util/STAR-Fusion.filter" (("mkdir") mkdir))
+              (substitute* "util/STAR-Fusion.predict" (("mkdir") mkdir)))))
+        (replace 'install
+          (lambda* (#:key inputs outputs #:allow-other-keys)
+            (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
+              (mkdir-p bin)
+              (install-file "STAR-Fusion" bin)
+              (copy-recursively "PerlLib" (string-append bin "/PerlLib"))
+              (copy-recursively "util" (string-append bin "/util"))
+              (copy-recursively "FusionFilter"
+                                (string-append bin "/FusionFilter"))))))))
+   (inputs
+    `(("perl" ,perl)
+      ("samtools" ,samtools)
+      ("coreutils" ,coreutils)
+      ("gzip" ,gzip)))
+   (propagated-inputs
+    `(("perl-carp" ,perl-carp)
+      ("perl-pathtools" ,perl-pathtools)
+      ("perl-db-file" ,perl-db-file)
+      ("perl-uri" ,perl-uri)
+      ("perl-set-intervaltree" ,perl-set-intervaltree)))
+   (home-page "https://github.com/STAR-Fusion/STAR-Fusion/")
+   (synopsis "Fusion detection based on STAR")
+   (description "This package provides a component of the Trinity Cancer
+Transcriptome Analysis Toolkit (CTAT).  It uses the STAR aligner to identify
+candidate fusion transcripts supported by Illumina reads.  It further
+processes the output generated by the STAR aligner to map junction reads and
+spanning reads to a reference annotation set.")
+   (license license:bsd-3)))
