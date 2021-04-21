@@ -1,0 +1,214 @@
+diff -crB strelka-2.9.2.release_src-orig/CMakeLists.txt strelka-2.9.2.release_src/CMakeLists.txt
+*** strelka-2.9.2.release_src/CMakeLists.txt	2018-04-23 13:30:22.980662446 +0200
+--- strelka-2.9.2.release_src_patched/CMakeLists.txt	2018-04-23 13:30:55.776696683 +0200
+***************
+*** 35,41 ****
+  
+  
+  set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+- enable_testing()
+  
+  
+  # paths:
+--- 35,40 ----
+diff -crB strelka-2.9.2.release_src-orig/src/c++/CMakeLists.txt strelka-2.9.2.release_src/src/c++/CMakeLists.txt
+*** strelka-2.9.2.release_src/src/c++/CMakeLists.txt	2018-04-23 13:30:22.992662458 +0200
+--- strelka-2.9.2.release_src_patched/src/c++/CMakeLists.txt	2018-04-23 13:31:12.440714797 +0200
+***************
+*** 33,39 ****
+  set (THIS_CXX_EXECUTABLE_CMAKE "${THIS_MODULE_DIR}/cxxExecutable.cmake")
+  set (THIS_CXX_LIBRARY_CMAKE "${THIS_MODULE_DIR}/cxxLibrary.cmake")
+  set (THIS_CXX_CONFIGURE_CMAKE "${THIS_MODULE_DIR}/cxxConfigure.cmake")
+- set (THIS_CXX_TEST_LIBRARY_CMAKE "${THIS_MODULE_DIR}/cxxTestLibrary.cmake")
+  
+  include ("${THIS_CXX_CONFIGURE_CMAKE}")
+  
+--- 33,38 ----
+diff -crB strelka-2.9.2.release_src-orig/src/cmake/boost.cmake strelka-2.9.2.release_src/src/cmake/boost.cmake
+*** strelka-2.9.2.release_src/src/cmake/boost.cmake	2018-04-23 13:30:23.020662487 +0200
+--- strelka-2.9.2.release_src_patched/src/cmake/boost.cmake	2018-04-23 13:31:49.424756545 +0200
+***************
+*** 44,50 ****
+      # for test, so we need two lists now:
+      set (THIS_BOOST_BUILD_COMPONENTS date_time filesystem program_options
+                                       serialization system timer chrono test)
+!     set (Boost_USE_STATIC_LIBS ON)
+      if (NOT WIN32)
+          # bjam on windows ignores this setting so skip for win32:
+          set (Boost_USE_MULTITHREADED OFF)
+--- 44,50 ----
+      # for test, so we need two lists now:
+      set (THIS_BOOST_BUILD_COMPONENTS date_time filesystem program_options
+                                       serialization system timer chrono test)
+!     set (Boost_USE_STATIC_LIBS OFF)
+      if (NOT WIN32)
+          # bjam on windows ignores this setting so skip for win32:
+          set (Boost_USE_MULTITHREADED OFF)
+***************
+*** 90,96 ****
+  initBoostParams()
+  
+  if (THIS_FORCE_STATIC_LINK)
+!     set(Boost_USE_STATIC_LIBS ON)
+  endif ()
+  
+  set(BOOST_BOOTSTRAP_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/bootstrap/boost)
+--- 90,96 ----
+  initBoostParams()
+  
+  if (THIS_FORCE_STATIC_LINK)
+!     set(Boost_USE_STATIC_LIBS OFF)
+  endif ()
+  
+  set(BOOST_BOOTSTRAP_INSTALL_DIR ${CMAKE_CURRENT_BINARY_DIR}/bootstrap/boost)
+diff -crB strelka-2.9.2.release_src-orig/src/cmake/cxxConfigure.cmake strelka-2.9.2.release_src/src/cmake/cxxConfigure.cmake
+*** strelka-2.9.2.release_src/src/cmake/cxxConfigure.cmake	2018-04-23 13:30:23.020662487 +0200
+--- strelka-2.9.2.release_src_patched/src/cmake/cxxConfigure.cmake	2018-04-23 13:34:25.404950667 +0200
+***************
+*** 110,119 ****
+      message (STATUS "No ccache found")
+  endif()
+  
+- 
+- # Force static linking
+- set(CMAKE_SHARED_LIBRARY_LINK_C_FLAGS "")
+- 
+  function(get_compiler_name_version compiler_name compiler_version)
+      # behavior of dumpversion changed in gcc 7+, so try the newer "-dumpfullversion" command first, see if it fails,
+      # and if so, go back to the old "-dumpversion" method:
+--- 110,115 ----
+***************
+*** 207,234 ****
+  # set compile flags
+  #
+  
+  
+  ##
+  ## set static linking of standard libraries for binary redistribution:
+  ##
+  set (IS_STANDARD_STATIC FALSE)
+- if     (${CMAKE_CXX_COMPILER_ID} STREQUAL "GNU")
+-     if (NOT (${COMPILER_VERSION} VERSION_LESS "4.5"))
+-         set (IS_STANDARD_STATIC TRUE)
+-     endif ()
+- elseif (${CMAKE_CXX_COMPILER_ID} STREQUAL "Intel")
+-     set (IS_STANDARD_STATIC TRUE)
+- endif ()
+- 
+- if (${IS_STANDARD_STATIC})
+-     append_args (CMAKE_EXE_LINKER_FLAGS "-static-libgcc -static-libstdc++")
+- endif ()
+- 
+  
+  ##
+  ## set bug workarounds:
+  ##
+  
+  # determine version of libstdc++ library
+  if     (${CMAKE_CXX_COMPILER_ID} STREQUAL "INTEL")
+      set(STDCXX_VERSION ${gxx_compiler_version})
+--- 203,238 ----
+  # set compile flags
+  #
+  
++ ##
++ ## Add flags for non-static Boost linking.
++ ##
++ add_definitions(-DBOOST_ALL_NO_LIB -DBOOST_ALL_DYN_LINK -DBOOST_LOG_DYN_LINK)
++ 
+  
+  ##
+  ## set static linking of standard libraries for binary redistribution:
+  ##
+  set (IS_STANDARD_STATIC FALSE)
+  
+  ##
+  ## set bug workarounds:
+  ##
+  
++ ##
++ ## Add libraries that were unbundled.
++ ##
++ append_args (CMAKE_CXX_FLAGS "-llzma")
++ append_args (CMAKE_CXX_FLAGS "-lcurl")
++ append_args (CMAKE_CXX_FLAGS "-lbz2")
++ append_args (CMAKE_CXX_FLAGS "-lssl")
++ append_args (CMAKE_CXX_FLAGS "-lcrypto")
++ 
++ append_args (CMAKE_C_FLAGS "-llzma")
++ append_args (CMAKE_C_FLAGS "-lcurl")
++ append_args (CMAKE_C_FLAGS "-lbz2")
++ append_args (CMAKE_C_FLAGS "-lssl")
++ append_args (CMAKE_C_FLAGS "-lcrypto")
++ 
+  # determine version of libstdc++ library
+  if     (${CMAKE_CXX_COMPILER_ID} STREQUAL "INTEL")
+      set(STDCXX_VERSION ${gxx_compiler_version})
+diff -crB strelka-2.9.2.release_src-orig/src/cmake/cxxLibrary.cmake strelka-2.9.2.release_src/src/cmake/cxxLibrary.cmake
+*** strelka-2.9.2.release_src/src/cmake/cxxLibrary.cmake	2018-04-23 13:30:23.020662487 +0200
+--- strelka-2.9.2.release_src_patched/src/cmake/cxxLibrary.cmake	2018-04-23 13:35:10.197010373 +0200
+***************
+*** 59,76 ****
+  
+  if (THIS_LIBRARY_SOURCES)
+      set (LIB_TARGET_NAME "${THIS_PROJECT_NAME}_${CURRENT_DIR_NAME}")
+!     add_library     (${LIB_TARGET_NAME} STATIC ${THIS_LIBRARY_SOURCES})
+      add_dependencies(${LIB_TARGET_NAME} ${THIS_OPT})
+  
+      # make the target project use folders when applying cmake IDE generators like Visual Studio
+      file(RELATIVE_PATH THIS_RELATIVE_LIBDIR "${THIS_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")
+      set_property(TARGET ${LIB_TARGET_NAME} PROPERTY FOLDER "${THIS_RELATIVE_LIBDIR}")
+  endif()
+- 
+- ##
+- ## build the unit tests if a "test" subdirectory is found:
+- ##
+- if (IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/test")
+-     message (STATUS "Adding c++ test subdirectory:    ${CURRENT_DIR_NAME}/test")
+-     add_subdirectory (test)
+- endif ()
+--- 59,68 ----
+  
+  if (THIS_LIBRARY_SOURCES)
+      set (LIB_TARGET_NAME "${THIS_PROJECT_NAME}_${CURRENT_DIR_NAME}")
+!     add_library     (${LIB_TARGET_NAME} SHARED ${THIS_LIBRARY_SOURCES})
+      add_dependencies(${LIB_TARGET_NAME} ${THIS_OPT})
+  
+      # make the target project use folders when applying cmake IDE generators like Visual Studio
+      file(RELATIVE_PATH THIS_RELATIVE_LIBDIR "${THIS_SOURCE_DIR}" "${CMAKE_CURRENT_SOURCE_DIR}")
+      set_property(TARGET ${LIB_TARGET_NAME} PROPERTY FOLDER "${THIS_RELATIVE_LIBDIR}")
+  endif()
+diff -urB strelka-2.9.2.release_src-orig/CMakeLists.txt strelka-2.9.2.release_src/CMakeLists.txt
+--- strelka-2.9.2.release_src-orig/CMakeLists.txt	2020-09-28 21:49:54.292974504 +0200
++++ strelka-2.9.2.release_src/CMakeLists.txt	2020-09-28 21:50:46.669156936 +0200
+@@ -205,7 +205,8 @@
+ add_custom_target(${THIS_OPT} ALL)
+ 
+ # redist includes
+-include ("${THIS_MODULE_DIR}/boost.cmake")
++set(Boost_LIBRARIES "-lboost_chrono -lboost_date_time -lboost_filesystem -lboost_program_options -lboost_regex -lboost_serialization -lboost_system -lboost_timer -lboost_unit_test_framework")
++ADD_DEFINITIONS(-DBOOST_TEST_DYN_LINK)
+ 
+ if (NOT WIN32)
+     # global source QC -- don't allow non-ascii chars in source files:
+diff -crB strelka-2.9.2.release_src-orig/src/CMakeLists.txt strelka-2.9.2.release_src/src/CMakeLists.txt
+*** strelka-2.9.2.release_src/src/CMakeLists.txt	2018-04-23 13:30:22.992662458 +0200
+--- strelka-2.9.2.release_src_patched/src/CMakeLists.txt	2018-04-23 13:35:23.477028328 +0200
+***************
+*** 26,40 ****
+  
+  add_subdirectory (cmake/preInstall)
+  
+- # force unit tests at compile time, and set them to be more verbose than
+- # cmake's default "test" target:
+- set(THIS_UNITTESTS "${THIS_PROJECT_NAME}_unittests")
+- set(utest_cmd ${CMAKE_CTEST_COMMAND} --force-new-ctest-process --output-on-failure)
+- add_custom_target(${THIS_UNITTESTS}
+-     ALL
+-     COMMAND ${utest_cmd}
+-     )
+- 
+  add_subdirectory (c++)
+  add_subdirectory (python)
+  add_subdirectory (config)
+--- 26,31 ----
