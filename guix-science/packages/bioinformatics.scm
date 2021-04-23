@@ -38,6 +38,7 @@
   #:use-module (gnu packages rsync)
   #:use-module (gnu packages time)
   #:use-module (gnu packages tls)
+  #:use-module (gnu packages vim)
   #:use-module (gnu packages web)
   #:use-module (gnu packages wget)
   #:use-module (guix build-system cmake)
