@@ -25,6 +25,7 @@
   #:use-module (gnu packages cmake)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages curl)
+  #:use-module (gnu packages databases)
   #:use-module (gnu packages documentation)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages graphviz)
@@ -41,6 +42,7 @@
   #:use-module (gnu packages wget)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
+  #:use-module (guix build-system perl)
   #:use-module (guix build-system python)
   #:use-module (guix download)
   #:use-module (guix packages))
@@ -684,6 +686,25 @@ chimeric (fusion) transcripts, and is also capable of mapping full-length RNA
 sequences.")
     ;; STAR is licensed under GPLv3 or later; htslib is MIT-licensed.
     (license license:gpl3+)))
+
+;; Dependency of star-fusion
+(define-public perl-set-intervaltree
+  (package
+   (name "perl-set-intervaltree")
+   (version "0.10")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (string-append
+           "mirror://cpan/authors/id/B/BE/BENBOOTH/Set-IntervalTree-"
+           version ".tar.gz"))
+     (sha256
+      (base32 "1g1yam3fwl11wvy489yhhfzrfdlqaj1dh7pgks3myjq71p7rrgg3"))))
+   (build-system perl-build-system)
+   (home-page "http://search.cpan.org/dist/Set-IntervalTree")
+   (synopsis "Perform range-based lookups on sets of ranges.")
+   (description "")
+   (license license:gpl1+)))
 
 (define-public star-fusion
   (package
