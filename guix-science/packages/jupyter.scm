@@ -92,7 +92,7 @@ applications")
        ("python-jupyterlab-server"
         ,python-jupyterlab-server)
        ("python-notebook" ,python-notebook)
-       ("python-tornado" ,python-tornado)
+       ("python-tornado" ,python-tornado-6)
        ;; Required to rebuild assets.
        ("node" ,node)))
     (native-inputs
