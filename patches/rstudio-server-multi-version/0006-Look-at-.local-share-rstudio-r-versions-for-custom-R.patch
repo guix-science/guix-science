@@ -1,0 +1,92 @@
+From e309b35a2f59a268442de8e1684ddd72fc9e5166 Mon Sep 17 00:00:00 2001
+From: Ricardo Wurmus <rekado@elephly.net>
+Date: Sun, 20 Dec 2020 00:25:42 +0100
+Subject: [PATCH 6/7] Look at ~/.local/share/rstudio/r-versions for custom R
+ versions.
+
+---
+ src/cpp/server_core/RVersionsScanner.cpp      | 20 +++++++++++++++++++
+ .../include/server_core/RVersionsScanner.hpp  |  1 +
+ src/cpp/session/SessionClientInit.cpp         |  8 +++++++-
+ 3 files changed, 28 insertions(+), 1 deletion(-)
+
+diff --git a/src/cpp/server_core/RVersionsScanner.cpp b/src/cpp/server_core/RVersionsScanner.cpp
+index af5974c24d..7504fbb1ff 100644
+--- a/src/cpp/server_core/RVersionsScanner.cpp
++++ b/src/cpp/server_core/RVersionsScanner.cpp
+@@ -2,6 +2,7 @@
+  * RVersionsScanner.cpp
+  *
+  * Copyright (C) 2021 by RStudio, PBC
++ * Copyright (C) 2020 Ricardo Wurmus
+  *
+  * Unless you have received this program directly from RStudio pursuant
+  * to the terms of a commercial license agreement with RStudio, then
+@@ -138,6 +139,11 @@ void RVersionsScanner::setFallbackVersion()
+ }
+ 
+ std::vector<r_util::RVersion> RVersionsScanner::getRVersions()
++{
++  return RVersionsScanner::getRVersions(FilePath(""));
++}
++
++std::vector<r_util::RVersion> RVersionsScanner::getRVersions(FilePath userFile)
+ {
+    if (!cachedVersions_.empty())
+       return cachedVersions_;
+@@ -173,6 +179,20 @@ std::vector<r_util::RVersion> RVersionsScanner::getRVersions()
+       }
+    }
+ 
++   if (!userFile.isEmpty() && (userFile.exists()))
++   {
++      std::string contents;
++      Error error = core::readStringFromFile(userFile, &contents, string_utils::LineEndingPosix);
++      if (!error)
++      {
++         parseRVersionsFile(userFile, contents, &rHomeDirs, &rEntries);
++      }
++      else
++      {
++         LOG_ERROR(error);
++      }
++   }
++
+    // scan for available R versions
+    using namespace r_util;
+    std::vector<r_util::RVersion> versions = r_util::enumerateRVersions(
+diff --git a/src/cpp/server_core/include/server_core/RVersionsScanner.hpp b/src/cpp/server_core/include/server_core/RVersionsScanner.hpp
+index 840429edf5..3cf9b7d79e 100644
+--- a/src/cpp/server_core/include/server_core/RVersionsScanner.hpp
++++ b/src/cpp/server_core/include/server_core/RVersionsScanner.hpp
+@@ -45,6 +45,7 @@ public:
+    // scans for r versions and returns any that were found
+    // subsequent calls return cached versions found in initial scan
+    std::vector<r_util::RVersion> getRVersions();
++   std::vector<r_util::RVersion> getRVersions(core::FilePath userFile);
+ 
+    bool detectRVersion(const core::FilePath& rScriptPath,
+                        core::r_util::RVersion* pVersion,
+diff --git a/src/cpp/session/SessionClientInit.cpp b/src/cpp/session/SessionClientInit.cpp
+index 52523fc896..34dad727c4 100644
+--- a/src/cpp/session/SessionClientInit.cpp
++++ b/src/cpp/session/SessionClientInit.cpp
+@@ -511,8 +511,14 @@ void handleClientInit(const boost::function<void()>& initFunction,
+    sessionInfo["multi_session"] = options.multiSession();
+ 
+    // Read versions from /etc/rstudio/r-versions
++   // ...and read from a user-controlled file
++   FilePath userRDirsPath =
++     options.userScratchPath().completePath("r-versions");
++
+    json::Array availableRVersionsJson;
+-   std::vector<r_util::RVersion> versions = RVersionsScanner().getRVersions();
++   std::vector<r_util::RVersion> versions =
++     RVersionsScanner().getRVersions(userRDirsPath);
++
+    for (r_util::RVersion& rEntry : versions)
+      {
+        json::Object rVersionJson;
+-- 
+2.31.1
+

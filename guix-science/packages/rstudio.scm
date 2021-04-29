@@ -280,6 +280,29 @@ be run as a server, enabling multiple users to access the RStudio IDE using a
 web browser.")
     (license license:agpl3)))
 
+(define-public rstudio-server-multi-version
+  (package
+    (inherit rstudio-server)
+    (name "rstudio-server-multi-version")
+    (source
+     (origin
+       (inherit (package-source rstudio-server))
+       (patches
+        (search-patches
+         "rstudio-server-1.4.1106-unbundle.patch"
+         "rstudio-server-1.4.1103-soci-searchpath.patch"
+         "patches/rstudio-server-multi-version/0001-handleClientInit-Store-R-versions-in-sessionInfo.patch"
+         "patches/rstudio-server-multi-version/0002-sessionProcessConfig-Configure-R-version-from-active.patch"
+         "patches/rstudio-server-multi-version/0003-NewProjectWizard-Unhide-version-selector-widget.patch"
+         "patches/rstudio-server-multi-version/0004-handleConnection-Switch-R-version-when-switching-pro.patch"
+         "patches/rstudio-server-multi-version/0005-Add-version-switcher-widget-to-toolbar.patch"
+         "patches/rstudio-server-multi-version/0006-Look-at-.local-share-rstudio-r-versions-for-custom-R.patch"
+         "patches/rstudio-server-multi-version/0007-detectRLocationsUsingR-Restore-R_HOME-at-the-end.patch"))))
+    (description "This fork of RStudio allows users to switch to
+different versions of R from the toolbar or project settings.  R
+versions can be recorded in @file{/etc/rstudio/r-versions} and in the
+user's @file{~/.local/share/rstudio/r-versions}.")))
+
 (define-public rstudio
   (package (inherit rstudio-server)
     (name "rstudio")

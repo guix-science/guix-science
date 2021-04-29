@@ -1,0 +1,88 @@
+From a41c5e9ce141713b12ad552205c27db41193c477 Mon Sep 17 00:00:00 2001
+From: Ricardo Wurmus <rekado@elephly.net>
+Date: Sat, 19 Dec 2020 00:57:26 +0100
+Subject: [PATCH 4/7] handleConnection: Switch R version when switching
+ projects.
+
+* src/cpp/session/SessionHttpMethods.cpp (handleConnection): Switch to
+the recorded R version when switching to a project; when closing a
+project switch back to the default.
+---
+ src/cpp/session/SessionHttpMethods.cpp        | 32 ++++++++++++++++---
+ .../studio/client/projects/Projects.java      |  3 +-
+ 2 files changed, 30 insertions(+), 5 deletions(-)
+
+diff --git a/src/cpp/session/SessionHttpMethods.cpp b/src/cpp/session/SessionHttpMethods.cpp
+index 2fd08c028b..3e66f13dd7 100644
+--- a/src/cpp/session/SessionHttpMethods.cpp
++++ b/src/cpp/session/SessionHttpMethods.cpp
+@@ -2,6 +2,7 @@
+  * SessionHttpMethods.hpp
+  *
+  * Copyright (C) 2021 by RStudio, PBC
++ * Copyright (C) 2020 Ricardo Wurmus
+  *
+  * Unless you have received this program directly from RStudio pursuant
+  * to the terms of a commercial license agreement with RStudio, then
+@@ -667,6 +668,33 @@ void handleConnection(boost::shared_ptr<HttpConnection> ptrConnection,
+                   activeSession().setWorkingDir(projDir);
+                }
+ 
++               RVersionSettings verSettings(
++                                  options().userScratchPath(),
++                                  FilePath(options().getOverlayOption(
++                                       kSessionSharedStoragePath)));
++
++               // Get the project's R version and set it for the active session.
++               if ((switchToProject != kProjectNone) &&
++                   (verSettings.restoreProjectRVersion()))
++               {
++                 FilePath projFile = resolveAliasedPath(switchToProject);
++                 std::string projDir = createAliasedPath(projFile.getParent());
++                 std::string version, rHome, label;
++                 verSettings.readProjectLastRVersion(projDir,
++                                                     module_context::sharedProjectScratchPath(),
++                                                     &version,
++                                                     &rHome,
++                                                     &label);
++                 activeSession().setRVersion(version, rHome, label);
++               }
++               // Reset version to default.
++               else
++               {
++                 activeSession().setRVersion(verSettings.defaultRVersion(),
++                                             verSettings.defaultRVersionHome(),
++                                             verSettings.defaultRVersionLabel());
++               }
++
+                if (options().switchProjectsWithUrl())
+                {
+                   r_util::SessionScope scope;
+@@ -721,10 +749,6 @@ void handleConnection(boost::shared_ptr<HttpConnection> ptrConnection,
+                      {
+                         FilePath projFile = resolveAliasedPath(switchToProject);
+                         std::string projDir = createAliasedPath(projFile.getParent());
+-                        RVersionSettings verSettings(
+-                                            options().userScratchPath(),
+-                                            FilePath(options().getOverlayOption(
+-                                                  kSessionSharedStoragePath)));
+                         verSettings.setProjectLastRVersion(projDir,
+                                                            module_context::sharedProjectScratchPath(),
+                                                            version,
+diff --git a/src/gwt/src/org/rstudio/studio/client/projects/Projects.java b/src/gwt/src/org/rstudio/studio/client/projects/Projects.java
+index 89c3eb04b9..4ebeb6881d 100644
+--- a/src/gwt/src/org/rstudio/studio/client/projects/Projects.java
++++ b/src/gwt/src/org/rstudio/studio/client/projects/Projects.java
+@@ -1131,7 +1131,8 @@ public class Projects implements OpenProjectFileHandler,
+                         {
+                            // perform quit
+                            applicationQuit_.performQuit(null, saveChanges,
+-                                 input.getProjectFile().getPath());
++                                                        input.getProjectFile().getPath(),
++                                                        input.getRVersion());
+                         }
+                      };
+ 
+-- 
+2.31.1
+
