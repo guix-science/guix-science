@@ -33,6 +33,7 @@
   #:use-module (gnu packages maths)
   #:use-module (gnu packages pcre)
   #:use-module (gnu packages perl)
+  #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-crypto)
   #:use-module (gnu packages python-web)
@@ -1231,4 +1232,91 @@ biopsies.")
     (description "This package primarily exists to prevent code duplication
 between some other projects, specifically AscatNGS and Battenburg.")
     (license license:agpl3+)))
+
+(define-public libmaus
+  (package
+   (name "libmaus")
+   (version "0.0.196")
+   (source (origin
+            (method url-fetch)
+            (uri (string-append
+                  "https://github.com/gt1/libmaus/archive/"
+                  version "-release-20150326095654.tar.gz"))
+            (sha256
+             (base32
+              "0g92bl37ci8pzkgi2xnn2bck7y655jwcb1bm3mg42mj5lf5x2i5b"))))
+   (build-system gnu-build-system)
+   (native-inputs
+    `(("pkg-config" ,pkg-config)))
+   (inputs
+    `(("zlib" ,zlib)))
+   (home-page "https://github.com/gt1/libmaus")
+   (synopsis "Collection of bioinformatics data structures and algorithms")
+   (description "This package contains a collection of bioinformatics data
+structures and algorithms.  It provides I/O classes, bitio classes, text
+indexing classes and BAM sequence alignment functionality.")
+   (license license:gpl3+)))
+
+(define-public biobambam
+  (package
+   (name "biobambam")
+   (version "0.0.191")
+   (source (origin
+            (method url-fetch)
+            (uri (string-append
+                  "https://github.com/gt1/biobambam/archive/" version
+                  "-release-20150401083643.tar.gz"))
+            (file-name (string-append name "-" version ".tar.gz"))
+            (sha256
+             (base32 "065fcwdh5sb6dg3mf5qk9w2818jxm27pvbv976qc00y7np2y2nqz"))))
+   (build-system gnu-build-system)
+   (arguments
+    `(#:tests? #f))
+   (inputs
+    `(("libmaus" ,libmaus)
+      ("zlib" ,zlib)))
+   (native-inputs
+    `(("pkg-config" ,pkg-config)))
+   (home-page "https://github.com/gt1/biobambam")
+   (synopsis "Collection of tools to work with BAM files")
+   (description "This package contains the following programs: bamcollate2,
+bammarkduplicates, bammaskflags, bamrecompress, bamsort, bamtofastq.")
+   (license license:gpl3+)))
+
+(define-public pcap-core
+  (package
+   (name "pcap-core")
+   (version "3.5.0")
+   (source (origin
+            (method url-fetch)
+            (uri (string-append
+                  "https://github.com/ICGC-TCGA-PanCancer/PCAP-core/archive/v"
+                  version ".tar.gz"))
+            (file-name (string-append name "-" version ".tar.gz"))
+            (sha256
+             (base32 "06im5lf00jyghwmqjzb3dpglgjx7pi5ysda75fw8ygmj1fi5q8kj"))))
+   (build-system gnu-build-system)
+   (arguments
+    `(#:tests? #f
+      #:phases
+      (modify-phases %standard-phases
+        (replace 'configure
+          (lambda* (#:key outputs #:allow-other-keys)
+            (system* "perl" "Makefile.PL"
+                     (string-append "PREFIX=" (assoc-ref outputs "out"))))))))
+   (propagated-inputs
+    `(("bwa" ,bwa)
+      ("samtools" ,samtools)
+      ("biobambam" ,biobambam)))
+   (native-inputs
+    `(("perl-module-install" ,perl-module-install)
+      ("perl-module-build" ,perl-module-build)
+      ("perl-file-sharedir-install" ,perl-file-sharedir-install)
+      ("perl" ,perl)
+      ("perltidy" ,perltidy)))
+   (home-page "https://github.com/ICGC-TCGA-PanCancer/PCAP-core")
+   (synopsis "NGS reference implementations and helper code for the ICGC/TCGA
+Pan-Cancer Analysis Project")
+   (description "")
+   (license license:gpl2+)))
 
