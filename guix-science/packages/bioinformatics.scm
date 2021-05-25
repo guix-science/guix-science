@@ -1431,3 +1431,136 @@ is designed for use with a compute cluster.  Most steps in the program make use
 of an index parameter.  The split step is designed to divide the genome into
 chunks of adjustable size to optimise for runtime/memory usage requirements.")
    (license license:agpl3+)))
+
+(define-public perl-forks
+  (package
+  (name "perl-forks")
+  (version "0.36")
+  (source
+    (origin
+      (method url-fetch)
+      (uri (string-append
+             "mirror://cpan/authors/id/R/RY/RYBSKEJ/forks-"
+             version
+             ".tar.gz"))
+      (sha256
+        (base32
+          "14srnq51n98aizdlg6lhzpzdqyjvxf5nfm431qiylvsc9zj29gk1"))))
+  (build-system perl-build-system)
+  (propagated-inputs
+    `(("perl-acme-damn" ,perl-acme-damn)
+      ("perl-devel-symdump" ,perl-devel-symdump)
+      ("perl-list-moreutils" ,perl-list-moreutils)
+      ("perl-sys-sigaction" ,perl-sys-sigaction)))
+  (home-page "http://search.cpan.org/dist/forks")
+  (synopsis "forks - emulate threads with fork")
+  (description "")
+  (license (package-license perl))))
+
+(define-public perl-acme-damn
+  (package
+   (name "perl-acme-damn")
+   (version "0.08")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (string-append
+           "https://cpan.metacpan.org/authors/id/I/IB/IBB/Acme-Damn-"
+           version
+           ".tar.gz"))
+     (sha256
+      (base32
+       "03kykdsz3fk5ppb9g92pvnif67zlk501finrwi1csbcizw1js39i"))))
+   (build-system perl-build-system)
+   (inputs
+    `(("perl-test-exception" ,perl-test-exception)))
+   (home-page "http://search.cpan.org/dist/Acme-Damn")
+   (synopsis "'Unbless' Perl objects.")
+   (description "")
+   (license license:perl-license)))
+
+(define-public perl-sys-sigaction
+  (package
+   (name "perl-sys-sigaction")
+   (version "0.23")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (string-append
+           "mirror://cpan/authors/id/L/LB/LBAXTER/Sys-SigAction-"
+           version
+           ".tar.gz"))
+     (sha256
+      (base32
+       "0lykjlq5dsf7z927lpllzixd953izi3w7bg2pgy32h2k8n9nrvy4"))))
+   (build-system perl-build-system)
+   (home-page
+    "http://search.cpan.org/dist/Sys-SigAction")
+   (synopsis
+    "Perl extension for Consistent Signal Handling")
+   (description "")
+   (license (package-license perl))))
+
+(define-public cgp-cavemanpostprocessing
+  (package
+    (name "cgp-cavemanpostprocessing")
+    (version "1.8.9")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://github.com/cancerit/cgpCaVEManPostProcessing/"
+                    "archive/" version ".tar.gz"))
+              (file-name (string-append name "-" version ".tar.gz"))
+              (sha256
+               (base32
+                "01h2vd8vz8vd4sdgjh13sy2kb98w2lgrqamqpw65ivvhb96yg3qf"))))
+    (build-system gnu-build-system)
+    (arguments
+     `(#:tests? #f
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'configure)
+         (delete 'install)
+         ;; The Perl in Guix does not support threads.
+         ;; The forks module is a drop-in replacement for it, so it
+         ;; is easier to use that instead of recompiling Perl.
+         (add-after 'unpack 'enable-threads
+           (lambda _
+             (substitute* "bin/cgpFlagCaVEMan.pl"
+               (("use strict;") "use forks;\nuse strict;"))))
+         (replace 'build
+           (lambda* (#:key inputs outputs #:allow-other-keys)
+             (let ((bin-dir (string-append (assoc-ref outputs "out") "/bin"))
+                   (lib-dir (string-append (assoc-ref outputs "out")
+                            "/lib/perl5/site_perl/5.28.0"))
+                   (config-dir (string-append (assoc-ref outputs "out") "/config")))
+               (mkdir-p bin-dir)
+               (mkdir-p lib-dir)
+               (mkdir-p config-dir)
+               (install-file "bin/cgpFlagCaVEMan.pl" bin-dir)
+               (copy-recursively "lib" lib-dir)
+               (copy-recursively "config" config-dir)
+               #t))))))
+    (propagated-inputs
+     `(("perl-file-path" ,perl-file-path)
+       ("perl-file-which", perl-file-which)
+       ("perl-const-fast", perl-const-fast)
+       ("perl-capture-tiny", perl-capture-tiny)
+       ("perl-ipc-system-simple", perl-ipc-system-simple)
+       ("perl-try-tiny", perl-try-tiny)
+       ("perl-carp", perl-carp)
+       ("perl-forks", perl-forks)
+       ("perl-attribute-util", perl-attribute-util)
+       ("perl-config-inifiles", perl-config-inifiles)
+       ("perl-set-intervaltree", perl-set-intervaltree)
+       ("perl-libwww", perl-libwww)
+       ("pcap-core" ,pcap-core)
+       ("perl-cgpvcf", perl-cgpvcf)
+       ("perl-bio-db-hts", perl-bio-db-hts)
+       ("bioperl-minimal", bioperl-minimal)
+       ("perl" ,perl)))
+    (home-page "https://github.com/cancerit/cgpCaVEManPostProcessing")
+    (synopsis "Flagging add-on to CaVEMan")
+    (description "This package is used to apply filtering on raw VCF calls
+generated using CaVEMan.")
+    (license license:agpl3+)))
