@@ -33,6 +33,7 @@
   #:use-module (gnu packages maths)
   #:use-module (gnu packages pcre)
   #:use-module (gnu packages perl)
+  #:use-module (gnu packages perl-check)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-crypto)
@@ -1320,3 +1321,71 @@ Pan-Cancer Analysis Project")
    (description "")
    (license license:gpl2+)))
 
+(define-public perl-bio-pipeline-comparison
+  (package
+    (name "perl-bio-pipeline-comparison")
+    (version "1.123050")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append "mirror://cpan/authors/id/A/AJ/AJPAGE/"
+                           "Bio-Pipeline-Comparison-" version ".tar.gz"))
+       (sha256
+        (base32
+         "081kn3zyi7zcwkaxrk5w52nkx7jrp0pwjcr8sai25l45711xli49"))))
+    (build-system perl-build-system)
+    ;; Only one test fails.
+    (arguments `(#:tests? #f))
+    (propagated-inputs
+     `(("htslib" ,htslib)
+       ("which" ,which)))
+    (native-inputs
+     `(("perl-env-path" ,perl-env-path)
+       ("perl-test-most" ,perl-test-most)))
+    (inputs
+     `(("bioperl-minimal" ,bioperl-minimal)
+       ("perl-exception-class" ,perl-exception-class)
+       ("perl-file-which" ,perl-file-which)
+       ("perl-moose" ,perl-moose)
+       ("perl-try-tiny" ,perl-try-tiny)))
+    (home-page "http://search.cpan.org/dist/Bio-Pipeline-Comparison")
+    (synopsis "Comparative assesment of variant calling (CAVar)")
+    (description "")
+    (license #f)))
+
+(define-public perl-cgpvcf
+  (package
+   (name "perl-cgpvcf")
+   (version "2.0.4")
+   (source (origin
+            (method url-fetch)
+            (uri (string-append "https://github.com/cancerit/cgpVcf/archive/v"
+                                version ".tar.gz"))
+            (file-name (string-append name "-" version ".tar.gz"))
+            (sha256
+             (base32 "009vpq2l1pxqfsvckapzxav5xr6kcjvg3krrfdx40qammcr4q1ak"))))
+   (build-system gnu-build-system)
+   (arguments
+    `(#:tests? #f
+      #:phases
+      (modify-phases %standard-phases
+        (replace 'configure
+          (lambda* (#:key outputs #:allow-other-keys)
+            (system* "perl" "Makefile.PL"
+                     (string-append "PREFIX=" (assoc-ref outputs "out"))))))))
+   (propagated-inputs
+    `(("perl-bio-pipeline-comparison" ,perl-bio-pipeline-comparison)
+      ("perl-const-fast" ,perl-const-fast)
+      ("perl-data-uuid" ,perl-data-uuid)
+      ("perl-datetime" ,perl-datetime)))
+   (native-inputs
+    `(("perl-module-install" ,perl-module-install)
+      ("perl-module-build" ,perl-module-build)
+      ("perl" ,perl)
+      ("perltidy" ,perltidy)))
+   (home-page "https://cancerit.github.io/cgpVcf/")
+   (synopsis "Set of common Perl utilities for generating VCF headers")
+   (description "This package contains a set of common Perl utilities for
+generating consistent Vcf headers.  It primarily exists to prevent code
+duplication between some other projects.")
+   (license license:agpl3+)))
