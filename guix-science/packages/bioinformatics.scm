@@ -53,6 +53,7 @@
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system perl)
   #:use-module (guix build-system python)
+  #:use-module (guix build-system r)
   #:use-module (guix build-system trivial)
   #:use-module (guix download)
   #:use-module (guix git-download)
@@ -2000,3 +2001,58 @@ against the nr protein database, and voting-based classification of the entire
 contig / MAG based on classification of the individual ORFs.  CAT and BAT can
 be run from intermediate steps if files are formated appropriately")
    (license license:expat)))
+
+(define-public r-ascat
+  (let ((commit "9fb25feaae2d7d25a17f5eff7b99666ad7afbba8"))
+    (package
+     (name "r-ascat")
+     (version (string-append "2.5.1-" (string-take commit 7)))
+     (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/Crick-CancerGenomics/ascat.git")
+                    (commit commit)))
+              (sha256
+               (base32
+                "02fxhqv4yf9dby8mmjb39fyqd141k3z4nhj0p8m2h4n7a476bdsc"))))
+     (build-system r-build-system)
+     (arguments
+      `(#:phases
+        (modify-phases %standard-phases
+         (add-after 'unpack 'move-to-ascat-dir
+           (lambda _
+             (chdir "ASCAT"))))))
+     (propagated-inputs
+      `(("r-rcolorbrewer" ,r-rcolorbrewer)))
+     (home-page "https://github.com/Crick-CancerGenomics/ascat")
+     (synopsis "ASCAT copy number R package")
+     (description "This package provides the ASCAT R package that can be used
+to infer tumour purity, ploidy and allele-specific copy number profiles.")
+     (license license:gpl3))))
+
+(define-public r-cgp-battenberg
+  (package
+   (name "r-cgp-battenberg")
+   (version "2.2.8")
+   (source (origin
+            (method url-fetch)
+            (uri (string-append
+                  "https://github.com/Wedge-Oxford/battenberg/archive/v"
+                  version ".tar.gz"))
+            (sha256
+             (base32 "0gi9zv8clr795mzplf1d3dm5agc78xz40kmwckcjqaji4dnbcik1"))))
+   (build-system r-build-system)
+   (propagated-inputs
+    `(("r-devtools" ,r-devtools)
+      ("r-readr" ,r-readr)
+      ("r-doparallel" ,r-doparallel)
+      ("r-ggplot2" ,r-ggplot2)
+      ("r-rcolorbrewer" ,r-rcolorbrewer)
+      ("r-gridextra" ,r-gridextra)
+      ("r-gtools" ,r-gtools)
+      ("r-ascat" ,r-ascat)))
+   (home-page "https://github.com/Wedge-Oxford/battenberg")
+   (synopsis "Battenberg R package for subclonal copy number estimation")
+   (description "This package contains the Battenberg R package for subclonal
+copy number estimation.")
+   (license license:gpl3)))
