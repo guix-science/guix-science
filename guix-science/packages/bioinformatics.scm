@@ -17,6 +17,7 @@
 (define-module (guix-science packages bioinformatics)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages)
+  #:use-module (gnu packages autotools)
   #:use-module (gnu packages base)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages bioinformatics)
@@ -53,6 +54,7 @@
   #:use-module (guix build-system python)
   #:use-module (guix build-system trivial)
   #:use-module (guix download)
+  #:use-module (guix git-download)
   #:use-module (guix packages)
   #:use-module (guix-science packages grid-engine))
 
@@ -1849,3 +1851,40 @@ generated using CaVEMan.")
    (description "This package provides a tool to download or view data in
 the cloud environments of ICGC.")
    (license license:gpl3)))
+
+(define-public metamaps
+  (let ((commit "e23f8a8688159ff0d092557a40305dbc7acc2342"))
+    (package
+     (name "metamaps")
+     (version (string-append "0.0-" (string-take commit 7)))
+     (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/DiltheyLab/MetaMaps.git")
+                    (commit commit)))
+              (sha256
+               (base32
+                "0h9ahkv7axw4qzgbvhsz4r699swiv64hlwjy6h8s11vjls2dslrp"))))
+     (build-system gnu-build-system)
+     (arguments
+      `(#:configure-flags (list (string-append
+                                 "--with-boost="
+                                 (assoc-ref %build-inputs "boost")))
+        #:tests? #f
+        #:phases
+        (modify-phases %standard-phases
+          (add-after 'unpack 'shared-boost
+            (lambda _
+              (substitute* "configure.ac"
+               (("libboost_math_c99.a") "libboost_math_c99.so")))))))
+     (native-inputs
+      `(("autoconf" ,autoconf)))
+     (inputs
+      `(("boost" ,boost)
+        ("zlib" ,zlib)
+        ("gsl" ,gsl)))
+     (home-page "https://github.com/DiltheyLab/MetaMaps")
+     (synopsis "Long-read metagenomic analysis")
+     (description "MetaMaps is tool specifically developed for the analysis
+of long-read (PacBio/Oxford Nanopore) metagenomic datasets.")
+     (license license:public-domain))))
