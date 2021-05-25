@@ -1169,3 +1169,66 @@ biopsies.")
         ("sambamba" ,sambamba)
         ("sed" ,sed)
         ("gnomad-sv-sites" ,gnomad-sv-sites-2.1)))))
+
+(define-public allelecount
+  (package
+    (name "allelecount")
+    (version "3.3.1")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://github.com/cancerit/alleleCount/archive/v"
+                    version ".tar.gz"))
+              (file-name (string-append name "-" version ".tar.gz"))
+              (sha256
+               (base32
+                "0yza03nma4y5f34x61pdi902fkv9hzkfbpry9qs3nphjf6q5wcwj"))))
+    (build-system gnu-build-system)
+    (arguments
+     `(#:tests? #f
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'configure)
+         (add-before 'build 'move-to-subdirectory
+           (lambda _
+             (chdir "perl")))
+         (replace 'build
+           (lambda* (#:key inputs outputs #:allow-other-keys)
+             (system* "perl" "Makefile.PL"
+                      (string-append "PREFIX=" (assoc-ref outputs "out")))
+             (system* "make")
+             ;; Build the C alleleCounter program.
+             (chdir "../c")
+             (mkdir-p "bin")
+             (substitute* "src/bam_access.c"
+               (("\\#include <cram\\/cram.h>") "#include <htslib/cram.h>"))
+             (system* "make")
+             ;; Don't interfere with the "make install" command for the Perl
+             ;; version.
+             (chdir "../perl")))
+         (add-after 'install 'install-allelecounter
+           (lambda* (#:key outputs #:allow-other-keys)
+             (let ((out (string-append (assoc-ref outputs "out") "/bin")))
+               (install-file "../c/bin/alleleCounter" out)))))))
+    (propagated-inputs
+     `(("perl-const-fast" ,perl-const-fast)
+       ("perl-sub-exporter-progressive" ,perl-sub-exporter-progressive)
+       ("perl-bio-db-hts" ,perl-bio-db-hts)
+       ("bioperl-minimal" ,bioperl-minimal)))
+    (inputs
+     `(("zlib" ,zlib)
+       ("htslib" ,htslib)
+       ("perl-pod-coverage" ,perl-pod-coverage)
+       ("perl-file-which" ,perl-file-which)
+       ("perl-test-fatal" ,perl-test-fatal)
+       ("perl-try-tiny" ,perl-try-tiny)
+       ("samtools" ,samtools)))
+    (native-inputs
+     `(("perl-module-build" ,perl-module-build)
+       ("perl" ,perl)))
+    (home-page "https://github.com/cancerit/alleleCount")
+    (synopsis "Support code for NGS copy number algorithms")
+    (description "This package primarily exists to prevent code duplication
+between some other projects, specifically AscatNGS and Battenburg.")
+    (license license:agpl3+)))
+
