@@ -1564,3 +1564,224 @@ chunks of adjustable size to optimise for runtime/memory usage requirements.")
     (description "This package is used to apply filtering on raw VCF calls
 generated using CaVEMan.")
     (license license:agpl3+)))
+
+(define-public perl-term-ui
+  (package
+    (name "perl-term-ui")
+    (version "0.46")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "https://cpan.metacpan.org/authors/id/B/BI/BINGOS/Term-UI-"
+             version ".tar.gz"))
+       (sha256
+        (base32
+         "19p92za5cx1v7g57pg993amprcvm1az3pp7y9g5b1aplsy06r54i"))))
+    (build-system perl-build-system)
+    (arguments `(#:tests? #f))
+    (propagated-inputs
+     `(("perl-log-message-simple" ,perl-log-message-simple)))
+    (home-page "http://search.cpan.org/dist/Term-UI")
+    (synopsis "User interfaces via Term::ReadLine made easy")
+    (description "")
+    (license (package-license perl))))
+
+(define-public perl-devel-cover
+  (package
+    (name "perl-devel-cover")
+    (version "1.29")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "mirror://cpan/authors/id/P/PJ/PJCJ/Devel-Cover-"
+             version ".tar.gz"))
+       (sha256
+        (base32
+         "0afkabxbbbwbnfh6b957cwxx1vcz00r4q49jbhcip3w6ib4pv60n"))))
+    (build-system perl-build-system)
+    (arguments
+     `(#:tests? #f))
+    (native-inputs
+     `(("perl-test-differences" ,perl-test-differences)))
+    (inputs
+     `(("perl-browser-open" ,perl-browser-open)
+       ("perl-capture-tiny" ,perl-capture-tiny)
+       ("perl-class-xsaccessor" ,perl-class-xsaccessor)
+       ("perl-moo" ,perl-moo)
+       ("perl-namespace-clean" ,perl-namespace-clean)
+       ("perl-parallel-iterator" ,perl-parallel-iterator)
+       ("perltidy" ,perltidy)
+       ("perl-pod-coverage" ,perl-pod-coverage)
+       ("perl-ppi-html" ,perl-ppi-html)
+       ("perl-template-toolkit" ,perl-template-toolkit)
+       ("perl-test-differences" ,perl-test-differences)))
+    (home-page
+     "http://search.cpan.org/dist/Devel-Cover")
+    (synopsis "Code coverage metrics for Perl")
+    (description "")
+    (license (package-license perl))))
+
+(define-public perl-parallel-iterator
+  (package
+    (name "perl-parallel-iterator")
+    (version "1.00")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "mirror://cpan/authors/id/A/AN/ANDYA/Parallel-Iterator-"
+             version ".tar.gz"))
+       (sha256
+        (base32
+         "1x252cqzcyxkmf8p5dw34ais47ci1ldv2ds02m7a2ijpryam0jg8"))))
+    (build-system perl-build-system)
+    (native-inputs
+     `(("perl-module-install" ,perl-module-install)
+       ("perl-module-build" ,perl-module-build)
+       ("perl-file-sharedir-install" ,perl-file-sharedir-install)))
+    (home-page
+     "http://search.cpan.org/dist/Parallel-Iterator")
+    (synopsis "Simple parallel execution")
+    (description "")
+    (license (package-license perl))))
+
+(define-public perl-ppi
+  (package
+    (name "perl-ppi")
+    (version "1.236")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "mirror://cpan/authors/id/M/MI/MITHALDU/PPI-"
+             version
+             ".tar.gz"))
+       (sha256
+        (base32
+         "1v4a622h19d2d6m070jcxn47siqma9g9ly4fcrnrlz8bkhs4nry6"))))
+    (build-system perl-build-system)
+    (arguments
+     `(#:tests? #f))
+    (native-inputs
+     `(("perl-class-inspector" ,perl-class-inspector)
+       ("perl-file-remove" ,perl-file-remove)
+       ("perl-test-nowarnings" ,perl-test-nowarnings)
+       ("perl-test-object" ,perl-test-object)
+       ("perl-test-subcalls" ,perl-test-subcalls)))
+    (inputs
+     `(("perl-clone" ,perl-clone)
+       ("perl-io-string" ,perl-io-string)
+       ("perl-list-moreutils" ,perl-list-moreutils)
+       ("perl-params-util" ,perl-params-util)
+       ("perl-task-weaken" ,perl-task-weaken)))
+    (home-page "http://search.cpan.org/dist/PPI")
+    (synopsis "Parse, Analyze and Manipulate Perl (without perl)")
+    (description "")
+    (license (package-license perl))))
+
+(define-public perl-ppi-html
+  (package
+    (name "perl-ppi-html")
+    (version "1.08")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "mirror://cpan/authors/id/A/AD/ADAMK/PPI-HTML-"
+             version
+             ".tar.gz"))
+       (sha256
+        (base32
+         "04f5sfrb6ckfdd3lnyipmky9mdgsxr5b724sp1xaszx86d09c9l4"))))
+    (build-system perl-build-system)
+    (arguments
+     `(#:tests? #f))
+    (propagated-inputs
+     `(("perl-module-install" ,perl-module-install)))
+    (inputs
+     `(("perl-css-tiny" ,perl-css-tiny)
+       ("perl-params-util" ,perl-params-util)
+       ("perl-ppi" ,perl-ppi)))
+    (home-page
+     "http://search.cpan.org/dist/PPI-HTML")
+    (synopsis
+     "Generate syntax-hightlighted HTML for Perl using PPI")
+    (description "")
+    (license (package-license perl))))
+
+(define-public perl-css-tiny
+  (package
+    (name "perl-css-tiny")
+    (version "1.20")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "mirror://cpan/authors/id/C/CH/CHORNY/CSS-Tiny-"
+             version
+             ".tar.gz"))
+       (sha256
+        (base32
+         "1yjjn4li8v3d51l7jgrbbkhjdpfm9mmira2xfgf3s58wlkk9vx38"))))
+    (build-system perl-build-system)
+    (home-page
+     "http://search.cpan.org/dist/CSS-Tiny")
+    (synopsis
+     "Read/Write .css files with as little code as possible")
+    (description "")
+    (license (package-license perl))))
+
+(define-public cgp-pindel
+  (package
+    (name "cgp-pindel")
+    (version "2.2.4")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://github.com/cancerit/cgpPindel/archive/v"
+                    version ".tar.gz"))
+              (sha256
+               (base32
+                "1vadlyffabqj696k9nnzqprxn5avf0a5iykpqjxmw8n2180lppvw"))))
+    (build-system gnu-build-system)
+    (arguments
+     `(#:tests? #f
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'configure)
+         (add-before 'build 'move-to-subdirectory
+           (lambda _
+             (chdir "perl")))
+         (replace 'build
+           (lambda* (#:key outputs #:allow-other-keys)
+             (system* "perl" "Makefile.PL"
+                      (string-append "PREFIX=" (assoc-ref outputs "out")))
+             (system* "make"))))))
+    (propagated-inputs
+     `(("perl" ,perl)
+       ("pcap-core" ,pcap-core)
+       ("perl-cgpvcf" ,perl-cgpvcf)
+       ("bioperl-minimal" ,bioperl-minimal)
+       ("perl-bio-db-hts" ,perl-bio-db-hts)
+       ("perl-const-fast" ,perl-const-fast)
+       ("perl-file-which" ,perl-file-which)
+       ("perl-pod-coverage" ,perl-pod-coverage)
+       ("perl-list-moreutils" ,perl-list-moreutils)
+       ("perl-test-fatal" ,perl-test-fatal)
+       ("perl-try-tiny" ,perl-try-tiny)
+       ("perl-capture-tiny" ,perl-capture-tiny)
+       ("perl-term-ui" ,perl-term-ui)
+       ("perl-log-message" ,perl-log-message)
+       ("perl-ipc-system-simple" ,perl-ipc-system-simple)
+       ("perl-sub-exporter-progressive" ,perl-sub-exporter-progressive)
+       ("perl-devel-cover" ,perl-devel-cover)))
+    (native-inputs
+     `(("perl-module-install" ,perl-module-install)
+       ("perl-module-build" ,perl-module-build)
+       ("perl-file-sharedir-install" ,perl-file-sharedir-install)))
+    (home-page "https://github.com/cancerit/cgpPindel")
+    (synopsis "Cancer Genome Projects workflow for Pindel.")
+    (description "")
+    (license license:agpl3+)))
