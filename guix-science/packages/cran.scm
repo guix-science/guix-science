@@ -21,6 +21,7 @@
   #:use-module (guix build-system r)
   #:use-module (gnu packages)
   #:use-module (gnu packages cran)
+  #:use-module (gnu packages gcc)
   #:use-module (gnu packages statistics))
 
 ;; Not upstreamable: Bundles lots of JavaScript libraries, minified bootstrap,
@@ -215,3 +216,61 @@ retrieval metrics (Okapi BM25), handling of multi-word expressions, keyword
 detection (Rapid Automatic Keyword Extraction, noun phrase extraction,
 syntactical patterns) sentiment scoring and semantic similarity analysis.")
     (license license:mpl2.0)))
+
+(define-public r-norm
+  (package
+    (name "r-norm")
+    (version "1.0-9.5")
+    (source (origin
+              (method url-fetch)
+              (uri (cran-uri "norm" version))
+              (sha256
+               (base32
+                "01j1h412yfjx5r4dd0w8rhlf55997spgb6zd6pawy19rgw0byp1h"))))
+    (build-system r-build-system)
+    (native-inputs
+     `(("gfortran" ,gfortran)))
+    (home-page "https://cran.r-project.org/web/packages/norm/")
+    (synopsis "Analysis of multivariate normal datasets with missing values")
+    (description "Analysis of multivariate normal datasets with missing values")
+    ;; See https://cran.r-project.org/web/packages/norm/LICENSE. This looks
+    ;; like public domain.
+    (license #f)))
+
+(define-public r-naniar
+  (package
+    (name "r-naniar")
+    (version "0.6.1")
+    (source (origin
+              (method url-fetch)
+              (uri (cran-uri "naniar" version))
+              (sha256
+               (base32
+                "0l3l2x85v3srilww483kpgp4zlwixyml257b0cqly8kcpwawlinm"))))
+    (build-system r-build-system)
+    (propagated-inputs
+     `(("r-dplyr" ,r-dplyr)
+       ("r-norm" ,r-norm)
+       ("r-forcats" ,r-forcats)
+       ("r-ggplot2" ,r-ggplot2)
+       ("r-glue" ,r-glue)
+       ("r-magrittr" ,r-magrittr)
+       ("r-purrr" ,r-purrr)
+       ("r-rlang" ,r-rlang)
+       ("r-tibble" ,r-tibble)
+       ("r-tidyr" ,r-tidyr)
+       ("r-upsetr" ,r-upsetr)
+       ("r-viridis" ,r-viridis)
+       ("r-visdat" ,r-visdat)))
+    (native-inputs
+     `(("r-knitr" ,r-knitr)))
+    (home-page "https://github.com/njtierney/naniar")
+    (synopsis
+     "Data structures, summaries, and visualisations for missing data")
+    (description
+     "Missing values are ubiquitous in data and need to be explored and
+handled in the initial stages of analysis. The package provides data structures
+and functions that facilitate the plotting of missing values and examination of
+imputations.  This allows missing data dependencies to be explored with minimal
+deviation from the common work patterns of @code{ggplot2} and tidy data.")
+    (license license:expat)))
