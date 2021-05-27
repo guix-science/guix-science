@@ -28,6 +28,7 @@
   #:use-module (gnu packages python-crypto)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages rdf)
   #:use-module (gnu packages textutils)
   #:use-module (gnu packages tex)
   #:use-module (gnu packages time)
@@ -128,3 +129,49 @@ applications")
 based on the Jupyter Notebook and Architecture.")
     (license license:bsd-3)))
 
+(define-public python-sparqlwrapper
+  (package
+    (name "python-sparqlwrapper")
+    (version "1.8.5")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://github.com/RDFLib/sparqlwrapper/archive/"
+                    version ".tar.gz"))
+              (sha256
+               (base32
+                "0shc8y36bdyql9fzhggka88nb163h79pk965m9vqmb01y42zmigp"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:tests? #f))
+    (propagated-inputs
+     `(("python-rdflib" ,python-rdflib)))
+    (home-page "http://rdflib.github.io/sparqlwrapper")
+    (synopsis "SPARQL Endpoint interface to Python")
+    (description "SPARQL Endpoint interface to Python")
+    (license license:w3c)))
+
+(define-public python-sparqlkernel
+  (package
+    (name "python-sparqlkernel")
+    (version "1.3.0")
+    (source (origin
+              (method url-fetch)
+              (uri (pypi-uri "sparqlkernel" version))
+              (sha256
+               (base32
+                "004v22nyi5cnpxq4fiws89p7i5wcnzv45n3n70axdd6prh6rkapx"))))
+    (build-system python-build-system)
+    (native-inputs
+     `(("python-traitlets" ,python-traitlets)
+       ("python-notebook" ,python-notebook)
+       ("python-ipykernel" ,python-ipykernel)
+       ("python-html5lib" ,python-html5lib-0.9)))
+    (propagated-inputs
+     `(("python-sparqlwrapper" ,python-sparqlwrapper)
+       ("python-pygments" ,python-pygments)))
+    (home-page "https://github.com/paulovn/sparql-kernel")
+    (synopsis "Jupyter kernel for SPARQL")
+    (description "This package provides a Jupyter kernel for running SPARQL
+queries.")
+    (license license:bsd-3)))
