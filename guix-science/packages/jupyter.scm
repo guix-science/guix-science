@@ -209,3 +209,31 @@ queries.")
    (synopsis "JupyterHub: A multi-user server for Jupyter notebooks")
    (description "JupyterHub: A multi-user server for Jupyter notebooks")
    (license license:bsd-3)))
+
+(define-public python-bash-kernel
+  (package
+   (name "python-bash-kernel")
+   (version "0.7.2")
+   (source (origin
+            (method url-fetch)
+            (uri (pypi-uri "bash_kernel" version))
+            (sha256
+             (base32
+              "0w0nbr3iqqsgpk83rgd0f5b02462bkyj2n0h6i9dwyc1vpnq9350"))))
+   (build-system python-build-system)
+   (arguments
+    `(#:tests? #f
+      #:phases
+      (modify-phases %standard-phases
+        (add-after 'install 'install-kernelspec
+          (lambda* (#:key outputs #:allow-other-keys)
+            (let ((out (assoc-ref outputs "out")))
+              (setenv "HOME" "/tmp")
+              (invoke "python" "-m" "bash_kernel.install" "--prefix" out)
+              #t))))))
+   (inputs
+    `(("jupyter" ,jupyter)))
+   (home-page "https://github.com/takluyver/bash_kernel")
+   (synopsis "A bash kernel for Jupyter")
+   (description "A bash kernel for Jupyter")
+   (license license:expat)))
