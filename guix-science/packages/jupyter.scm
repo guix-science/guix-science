@@ -237,3 +237,26 @@ queries.")
    (synopsis "A bash kernel for Jupyter")
    (description "A bash kernel for Jupyter")
    (license license:expat)))
+
+(define-public python-batchspawner
+  (package
+    (name "python-batchspawner")
+    (version "1.1.0")
+    (source (origin
+              (method url-fetch)
+              (uri (pypi-uri "batchspawner" version))
+              (sha256
+               (base32
+                "0fnxr6ayp9vzsv0c0bfrzl85liz5zb4kpk4flldb36xxq7vp5blv"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:tests? #f))
+    (propagated-inputs
+     `(("python-jupyterhub" ,python-jupyterhub)
+       ("python-pamela" ,python-pamela)))
+    (home-page "http://jupyter.org")
+    (synopsis "Add-on for Jupyterhub to spawn notebooks using batch systems")
+    (description
+     "This package provides a spawner for Jupyterhub to spawn notebooks using
+batch resource managers.")
+    (license license:bsd-3)))
