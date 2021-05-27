@@ -41,6 +41,7 @@
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-crypto)
+  #:use-module (gnu packages python-science)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages statistics)
@@ -2315,3 +2316,33 @@ modulate the factor’s activating or repressive function.  Here we describe the
 implementation and features of BETA to demonstrate its application to several
 datasets.  BETA requires ~2GB RAM and 1h for the whole procedure.")
     (license license:artistic2.0)))
+
+(define-public python-ont-tombo
+  (package
+    (name "python-ont-tombo")
+    (version "1.5.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "ont-tombo" version))
+       (sha256
+        (base32
+         "1023hadgcsgi53kz53ql45207hfizf9sw57z0qij3ay1bx68zbpm"))))
+    (build-system python-build-system)
+    (native-inputs
+     `(("python-cython" ,python-cython)
+       ("python-nose2" ,python-nose2)
+       ("python-tqdm" ,python-tqdm)))
+    (propagated-inputs
+     `(("python-future" ,python-future)
+       ("python-h5py" ,python-h5py)
+       ("python-mappy" ,python-mappy)
+       ("python-numpy" ,python-numpy)
+       ("python-scipy" ,python-scipy)))
+    (home-page "https://github.com/nanoporetech/tombo")
+    (synopsis "Analysis of raw nanopore sequencing data")
+    (description "Analysis of raw nanopore sequencing data.")
+    ;; In addition, some of the source code form may contain derivative works of
+    ;; nanoraw licensed under the licence from The Regents of the University of
+    ;; California, terms of which are included below.
+    (license license:mpl2.0)))
