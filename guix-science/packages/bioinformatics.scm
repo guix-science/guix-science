@@ -2260,3 +2260,58 @@ genome annotation.")
    (description "This package provides the reference implementation of CGP
 workflow for CaVEMan SNV analysis.")
    (license license:agpl3+)))
+
+(define-public beta
+  (package
+    (name "beta")
+    (version "1.0.7")
+    (source (origin
+              (method url-fetch)
+              (uri "http://cistrome.org/BETA/src/BETA_1.0.7.zip")
+              (sha256
+               (base32 "0axnq7mjj8b7v3fkyh7vp4gq1h252czxakc914zvii10i6kmjkh1"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:tests? #f
+       #:python ,python-2
+       #:phases
+       (modify-phases %standard-phases
+         (replace 'unpack
+           (lambda* (#:key inputs #:allow-other-keys)
+             (let ((unzip (string-append (assoc-ref inputs "unzip")
+                                         "/bin/unzip")))
+               (system* unzip (assoc-ref %build-inputs "source")
+                        "-C" "BETA_1.0.7/*")
+               (chdir "BETA_1.0.7"))))
+         (add-after 'unpack 'fix-compiler-invocation
+           (lambda* (#:key inputs #:allow-other-keys)
+             (substitute* "BETA/misp/Makefile"
+               (("CC = cc") (string-append "CC = " (assoc-ref inputs "gcc")
+                                           "/bin/gcc")))))
+         (add-after 'unpack 'fix-rscript-path
+           (lambda* (#:key inputs #:allow-other-keys)
+             (substitute* "BETA/Up_Down_score.py"
+               (("Rscript") (string-append (assoc-ref inputs "r")
+                                           "/bin/Rscript")))
+             (substitute* "BETA/Up_Down_distance.py"
+               (("Rscript") (string-append (assoc-ref inputs "r")
+                                           "/bin/Rscript"))))))))
+    (native-inputs
+     `(("unzip" ,unzip)
+       ("gcc" ,gcc)))
+    (inputs
+     `(("python2-numpy" ,python2-numpy)
+       ("zlib" ,zlib)
+       ("r" ,r-minimal)))
+    (home-page "http://cistrome.org/BETA/")
+    (synopsis "Binding and Expression Target Analysis")
+    (description "Binding and Expression Target Analysis (BETA) is a software
+package that integrates ChIP-seq of transcription factors or chromatin
+regulators with differential gene expression data to infer direct target
+genes.  BETA has three functions: (1) to predict whether the factor has
+activating or repressive function; (2) to infer the factor’s target genes;
+and (3) to identify the motif of the factor and its collaborators which might
+modulate the factor’s activating or repressive function.  Here we describe the
+implementation and features of BETA to demonstrate its application to several
+datasets.  BETA requires ~2GB RAM and 1h for the whole procedure.")
+    (license license:artistic2.0)))
