@@ -1,0 +1,54 @@
+diff -crB cgpCaVEManWrapper-1.15.2-orig/bin/caveman_merge_results.pl cgpCaVEManWrapper-1.15.2/bin/caveman_merge_results.pl
+*** cgpCaVEManWrapper-1.15.2-orig/bin/caveman_merge_results.pl	2020-01-17 08:25:27.822179647 +0100
+--- cgpCaVEManWrapper-1.15.2/bin/caveman_merge_results.pl	2020-01-17 08:26:26.735045998 +0100
+***************
+*** 41,47 ****
+  {
+    my $options = setup();
+    merge_vcf($options->{'out'}.'.snps', $options->{'snp_vcf'});
+!   merge_vcf($options->{'out'}.'.subs', $options->{'sub_vcf'});
+    merge_bed($options->{'out'}.'.no_analysis', $options->{'na_bed'});
+  }
+  
+--- 41,47 ----
+  {
+    my $options = setup();
+    merge_vcf($options->{'out'}.'.snps', $options->{'snp_vcf'});
+!   merge_vcf($options->{'out'}.'.muts', $options->{'mut_vcf'});
+    merge_bed($options->{'out'}.'.no_analysis', $options->{'na_bed'});
+  }
+  
+***************
+*** 66,72 ****
+  	my ($path_prefix, $bed_files) = @_;
+    my $new_bed = $path_prefix.'.bed';
+    my $new_tmp_bed = $path_prefix.'.tmp.bed';
+!   system(qq{grep '^#' $bed_files->[0] > $new_tmp_bed});
+    system(qq{cat @{$bed_files} | grep -v '^#' | sort -k1,1 -k2,2n >> $new_tmp_bed});
+  
+  	#Now merge the bed file with bedtools merge so we have a much smaller output file.
+--- 66,72 ----
+  	my ($path_prefix, $bed_files) = @_;
+    my $new_bed = $path_prefix.'.bed';
+    my $new_tmp_bed = $path_prefix.'.tmp.bed';
+! #  system(qq{grep '^#' $bed_files->[0] > $new_tmp_bed});
+    system(qq{cat @{$bed_files} | grep -v '^#' | sort -k1,1 -k2,2n >> $new_tmp_bed});
+  
+  	#Now merge the bed file with bedtools merge so we have a much smaller output file.
+***************
+*** 103,109 ****
+      if($file =~ m/\.snps\.vcf$/) {
+        push @{$opts{'snp_vcf'}}, $file;
+      }elsif($file =~ m/\.muts\.vcf$/){
+!     	push @{$opts{'snp_vcf'}}, $file;
+      }
+      elsif($file =~ m/\.no_analysis\.bed$/) {
+        push @{$opts{'na_bed'}}, $file;
+--- 103,109 ----
+      if($file =~ m/\.snps\.vcf$/) {
+        push @{$opts{'snp_vcf'}}, $file;
+      }elsif($file =~ m/\.muts\.vcf$/){
+!     	push @{$opts{'mut_vcf'}}, $file;
+      }
+      elsif($file =~ m/\.no_analysis\.bed$/) {
+        push @{$opts{'na_bed'}}, $file;
