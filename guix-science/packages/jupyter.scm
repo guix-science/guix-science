@@ -18,8 +18,10 @@
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages)
   #:use-module (gnu packages check)
+  #:use-module (gnu packages databases)
   #:use-module (gnu packages haskell-xyz)
   #:use-module (gnu packages jupyter)
+  #:use-module (gnu packages linux)
   #:use-module (gnu packages monitoring)
   #:use-module (gnu packages node)
   #:use-module (gnu packages sphinx)
@@ -175,3 +177,35 @@ based on the Jupyter Notebook and Architecture.")
     (description "This package provides a Jupyter kernel for running SPARQL
 queries.")
     (license license:bsd-3)))
+
+(define-public python-jupyterhub
+  (package
+   (name "python-jupyterhub")
+   (version "1.4.1")
+   (source (origin
+            (method url-fetch)
+            (uri (pypi-uri "jupyterhub" version))
+            (sha256
+             (base32
+              "16aibgv34ndvkll3ax1an8m859jcf05ybqwnjwrhp3nvlhc0f6zf"))))
+   (build-system python-build-system)
+   (arguments
+    `(#:tests? #f))
+   (propagated-inputs
+    `(("python-alembic" ,python-alembic)
+      ("python-async-generator" ,python-async-generator)
+      ("python-certipy" ,python-certipy)
+      ("python-dateutil" ,python-dateutil)
+      ("python-entrypoints" ,python-entrypoints)
+      ("python-jinja2" ,python-jinja2)
+      ("python-oauthlib" ,python-oauthlib)
+      ("python-pamela" ,python-pamela)
+      ("python-prometheus-client" ,python-prometheus-client)
+      ("python-requests" ,python-requests)
+      ("python-sqlalchemy" ,python-sqlalchemy)
+      ("python-tornado" ,python-tornado)
+      ("python-traitlets" ,python-traitlets)))
+   (home-page "https://jupyter.org")
+   (synopsis "JupyterHub: A multi-user server for Jupyter notebooks")
+   (description "JupyterHub: A multi-user server for Jupyter notebooks")
+   (license license:bsd-3)))
