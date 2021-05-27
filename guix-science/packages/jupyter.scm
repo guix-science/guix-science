@@ -31,6 +31,7 @@
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages rdf)
+  #:use-module (gnu packages serialization)
   #:use-module (gnu packages textutils)
   #:use-module (gnu packages tex)
   #:use-module (gnu packages time)
@@ -259,4 +260,47 @@ queries.")
     (description
      "This package provides a spawner for Jupyterhub to spawn notebooks using
 batch resource managers.")
+    (license license:bsd-3)))
+
+(define-public python-jupyter-telemetry
+  (package
+    (name "python-jupyter-telemetry")
+    (version "0.1.0")
+    (source (origin
+              (method url-fetch)
+              (uri (pypi-uri "jupyter_telemetry" version))
+              (sha256
+               (base32
+                "052khyn6h97jxl3k5i2m81xvga5v6vwh5qixzrax4w6zwcx62p24"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-json-logger" ,python-json-logger)
+       ("python-jsonschema" ,python-jsonschema)
+       ("python-ruamel.yaml" ,python-ruamel.yaml)
+       ("python-traitlets" ,python-traitlets)))
+    (home-page "https://jupyter.org/")
+    (synopsis "Jupyter telemetry library")
+    (description "Jupyter telemetry library")
+    (license license:bsd-3)))
+
+(define-public python-jupyterhub-ldapauthenticator
+  (package
+    (name "python-jupyterhub-ldapauthenticator")
+    (version "1.3.2")
+    (source (origin
+              (method url-fetch)
+              (uri (pypi-uri "jupyterhub-ldapauthenticator" version))
+              (sha256
+               (base32
+                "12xby5j7wmi6qsbb2fjd5qbckkcg5fmdij8qpc9n7ci8vfxq303m"))))
+    (build-system python-build-system)
+    (propagated-inputs
+     `(("python-jupyterhub" ,python-jupyterhub)
+       ("python-jupyter-telemetry" ,python-jupyter-telemetry)
+       ("python-ldap3" ,python-ldap3)
+       ("python-tornado" ,python-tornado)
+       ("python-traitlets" ,python-traitlets)))
+    (home-page "https://github.com/yuvipanda/ldapauthenticator")
+    (synopsis "LDAP Authenticator for JupyterHub")
+    (description "LDAP Authenticator for JupyterHub")
     (license license:bsd-3)))
