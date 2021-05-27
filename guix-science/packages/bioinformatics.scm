@@ -35,6 +35,7 @@
   #:use-module (gnu packages java)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages pcre)
+  #:use-module (gnu packages parallel)
   #:use-module (gnu packages perl)
   #:use-module (gnu packages perl-check)
   #:use-module (gnu packages pkg-config)
@@ -50,6 +51,7 @@
   #:use-module (gnu packages vim)
   #:use-module (gnu packages web)
   #:use-module (gnu packages wget)
+  #:use-module (gnu packages xml)
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system perl)
@@ -2100,3 +2102,106 @@ HK27me3.  The input data can be in BAM format, or in a tab-delimited
 'reads per bin' format described below.  The output is a BED formatted
 file the lists the enriched domains and their posterior probabilities.")
    (license license:gpl2)))
+
+(define-public perl-findbin-libs
+  (package
+    (name "perl-findbin-libs")
+    (version "2.15")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (string-append
+             "mirror://cpan/authors/id/L/LE/LEMBARK/FindBin-libs-"
+             version ".tar.gz"))
+       (sha256
+        (base32
+         "0306g1lpxfpv0r6491y6njjc312jx01zh2qqqa4cwkc0ya4jpdpn"))))
+    (build-system perl-build-system)
+    (home-page "http://search.cpan.org/dist/FindBin-libs")
+    (synopsis "")
+    (description "")
+    (license #f)))
+
+(define-public perl-prokka
+  (package
+   (name "perl-prokka")
+   (version "1.14.0")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (string-append
+           "https://github.com/tseemann/prokka/archive/v"
+           version ".tar.gz"))
+     (file-name (string-append name "-" version ".tar.gz"))
+     (sha256
+      (base32
+       "1d8v52mxr61pf8pg4vw72wlq6xlfm1m0b1ds14lzr5n2xz1lgdkh"))))
+   (build-system gnu-build-system)
+   (arguments
+    `(#:tests? #f
+      #:phases
+      (modify-phases %standard-phases
+        (delete 'configure)
+        (delete 'build)
+        (replace 'install
+          (lambda* (#:key inputs outputs #:allow-other-keys)
+            (substitute* '("bin/prokka"
+                           "bin/prokka-abricate_to_fasta_db"
+                           "bin/prokka-biocyc_to_fasta_db"
+                           "bin/prokka-build_kingdom_dbs"
+                           "bin/prokka-cdd_to_hmm"
+                           "bin/prokka-clusters_to_hmm"
+                           "bin/prokka-genbank_to_fasta_db"
+                           "bin/prokka-genpept_to_fasta_db"
+                           "bin/prokka-hamap_to_hmm"
+                           "bin/prokka-make_tarball"
+                           "bin/prokka-tigrfams_to_hmm"
+                           "bin/prokka-uniprot_to_fasta_db")
+             (("minced ")      (string-append (assoc-ref inputs "minced")   "/bin/minced "))
+             (("blastp ")      (string-append (assoc-ref inputs "blast+")   "/bin/blastp "))
+             (("hmmscan ")     (string-append (assoc-ref inputs "hmmer")    "/bin/hmmscan "))
+             (("hmmpress ")    (string-append (assoc-ref inputs "hmmer")    "/bin/hmmpress "))
+             (("\"parallel ")  (string-append "\"" (assoc-ref inputs "parallel") "/bin/parallel "))
+             (("aragorn ")     (string-append (assoc-ref inputs "aragorn")  "/bin/aragorn "))
+             (("prodigal ")    (string-append (assoc-ref inputs "prodigal") "/bin/prodigal "))
+             (("cmscan ")      (string-append (assoc-ref inputs "infernal") "/bin/cmscan "))
+             (("cmpress ")     (string-append (assoc-ref inputs "infernal") "/bin/cmpress "))
+             (("makeblastdb ") (string-append (assoc-ref inputs "blast+")   "/bin/makeblastdb ")))
+
+            (mkdir-p (string-append (assoc-ref outputs "out") "/bin"))
+            (copy-recursively "bin" (string-append (assoc-ref outputs "out") "/bin"))
+            (mkdir-p (string-append (assoc-ref outputs "out") "/share/prokka/db"))
+            (copy-recursively "db" (string-append (assoc-ref outputs "out") "/share/prokka/db"))
+
+            (for-each (lambda (program)
+                        (wrap-program program
+                          `("PERL5LIB" ":" = (,(getenv "PERL5LIB") "$PERL5LIB"))))
+                      (find-files (string-append (assoc-ref outputs "out") "/bin"))))))))
+   (inputs
+    `(("perl" ,perl)
+      ("perl-time-piece" ,perl-time-piece)
+      ("perl-xml-simple" ,perl-xml-simple)
+      ("perl-digest-md5" ,perl-digest-md5)
+      ("perl-module-build" ,perl-module-build)
+      ("perl-data-dumper" ,perl-data-dumper)
+      ("bioperl-minimal" ,bioperl-minimal)
+      ("perl-findbin-libs" ,perl-findbin-libs)
+      ("perl-scalar-list-utils" ,perl-scalar-list-utils)
+      ("parallel" ,parallel)
+      ("aragorn" ,aragorn)
+      ("blast+" ,blast+)
+      ("hmmer" ,hmmer)
+      ("prodigal" ,prodigal)
+      ("infernal" ,infernal)
+      ("minced" ,minced)
+      ("findutils" ,findutils)
+      ("icedtea" ,icedtea-8)))
+   (native-search-paths
+    (list (search-path-specification
+           (variable "PROKKA_DBDIR")
+           (files '("share/prokka/db")))))
+   (home-page "https://github.com/tseemann/prokka")
+   (synopsis "Rapid prokaryotic genome annotation")
+   (description "This package provides tools for rapid prokaryotic
+genome annotation.")
+   (license license:gpl3)))
