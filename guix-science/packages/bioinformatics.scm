@@ -26,6 +26,7 @@
   #:use-module (gnu packages check)
   #:use-module (gnu packages cmake)
   #:use-module (gnu packages compression)
+  #:use-module (gnu packages cran)
   #:use-module (gnu packages curl)
   #:use-module (gnu packages databases)
   #:use-module (gnu packages documentation)
@@ -2056,3 +2057,46 @@ to infer tumour purity, ploidy and allele-specific copy number profiles.")
    (description "This package contains the Battenberg R package for subclonal
 copy number estimation.")
    (license license:gpl3)))
+
+(define-public hiddendomains
+  (package
+   (name "hiddendomains")
+   (version "3.1")
+   (source (origin
+            (method url-fetch)
+            (uri (string-append
+                  "mirror://sourceforge/hiddendomains/hiddenDomains."
+                  version ".tar.gz"))
+            (sha256
+             (base32 "0kpdfz7z014aax26ga8b29s924jb8csy06lxkg3jwjdq7amy2bbw"))))
+   (build-system gnu-build-system)
+   (arguments
+    `(#:tests? #f
+      #:phases
+      (modify-phases %standard-phases
+        (delete 'configure)
+        (delete 'build)
+        (replace 'install
+          (lambda* (#:key inputs outputs #:allow-other-keys)
+            (let ((bin   (string-append (assoc-ref outputs "out") "/bin"))
+                  (share (string-append (assoc-ref outputs "out")
+                                        "/share/hiddenDomains")))
+              (mkdir-p bin)
+              (for-each (lambda (file) (install-file file bin))
+               '("binReads.pl"     "centersToGEM.pl" "domainsMergeToBed.pl"
+                 "domainsToBed.pl" "hiddenDomains"   "peakCenters"))
+              (mkdir-p share)
+              (install-file "hiddenDomains.R" share)))))))
+   (inputs
+    `(("perl" ,perl)))
+   (propagated-inputs
+    `(("r-depmixS4" ,r-depmixs4)
+      ("r-hiddenmarkov" ,r-hiddenmarkov)))
+   (home-page "http://hiddendomains.sourceforge.net")
+   (synopsis "Programs used to identify enrichment of ChIP-seq reads")
+   (description "hiddenDomains is a suite of programs used to identify
+significant enrichment of ChIP-seq reads that span large domains, like
+HK27me3.  The input data can be in BAM format, or in a tab-delimited
+'reads per bin' format described below.  The output is a BED formatted
+file the lists the enriched domains and their posterior probabilities.")
+   (license license:gpl2)))
