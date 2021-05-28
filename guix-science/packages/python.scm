@@ -16,11 +16,16 @@
 
 (define-module (guix-science packages python)
   #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (gnu packages bioinformatics)
+  #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages python-science)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-crypto)
   #:use-module (gnu packages python-check)
+  #:use-module (gnu packages compression)
+  #:use-module (gnu packages statistics)
+  #:use-module (gnu packages pdf)
   #:use-module (gnu packages check)
   #:use-module (gnu packages)
   #:use-module (guix build-system python)
@@ -280,3 +285,129 @@ audience is the natural language processing and information retrieval
 community.")
     (license license:lgpl2.1)))
 
+(define-public python-parabam
+  (package
+    (name "python-parabam")
+    (version "2.3.1")
+    (source (origin
+              (method url-fetch)
+              (uri (pypi-uri "parabam" version))
+              (sha256
+               (base32
+                "1iacm5vdk5xhra6xv4hzf9p9rjxc0w1mxw3ffi4g30n9wkfl6dkn"))))
+    (build-system python-build-system)
+    ;; Tests need 'argparse', but that's in the standard library.
+    (arguments
+     `(#:tests? #f))
+    (propagated-inputs
+     `(("python-numpy" ,python-numpy)
+       ("python-pysam" ,python-pysam)))
+    (home-page "")
+    (synopsis "Parallel BAM File Analysis")
+    (description "Parallel BAM File Analysis")
+    (license license:gpl3)))
+
+(define-public python-telomerecat
+  (package
+    (name "python-telomerecat")
+    (version "3.4.0")
+    (source (origin
+              (method url-fetch)
+              (uri (pypi-uri "telomerecat" version))
+              (sha256
+               (base32
+                "1i59jdflc0m5kyq4b1brvvcyq6iid39pv3yw39w264i007yqgg0d"))))
+    (build-system python-build-system)
+    ;; Tests need 'argparse', but that's in the standard library.
+    (arguments
+     `(#:tests? #f))
+    (propagated-inputs
+     `(("python-numpy" ,python-numpy)
+       ("python-pandas" ,python-pandas)
+       ("python-parabam" ,python-parabam)
+       ("python-pysam" ,python-pysam)))
+    (home-page "https://pypi.org/project/telomerecat/")
+    (synopsis "Telomere Computational Analysis Tool")
+    (description "Telomerecat is a tool for estimating the average
+telomere length for a paired end, whole genome sequencing sample.")
+    (license license:gpl3)))
+
+;; This package seems to only work with Python 2.
+(define-public telomerehunter
+  (package
+    (name "telomerehunter")
+    (version "1.1.0")
+    (source (origin
+              (method url-fetch)
+              ;; There is no tarball or zip file.
+              (uri (string-append
+                    "https://files.pythonhosted.org/packages/e5/67/"
+                    "ce6ac292a88a078a733dc3d9adb3f153834692effbf0851"
+                    "b93a6f3e49b7a/telomerehunter-1.1.0-py2-none-any.whl"))
+              (sha256
+               (base32
+                "1055z4hs2hhsfwqnjm0kffkhh6ag041mp6l13i2gs5454xk02nwi"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:tests? #f
+       #:phases
+       (modify-phases %standard-phases
+         (replace 'unpack
+           (lambda* (#:key inputs #:allow-other-keys)
+             (let ((unzip (string-append (assoc-ref inputs "unzip")
+                                         "/bin/unzip")))
+               (system* unzip (assoc-ref %build-inputs "source")))))
+         (replace 'build
+           (lambda* (#:key inputs outputs #:allow-other-keys)
+             (let* ((out            (assoc-ref outputs "out"))
+                    (python-version (python-version
+                                     (assoc-ref inputs "python")))
+                    (python-libdir  (string-append
+                                     (assoc-ref outputs "out")
+                                     "/lib/python" python-version
+                                     "/site-packages"))
+                    (site-dir (string-append python-libdir "/telomerehunter"))
+                    (bindir   (string-append out "/bin")))
+               (substitute* "telomerehunter/run_plot.sh"
+                 (("R --no-save") (string-append (assoc-ref inputs "r") "/bin/R --no-save")))
+               (substitute* (list "telomerehunter/filter_telomere_reads.py"
+                                  "telomerehunter/normalize_TVR_counts.R")
+                 (("samtools ") (string-append (assoc-ref inputs "samtools") "/bin/samtools ")))
+               (mkdir-p python-libdir)
+               (copy-recursively "telomerehunter" site-dir)
+               (mkdir-p bindir)
+               (mkdir-p (string-append (assoc-ref outputs "out") "/site-library"))
+               (substitute* "telomerehunter-1.1.0.data/scripts/telomerehunter"
+                 (("#!python") (string-append
+                                "#!" (assoc-ref inputs "python") "/bin/python3")))
+               (install-file "telomerehunter-1.1.0.data/scripts/telomerehunter" bindir)
+               (wrap-program (string-append bindir "/telomerehunter")
+                 `("PYTHONPATH" ":" prefix (,bindir ,(getenv "PYTHONPATH")
+                                                    ,site-dir))))))
+         (delete 'install))))
+    (inputs
+     `(("unzip" ,unzip)
+       ("samtools" ,samtools)
+       ("python" ,python)))
+    (propagated-inputs
+     `(("r" ,r)
+       ("python-pypdf2", python2-pypdf2)
+       ("python-numpy", python2-numpy)
+       ("python-pysam", python2-pysam)
+       ("r-ggplot2", r-ggplot2)
+       ("r-reshape2", r-reshape2)
+       ("r-gridextra", r-gridextra)
+       ("r-rcolorbrewer" ,r-rcolorbrewer)
+       ("r-cowplot", r-cowplot)
+       ("r-svglite", r-svglite)
+       ("r-dplyr", r-dplyr)))
+    (native-search-paths
+     (list (search-path-specification
+            (variable "R_LIBS_SITE")
+            (files (list "site-library/")))))
+    (home-page "http://pypi.python.org/pypi/telomerehunter/")
+    (synopsis "Estimation of Telomere Content from WGS Data")
+    (description "TelomereHunter extracts, sorts and analyses telomeric reads
+from WGS Data. It is designed to take BAM files from a tumor and/or a control
+sample as input. The tool was developed at the German Cancer Research Center.")
+    (license license:gpl3+)))
