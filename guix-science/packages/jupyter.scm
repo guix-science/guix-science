@@ -304,3 +304,27 @@ batch resource managers.")
     (synopsis "LDAP Authenticator for JupyterHub")
     (description "LDAP Authenticator for JupyterHub")
     (license license:bsd-3)))
+
+(define-public python-wrapspawner
+  (package
+    (name "python-wrapspawner")
+    (version "1.0.0")
+    (source (origin
+              (method url-fetch)
+              (uri (pypi-uri "wrapspawner" version))
+              (sha256
+               (base32
+                "1fqlzg06mpglfgkrh9117sx3dj4b2y3xqh476q89533j9v98qqyr"))))
+    (inputs
+     `(("jupyter" ,jupyter)
+       ("python-tornado" ,python-tornado)
+       ("python-jupyterhub" ,python-jupyterhub)))
+    (build-system python-build-system)
+    (home-page "https://github.com/jupyterhub/wrapspawner")
+    (synopsis "Wrapspawner for JupyterHub")
+    (description "This package includes @code{WrapSpawner} and
+@code{ProfilesSpawner}, which provide mechanisms for runtime configuration of
+spawners.  The inspiration for their development was to allow users to select
+from a range of pre-defined batch job profiles, but their operation is
+completely generic.")
+    (license license:bsd-3)))
