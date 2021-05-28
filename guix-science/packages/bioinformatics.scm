@@ -2346,3 +2346,28 @@ datasets.  BETA requires ~2GB RAM and 1h for the whole procedure.")
     ;; nanoraw licensed under the licence from The Regents of the University of
     ;; California, terms of which are included below.
     (license license:mpl2.0)))
+
+(define-public python-checkm-genome
+  (package
+   (name "python-checkm-genome")
+   (version "1.1.3")
+   (source (origin
+            (method url-fetch)
+            (uri (pypi-uri "checkm-genome" version))
+            (sha256
+             (base32
+              "0i2nnki639hgjag17wlva2x0ymn37b4krqsf6akxddykhfbkdnkz"))))
+   (build-system python-build-system)
+   ;; Tests fail due to missing data. More investigation is needed.
+   (arguments
+    `(#:tests? #f))
+   (propagated-inputs
+    `(("python-dendropy" ,python-dendropy)
+      ("python-matplotlib" ,python-matplotlib)
+      ("python-numpy" ,python-numpy)
+      ("python-pysam" ,python-pysam)
+      ("python-scipy" ,python-scipy)))
+   (home-page "http://pypi.python.org/pypi/checkm/")
+   (synopsis "Assess the quality of putative genome bins.")
+   (description "Assess the quality of putative genome bins.")
+   (license license:gpl3)))
