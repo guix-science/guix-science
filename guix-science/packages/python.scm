@@ -19,6 +19,7 @@
   #:use-module (gnu packages bioinformatics)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-xyz)
+  #:use-module (gnu packages python-build)
   #:use-module (gnu packages python-science)
   #:use-module (gnu packages python-web)
   #:use-module (gnu packages python-crypto)
@@ -475,3 +476,298 @@ Oxford Nanopore sequencing data and alignments.")
      "This package provides procedures to calculate statistics for Oxford
 Nanopore sequencing data and alignments.")
     (license license:expat)))
+
+(define-public python-nr.fs
+  (package
+    (name "python-nr.fs")
+    (version "1.6.3")
+    (source (origin
+             (method url-fetch)
+             (uri (pypi-uri "nr.fs" version))
+             (sha256
+              (base32
+               "0jhjvzy5mdgvh1vx6fskpqrfjwh81k68rg25a9fgjhs19jha12kq"))))
+    (build-system python-build-system)
+    (propagated-inputs `(("python-six" ,python-six)))
+    (home-page "https://git.niklasrosenstein.com/NiklasRosenstein/nr")
+    (synopsis "Filesystem and path manipulation tools")
+    (description "Filesystem and path manipulation tools.")
+    (license license:expat)))
+
+(define-public python-docspec-python
+  (package
+   (name "python-docspec-python")
+   (version "0.2.0")
+   (source (origin
+            (method url-fetch)
+            (uri (pypi-uri "docspec-python" version))
+            (sha256
+             (base32
+              "0s04yn9hff5f68jbwxl2mrpcvghlir2jgqfjdr6wrl76np663cb1"))))
+   (build-system python-build-system)
+    (arguments
+     `(#:tests? #f)) ; Needs old version of nr.pylang.utils
+   (propagated-inputs
+    `(("python-dataclasses" ,python-dataclasses)
+      ("python-docspec" ,python-docspec)))
+   (home-page "")
+   (synopsis "Parser based on lib2to3 producing docspec data from Python code")
+   (description "This package provides a parser based on lib2to3 producing
+docspec data from Python source code.")
+   (license license:expat)))
+
+(define-public python-nr.utils.re
+  (package
+   (name "python-nr.utils.re")
+   (version "0.2.0")
+   (source (origin
+            (method url-fetch)
+            (uri (pypi-uri "nr.utils.re" version))
+            (sha256
+             (base32
+              "11mscz791vyc5133xvrggaz3srf6fs35qb7zx3k0a9hwn43cd4xq"))))
+   (build-system python-build-system)
+   (native-inputs
+    `(("python-pytest" ,python-pytest)))
+   (home-page "https://git.niklasrosenstein.com/NiklasRosenstein/nr")
+   (synopsis "Utility functions for applying regular expressions")
+   (description "This module provides some utility functions for applying
+regular expressions.")
+   (license license:expat)))
+
+(define-public python-nr.parsing.date
+  (package
+   (name "python-nr.parsing.date")
+   (version "0.6.1")
+   (source (origin
+            (method url-fetch)
+            (uri (pypi-uri "nr.parsing.date" version))
+            (sha256
+             (base32
+              "1n2g6kc1zs924w10n8ya2iz3vlslkwxb1xlw0fg3yyirccm1xgqi"))))
+   (build-system python-build-system)
+   (arguments
+    `(#:tests? #f)) ; Needs very old version of nr.utils.re.
+   (home-page "https://git.niklasrosenstein.com/NiklasRosenstein/nr")
+   (synopsis "Simple and fast date parsing library")
+   (description "This package provides a simple and fast date parsing
+library.  It uses dateutil for timezone offset support.")
+   (license license:expat)))
+
+(define-public python-nr.databind.json
+  (package
+   (name "python-nr.databind.json")
+   (version "0.0.14")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (pypi-uri "nr.databind.json" version))
+     (sha256
+      (base32
+       "03pjfjjxw4mw5r0lv1zrkjrm2fmmzm88k2bbc463lw3gkykagir7"))))
+   (build-system python-build-system)
+    (arguments
+     `(#:tests? #f)) ; Needs old version of nr.pylang.utils
+   (propagated-inputs
+    `(("python-nr.collections" ,python-nr.collections)
+      ("python-nr.databind.core" ,python-nr.databind.core)
+      ("python-nr.interface" ,python-nr.interface)
+      ("python-nr.parsing.date" ,python-nr.parsing.date)
+      ("python-nr.pylang.utils" ,python-nr.pylang.utils)))
+   (home-page "https://git.niklasrosenstein.com/NiklasRosenstein/nr")
+   (synopsis "Deserialize JSON into Python objects and reverse")
+   (description "This package provides a module to deserialize JSON into
+Python objects and reverse.")
+   (license license:expat)))
+
+(define-public python-nr.stream
+  (package
+   (name "python-nr.stream")
+   (version "0.1.1")
+   (source (origin
+            (method url-fetch)
+            (uri (pypi-uri "nr.stream" version))
+            (sha256
+             (base32
+              "11wzmp8rpsl0vfvg6w6syfy50393zlmj13dhnbzzh1fhszdcjjaw"))))
+   (build-system python-build-system)
+   (native-inputs
+    `(("python-pytest" ,python-pytest)))
+   (propagated-inputs
+    `(("python-nr.collections" ,python-nr.collections)
+      ("python-nr.pylang.utils" ,python-nr.pylang.utils)
+      ("python-six" ,python-six)))
+   (home-page "https://git.niklasrosenstein.com/NiklasRosenstein/nr")
+   (synopsis "Use iterators like Java streams")
+   (description "This package provides a module to use iterators like
+Java streams.")
+   (license license:expat)))
+
+(define-public python-nr.pylang.utils
+  (package
+   (name "python-nr.pylang.utils")
+   (version "0.1.0")
+   (source (origin
+            (method url-fetch)
+            (uri (pypi-uri "nr.pylang.utils" version))
+            (sha256
+             (base32
+              "1gysjx9b80xp1981qix0iz4p9s82mk319rjfhq1dbl5i4jfmgygx"))))
+   (build-system python-build-system)
+   (native-inputs
+    `(("python-pytest" ,python-pytest)))
+   (propagated-inputs
+    `(("python-nr.collections" ,python-nr.collections)))
+   (home-page "https://git.niklasrosenstein.com/NiklasRosenstein/nr")
+   (synopsis "")
+   (description "")
+   (license license:expat)))
+
+(define-public python-nr.interface
+  (package
+   (name "python-nr.interface")
+   (version "0.0.5")
+   (source (origin
+            (method url-fetch)
+            (uri (pypi-uri "nr.interface" version))
+            (sha256
+             (base32
+              "10yy380z8z9iz3hlky06g4nsmg5v6ch07qww55apa90k92al6q7d"))))
+   (build-system python-build-system)
+   (arguments
+    `(#:tests? #f)) ; Needs old version of nr.pylang.utils
+   (propagated-inputs
+    `(("python-nr.collections" ,python-nr.collections)
+      ("python-nr.metaclass" ,python-nr.metaclass)
+      ("python-nr.pylang.utils" ,python-nr.pylang.utils)
+      ("python-six" ,python-six)))
+   (home-page "https://git.niklasrosenstein.com/NiklasRosenstein/nr")
+   (synopsis "Interface definitions for Python")
+   (description "This package provides a module to define interface
+definitions for Python.")
+   (license license:expat)))
+
+(define-public python-nr.metaclass
+  (package
+   (name "python-nr.metaclass")
+   (version "0.0.6")
+   (source (origin
+            (method url-fetch)
+            (uri (pypi-uri "nr.metaclass" version))
+            (sha256
+             (base32
+              "041ban9b3vvigjdc5wbcya8n3hy3jfas1r9mj55r9hp30gkghlix"))))
+   (build-system python-build-system)
+   (native-inputs
+    `(("python-pytest" ,python-pytest)))
+   (home-page "https://git.niklasrosenstein.com/NiklasRosenstein/nr")
+   (synopsis "Metaclass utilities.")
+   (description "Metaclass utilities.")
+   (license license:expat)))
+
+(define-public python-nr.collections
+  (package
+   (name "python-nr.collections")
+   (version "0.1.1")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (pypi-uri "nr.collections" version))
+     (sha256
+      (base32
+       "0klspp025f2d7yzh61pcfb73i23xrx3xsqwacf74xzg3dlx5snv4"))))
+   (build-system python-build-system)
+   (native-inputs
+    `(("python-pytest" ,python-pytest)))
+   (propagated-inputs
+    `(("python-nr.metaclass" ,python-nr.metaclass)
+      ("python-nr.fs" ,python-nr.fs)
+      ("python-six" ,python-six)))
+   (home-page "https://git.niklasrosenstein.com/NiklasRosenstein/nr")
+   (synopsis "Useful container datatypes for Python")
+   (description "This package provides container datatypes for
+Python 2 and 3.")
+   (license license:expat)))
+
+(define-public python-nr.databind.core
+  (package
+    (name "python-nr.databind.core")
+    (version "0.0.22")
+    (source (origin
+             (method url-fetch)
+             (uri (pypi-uri "nr.databind.core" version))
+             (sha256
+              (base32
+               "0xsz0ws56xhg0gippnx8av50fla3av849lawl9wbi4fxv3bk5zl7"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:tests? #f)) ; Needs old version of nr.pylang.utils
+    (propagated-inputs
+      `(("python-nr.collections" ,python-nr.collections)
+        ("python-nr.interface" ,python-nr.interface)
+        ("python-nr.pylang.utils" ,python-nr.pylang.utils)
+        ("python-nr.stream" ,python-nr.stream)))
+    (home-page
+      "https://git.niklasrosenstein.com/NiklasRosenstein/nr")
+    (synopsis "Bind structured data directly to typed objects")
+    (description "This module provides a mechanism to bind structured data
+directly to typed objects.")
+    (license license:expat)))
+
+(define-public python-docspec
+  (package
+   (name "python-docspec")
+   (version "0.2.1")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (pypi-uri "docspec" version))
+     (sha256
+      (base32
+       "0afdl37yda2xsp2d1xaw2k9ki7hj57b4iir57s69b6pnrni4vwcg"))))
+   (build-system python-build-system)
+    (arguments
+     `(#:tests? #f)) ; Needs old version of nr.pylang.utils
+   (propagated-inputs
+    `(("python-nr.databind.core" ,python-nr.databind.core)
+      ("python-nr.databind.json" ,python-nr.databind.json)))
+   (home-page "")
+   (synopsis "Specification for representing API documentation")
+   (description "This package provides a JSON object specification for
+representing API documentation of programming languages.")
+   (license license:expat)))
+
+(define-public python-pydoc-markdown
+  (package
+   (name "python-pydoc-markdown")
+   (version "3.13.0")
+   (source (origin
+            (method url-fetch)
+            (uri (pypi-uri "pydoc-markdown" version))
+            (sha256
+             (base32
+              "13yrwvq3wq2vkr9qkp998g4aa77118hgssaraf24wrjn4z8fn8qz"))))
+   (build-system python-build-system)
+   (arguments
+    `(#:tests? #f)) ; Needs newer version of python-watchdog.
+   (propagated-inputs
+    `(("python-click" ,python-click)
+      ("python-dataclasses" ,python-dataclasses)
+      ("python-docspec" ,python-docspec)
+      ("python-docspec-python" ,python-docspec-python)
+      ("python-nr.collections" ,python-nr.collections)
+      ("python-nr.databind.core" ,python-nr.databind.core)
+      ("python-nr.databind.json" ,python-nr.databind.json)
+      ("python-nr.fs" ,python-nr.fs)
+      ("python-nr.interface" ,python-nr.interface)
+      ("python-pyyaml" ,python-pyyaml)
+      ("python-requests" ,python-requests)
+      ("python-six" ,python-six)
+      ("python-toml" ,python-toml)
+      ("python-watchdog" ,python-watchdog)))
+   (home-page "https://github.com/NiklasRosenstein/pydoc-markdown")
+   (synopsis "Create Python API documentation in Markdown format.")
+   (description
+    "This package contains a module to create Python API documentation
+using the Markdown format.")
+   (license license:expat)))
