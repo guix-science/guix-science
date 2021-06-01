@@ -815,3 +815,25 @@ representing API documentation of programming languages.")
     "This package contains a module to create Python API documentation
 using the Markdown format.")
    (license license:expat)))
+
+(define-public python-py-make
+  (package
+   (name "python-py-make")
+   (version "0.1.1")
+   (source (origin
+            (method url-fetch)
+            (uri (pypi-uri "py-make" version))
+            (sha256
+             (base32
+              "1sg848j1v65i636qr8d9p4b29ps4zpb1p7382cdyav5bglcm259j"))))
+   (build-system python-build-system)
+   (propagated-inputs
+    `(("python-coverage" ,python-coverage)
+      ("python-flake8" ,python-flake8)
+      ("python-nose" ,python-nose)
+      ("python-docopt" ,python-docopt)))
+   (home-page "https://github.com/tqdm/pymake")
+   (synopsis "Makefile execution powered by pure Python")
+   (description "This package provides tools for Makefile execution powered
+by pure Python.")
+   (license license:mpl2.0)))
