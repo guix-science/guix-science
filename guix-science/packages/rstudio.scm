@@ -43,6 +43,7 @@
   #:use-module (gnu packages linux)
   #:use-module (gnu packages node)
   #:use-module (gnu packages qt)
+  #:use-module (gnu packages serialization)
   #:use-module (gnu packages statistics)
   #:use-module (gnu packages sqlite)
   #:use-module (gnu packages tls)
@@ -74,7 +75,7 @@ for assistive technology like screen readers.")
 (define-public rstudio-server
   (package
     (name "rstudio-server")
-    (version "1.4.1106")
+    (version "1.4.1717")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -83,9 +84,9 @@ for assistive technology like screen readers.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1brd93hy8254frx98zj1vpkbfj90chkky57z7iinp97wgslink8n"))
+                "0lcnx5spcp5dypvdb7jf8515gnrwx5gk374xf7lri47wqwv5pkgm"))
               (patches
-               (search-patches "rstudio-server-1.4.1106-unbundle.patch"
+               (search-patches "rstudio-server-1.4.1717-unbundle.patch"
                                "rstudio-server-1.4.1103-soci-searchpath.patch"))
               (modules '((guix build utils)))
               (snippet
@@ -104,9 +105,11 @@ for assistive technology like screen readers.")
        (list
          "-DRSTUDIO_TARGET=Server"
          "-DCMAKE_BUILD_TYPE=Release"
+         "-DRSTUDIO_USE_SYSTEM_YAML_CPP=1"
+         "-DRSTUDIO_USE_SYSTEM_BOOST=1"
+         "-DRSTUDIO_USE_SYSTEM_SOCI=1"
          ;; auto-detection seems to be broken with boost 1.72
-         "-DRSTUDIO_BOOST_SIGNALS_VERSION=2"
-         (string-append "-DSOCI_LIBRARY_DIR=" (assoc-ref %build-inputs "soci") "/lib"))
+         "-DRSTUDIO_BOOST_SIGNALS_VERSION=2")
        #:tests? #f ; no tests exist
        #:modules ((guix build cmake-build-system)
                   (guix build utils)
@@ -115,7 +118,7 @@ for assistive technology like screen readers.")
        (modify-phases %standard-phases
          (add-after 'unpack 'unpack-dictionary
            (lambda* (#:key inputs native-inputs #:allow-other-keys)
-             (let ((dict-dir "dependencies/common/dictionaries"))
+             (let ((dict-dir "dependencies/dictionaries"))
                (mkdir dict-dir)
                (invoke "unzip" "-qd" dict-dir (assoc-ref inputs "dict-source-tarball")))
              #t))
@@ -138,7 +141,9 @@ for assistive technology like screen readers.")
              (substitute* '("src/cpp/session/modules/SessionFiles.R")
                (("\"zip\"") (string-append "\"" (assoc-ref inputs "zip") "/bin/zip\"")))
              (substitute* '("src/cpp/session/modules/SessionFiles.cpp")
-               (("\"unzip ") (string-append "\"" (assoc-ref inputs "unzip") "/bin/unzip ")))
+               (("/usr/bin/unzip") (string-append (assoc-ref inputs "unzip") "/bin/unzip")))
+             (substitute* "src/cpp/core/system/Architecture.cpp"
+               (("/usr/bin/uname") (string-append (assoc-ref inputs "coreutils") "/bin/uname")))
              (substitute* "src/gwt/build.xml"
                ;; Fix path to node binary
                (("\"[^\"]+/bin/node\"")
@@ -204,6 +209,7 @@ for assistive technology like screen readers.")
      `(("boost" ,boost)
        ("zlib" ,zlib)
        ("linux-pam" ,linux-pam)
+       ("yaml-cpp" ,yaml-cpp)
        ("r-minimal" ,r-minimal)
        ("openssl" ,openssl)
        ;; for libuuid
@@ -285,19 +291,19 @@ web browser.")
     (inherit rstudio-server)
     (name "rstudio-server-multi-version")
     (source
-     (origin
-       (inherit (package-source rstudio-server))
-       (patches
-        (search-patches
-         "rstudio-server-1.4.1106-unbundle.patch"
-         "rstudio-server-1.4.1103-soci-searchpath.patch"
-         "patches/rstudio-server-multi-version/0001-handleClientInit-Store-R-versions-in-sessionInfo.patch"
-         "patches/rstudio-server-multi-version/0002-sessionProcessConfig-Configure-R-version-from-active.patch"
-         "patches/rstudio-server-multi-version/0003-NewProjectWizard-Unhide-version-selector-widget.patch"
-         "patches/rstudio-server-multi-version/0004-handleConnection-Switch-R-version-when-switching-pro.patch"
-         "patches/rstudio-server-multi-version/0005-Add-version-switcher-widget-to-toolbar.patch"
-         "patches/rstudio-server-multi-version/0006-Look-at-.local-share-rstudio-r-versions-for-custom-R.patch"
-         "patches/rstudio-server-multi-version/0007-detectRLocationsUsingR-Restore-R_HOME-at-the-end.patch"))))
+      (origin
+        (inherit (package-source rstudio-server))
+        (patches
+          (append
+            (origin-patches (package-source rstudio-server))
+            (search-patches
+              "patches/rstudio-server-multi-version/0001-handleClientInit-Store-R-versions-in-sessionInfo.patch"
+              "patches/rstudio-server-multi-version/0002-sessionProcessConfig-Configure-R-version-from-active.patch"
+              "patches/rstudio-server-multi-version/0003-NewProjectWizard-Unhide-version-selector-widget.patch"
+              "patches/rstudio-server-multi-version/0004-handleConnection-Switch-R-version-when-switching-pro.patch"
+              "patches/rstudio-server-multi-version/0005-Add-version-switcher-widget-to-toolbar.patch"
+              "patches/rstudio-server-multi-version/0006-Look-at-.local-share-rstudio-r-versions-for-custom-R.patch"
+              "patches/rstudio-server-multi-version/0007-detectRLocationsUsingR-Restore-R_HOME-at-the-end.patch")))))
     (description "This fork of RStudio allows users to switch to
 different versions of R from the toolbar or project settings.  R
 versions can be recorded in @file{/etc/rstudio/r-versions} and in the
