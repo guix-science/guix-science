@@ -317,6 +317,9 @@ user's @file{~/.local/share/rstudio/r-versions}.")))
        ((#:configure-flags flags)
         '(list "-DRSTUDIO_TARGET=Desktop"
                "-DCMAKE_BUILD_TYPE=Release"
+               "-DRSTUDIO_USE_SYSTEM_YAML_CPP=1"
+               "-DRSTUDIO_USE_SYSTEM_BOOST=1"
+               "-DRSTUDIO_USE_SYSTEM_SOCI=1"
                ;; auto-detection seems to be broken with boost 1.72
                "-DRSTUDIO_BOOST_SIGNALS_VERSION=2"
                (string-append "-DQT_QMAKE_EXECUTABLE="
