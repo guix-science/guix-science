@@ -1,0 +1,38 @@
+commit 4e5a8565bb8562db3f6a2ee29dff9fded744c764
+Author: Lars-Dominik Braun <lars@6xq.net>
+Date:   Fri Jun 11 11:15:40 2021 +0200
+
+    Unbundle MathJax and Pandoc
+
+diff --git a/src/cpp/session/CMakeLists.txt b/src/cpp/session/CMakeLists.txt
+index 54d15d9055..58cb1a9c2c 100644
+--- a/src/cpp/session/CMakeLists.txt
++++ b/src/cpp/session/CMakeLists.txt
+@@ -48,9 +48,7 @@ else()
+ 
+ endif()
+ 
+-foreach(DEP "${RSTUDIO_DEPENDENCIES_DICTIONARIES_DIR}"
+-            "${RSTUDIO_DEPENDENCIES_MATHJAX_DIR}"
+-            "${RSTUDIO_DEPENDENCIES_PANDOC_DIR}")
++foreach(DEP "${RSTUDIO_DEPENDENCIES_DICTIONARIES_DIR}")
+    if(NOT EXISTS "${DEP}")
+       message(FATAL_ERROR "${DEP} not found (re-run install-dependencies script to install")
+    endif()
+@@ -574,16 +572,6 @@ if(NOT RSTUDIO_SESSION_WIN32 AND NOT RSESSION_ALTERNATE_BUILD)
+    install(DIRECTORY "${RSTUDIO_DEPENDENCIES_DICTIONARIES_DIR}"
+            DESTINATION "${RSTUDIO_INSTALL_SUPPORTING}/resources")
+ 
+-   # install mathjax for local html preview
+-   install(DIRECTORY "${RSTUDIO_DEPENDENCIES_MATHJAX_DIR}"
+-           DESTINATION "${RSTUDIO_INSTALL_SUPPORTING}/resources")
+-
+-   # install pandoc
+-   file(GLOB PANDOC_FILES "${RSTUDIO_DEPENDENCIES_PANDOC_DIR}/pandoc*")
+-   install(FILES ${PANDOC_FILES}
+-           PERMISSIONS OWNER_READ OWNER_WRITE OWNER_EXECUTE GROUP_READ GROUP_EXECUTE WORLD_READ WORLD_EXECUTE
+-           DESTINATION "${RSTUDIO_INSTALL_BIN}/pandoc")
+-
+    # install embedded packages
+    foreach(PKG ${RSTUDIO_EMBEDDED_PACKAGES})
+       file(GLOB PKG_FILES "${RSTUDIO_DEPENDENCIES_DIR}/common/${PKG}*.tar.gz")
