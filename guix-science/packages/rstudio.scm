@@ -343,7 +343,7 @@ user's @file{~/.local/share/rstudio/r-versions}.")))
                    `("QTWEBENGINEPROCESS_PATH" ":" = (,qtwebengine-path))))
                #t))))))
     (inputs
-     `(("qtbase" ,qtbase)
+     `(("qtbase" ,qtbase-5)
        ("qtdeclarative" ,qtdeclarative)
        ("qtlocation" ,qtlocation)
        ("qtsvg" ,qtsvg)

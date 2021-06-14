@@ -118,7 +118,7 @@
                    (,(string-append out "/site-library:" (getenv "R_LIBS_SITE"))))))
              #t)))))
     (native-inputs
-     `(("qtbase" ,qtbase)))             ; qmake
+     `(("qtbase" ,qtbase-5)))             ; qmake
     (inputs
      `(("qtwebengine" ,qtwebengine)
        ("qtsvg" ,qtsvg)
