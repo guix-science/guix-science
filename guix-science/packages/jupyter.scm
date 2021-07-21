@@ -132,53 +132,7 @@ applications")
 based on the Jupyter Notebook and Architecture.")
     (license license:bsd-3)))
 
-(define-public python-sparqlwrapper
-  (package
-    (name "python-sparqlwrapper")
-    (version "1.8.5")
-    (source (origin
-              (method url-fetch)
-              (uri (string-append
-                    "https://github.com/RDFLib/sparqlwrapper/archive/"
-                    version ".tar.gz"))
-              (sha256
-               (base32
-                "0shc8y36bdyql9fzhggka88nb163h79pk965m9vqmb01y42zmigp"))))
-    (build-system python-build-system)
-    (arguments
-     `(#:tests? #f))
-    (propagated-inputs
-     `(("python-rdflib" ,python-rdflib)))
-    (home-page "http://rdflib.github.io/sparqlwrapper")
-    (synopsis "SPARQL Endpoint interface to Python")
-    (description "SPARQL Endpoint interface to Python")
-    (license license:w3c)))
-
-(define-public python-sparqlkernel
-  (package
-    (name "python-sparqlkernel")
-    (version "1.3.0")
-    (source (origin
-              (method url-fetch)
-              (uri (pypi-uri "sparqlkernel" version))
-              (sha256
-               (base32
-                "004v22nyi5cnpxq4fiws89p7i5wcnzv45n3n70axdd6prh6rkapx"))))
-    (build-system python-build-system)
-    (native-inputs
-     `(("python-traitlets" ,python-traitlets)
-       ("python-notebook" ,python-notebook)
-       ("python-ipykernel" ,python-ipykernel)
-       ("python-html5lib" ,python-html5lib-0.9)))
-    (propagated-inputs
-     `(("python-sparqlwrapper" ,python-sparqlwrapper)
-       ("python-pygments" ,python-pygments)))
-    (home-page "https://github.com/paulovn/sparql-kernel")
-    (synopsis "Jupyter kernel for SPARQL")
-    (description "This package provides a Jupyter kernel for running SPARQL
-queries.")
-    (license license:bsd-3)))
-
+;; Cannot be upstreamed, bundles lots of JavaScript.
 (define-public python-jupyterhub
   (package
    (name "python-jupyterhub")
@@ -211,34 +165,7 @@ queries.")
    (description "JupyterHub: A multi-user server for Jupyter notebooks")
    (license license:bsd-3)))
 
-(define-public python-bash-kernel
-  (package
-   (name "python-bash-kernel")
-   (version "0.7.2")
-   (source (origin
-            (method url-fetch)
-            (uri (pypi-uri "bash_kernel" version))
-            (sha256
-             (base32
-              "0w0nbr3iqqsgpk83rgd0f5b02462bkyj2n0h6i9dwyc1vpnq9350"))))
-   (build-system python-build-system)
-   (arguments
-    `(#:tests? #f
-      #:phases
-      (modify-phases %standard-phases
-        (add-after 'install 'install-kernelspec
-          (lambda* (#:key outputs #:allow-other-keys)
-            (let ((out (assoc-ref outputs "out")))
-              (setenv "HOME" "/tmp")
-              (invoke "python" "-m" "bash_kernel.install" "--prefix" out)
-              #t))))))
-   (inputs
-    `(("jupyter" ,jupyter)))
-   (home-page "https://github.com/takluyver/bash_kernel")
-   (synopsis "A bash kernel for Jupyter")
-   (description "A bash kernel for Jupyter")
-   (license license:expat)))
-
+;; Cannot be upstreamed: Depends on JupyterHub
 (define-public python-batchspawner
   (package
     (name "python-batchspawner")
@@ -283,6 +210,7 @@ batch resource managers.")
     (description "Jupyter telemetry library")
     (license license:bsd-3)))
 
+;; Cannot be upstreamed: Depends on JupyterHub
 (define-public python-jupyterhub-ldapauthenticator
   (package
     (name "python-jupyterhub-ldapauthenticator")
@@ -305,6 +233,7 @@ batch resource managers.")
     (description "LDAP Authenticator for JupyterHub")
     (license license:bsd-3)))
 
+;; Cannot be upstreamed: Depends on JupyterHub
 (define-public python-wrapspawner
   (package
     (name "python-wrapspawner")
