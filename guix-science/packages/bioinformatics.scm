@@ -16,6 +16,7 @@
 
 (define-module (guix-science packages bioinformatics)
   #:use-module ((guix licenses) #:prefix license:)
+  #:use-module ((guix build utils) #:select (alist-replace))
   #:use-module (gnu packages)
   #:use-module (gnu packages algebra)
   #:use-module (gnu packages autotools)
@@ -411,6 +412,29 @@ in small sets of individuals and somatic variation in tumor/normal sample pairs.
 Manta discovers, assembles and scores large-scale SVs, medium-sized indels and
 large insertions within a single efficient workflow.")
    (license license:gpl3)))
+
+;; Currently needed for manta-1.6.0
+(define-public samtools-1.9
+  (package (inherit samtools)
+    (name "samtools")
+    (version "1.9")
+    (source
+     (origin
+       (method url-fetch)
+       (uri
+        (string-append "mirror://sourceforge/samtools/samtools/"
+                       version "/samtools-" version ".tar.bz2"))
+       (sha256
+        (base32
+         "10ilqbmm7ri8z431sn90lvbjwizd0hhkf9rcqw8j823hf26nhgq8"))
+       (modules '((guix build utils)))
+       (snippet '(begin
+                   ;; Delete bundled htslib.
+                   (delete-file-recursively "htslib-1.9")
+                   #t))))
+    (inputs
+     (alist-replace "htslib" (list htslib-1.9)
+                    (package-inputs samtools)))))
 
 ;; This is a dependency for strelka.
 (define-public codemin
