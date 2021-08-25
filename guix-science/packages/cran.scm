@@ -127,6 +127,40 @@ diagrams from a lavaan path model without having to write the DOT language
 graph specification.")
     (license license:gpl2+)))
 
+;; Depends on r-diagrammer.
+(define-public r-piecewisesem
+  (package
+    (name "r-piecewisesem")
+    (version "2.1.2")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (cran-uri "piecewiseSEM" version))
+        (sha256
+          (base32
+            "1qxwc1drx26p4cgymrfjmg5i7ypl7gddv40virkpmc0qaag9pq36"))))
+    (properties `((upstream-name . "piecewiseSEM")))
+    (build-system r-build-system)
+    (propagated-inputs
+      `(("r-car" ,r-car)
+        ("r-diagrammer" ,r-diagrammer)
+        ("r-emmeans" ,r-emmeans)
+        ("r-igraph" ,r-igraph)
+        ("r-lme4" ,r-lme4)
+        ("r-mass" ,r-mass)
+        ("r-multcomp" ,r-multcomp)
+        ("r-nlme" ,r-nlme)))
+    (native-inputs `(("r-knitr" ,r-knitr)))
+    (home-page "http://jslefche.github.io/piecewiseSEM/")
+    (synopsis
+      "Piecewise Structural Equation Modeling")
+    (description
+      "Implements piecewise structural equation modeling from a single list of
+structural equations, with new methods for non-linear, latent, and composite
+variables, standardized coefficients, query-based prediction and indirect
+effects.")
+    (license license:gpl3)))
+
 ;; Not upstreamable, contains precompiled jars.
 (define-public r-xlsxjars
   (package
