@@ -1,4 +1,4 @@
-From a41c5e9ce141713b12ad552205c27db41193c477 Mon Sep 17 00:00:00 2001
+From 54e7fb9c835b3ec8afcb5db55b03a8ead3ff6088 Mon Sep 17 00:00:00 2001
 From: Ricardo Wurmus <rekado@elephly.net>
 Date: Sat, 19 Dec 2020 00:57:26 +0100
 Subject: [PATCH 4/7] handleConnection: Switch R version when switching
@@ -70,10 +70,10 @@ index 2fd08c028b..3e66f13dd7 100644
                                                             module_context::sharedProjectScratchPath(),
                                                             version,
 diff --git a/src/gwt/src/org/rstudio/studio/client/projects/Projects.java b/src/gwt/src/org/rstudio/studio/client/projects/Projects.java
-index 89c3eb04b9..4ebeb6881d 100644
+index 71ce880487..63937c4806 100644
 --- a/src/gwt/src/org/rstudio/studio/client/projects/Projects.java
 +++ b/src/gwt/src/org/rstudio/studio/client/projects/Projects.java
-@@ -1131,7 +1131,8 @@ public class Projects implements OpenProjectFileHandler,
+@@ -1127,7 +1127,8 @@ public class Projects implements OpenProjectFileEvent.Handler,
                          {
                             // perform quit
                             applicationQuit_.performQuit(null, saveChanges,
@@ -84,5 +84,5 @@ index 89c3eb04b9..4ebeb6881d 100644
                       };
  
 -- 
-2.31.1
+2.33.0
 

@@ -1,4 +1,4 @@
-From 6a8348988fcd961a67d709aa37c5defd7159b27b Mon Sep 17 00:00:00 2001
+From 131f634028a572b206742697d5cad2122ca940b1 Mon Sep 17 00:00:00 2001
 From: Ricardo Wurmus <rekado@elephly.net>
 Date: Fri, 18 Dec 2020 10:26:44 +0100
 Subject: [PATCH 1/7] handleClientInit: Store R versions in sessionInfo.
@@ -15,7 +15,7 @@ r_versions_info->available_r_versions.
  1 file changed, 26 insertions(+), 5 deletions(-)
 
 diff --git a/src/cpp/session/SessionClientInit.cpp b/src/cpp/session/SessionClientInit.cpp
-index e4b3b7dd71..52523fc896 100644
+index ab1228096f..6d9e5a064b 100644
 --- a/src/cpp/session/SessionClientInit.cpp
 +++ b/src/cpp/session/SessionClientInit.cpp
 @@ -2,6 +2,7 @@
@@ -26,7 +26,7 @@ index e4b3b7dd71..52523fc896 100644
   *
   * Unless you have received this program directly from RStudio pursuant
   * to the terms of a commercial license agreement with RStudio, then
-@@ -62,6 +63,8 @@
+@@ -63,6 +64,8 @@
  #include <core/http/CSRFToken.hpp>
  #include <core/system/Environment.hpp>
  
@@ -35,7 +35,7 @@ index e4b3b7dd71..52523fc896 100644
  #include <session/SessionConsoleProcess.hpp>
  #include <session/SessionClientEventService.hpp>
  #include <session/SessionHttpConnection.hpp>
-@@ -507,11 +510,29 @@ void handleClientInit(const boost::function<void()>& initFunction,
+@@ -511,11 +514,29 @@ void handleClientInit(const boost::function<void()>& initFunction,
  
     sessionInfo["multi_session"] = options.multiSession();
  
@@ -71,5 +71,5 @@ index e4b3b7dd71..52523fc896 100644
     sessionInfo["show_user_home_page"] = options.showUserHomePage();
     sessionInfo["user_home_page_url"] = json::Value();
 -- 
-2.31.1
+2.33.0
 

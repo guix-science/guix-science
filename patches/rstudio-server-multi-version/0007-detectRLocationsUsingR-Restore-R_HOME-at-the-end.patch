@@ -1,4 +1,4 @@
-From 36ed7d1c0036d40798a3ab5045f365e8e33692f3 Mon Sep 17 00:00:00 2001
+From 4834bd54840c7df650b10222597f06a312ce24c6 Mon Sep 17 00:00:00 2001
 From: Ricardo Wurmus <rekado@elephly.net>
 Date: Sun, 20 Dec 2020 14:49:51 +0100
 Subject: [PATCH 7/7] detectRLocationsUsingR: Restore R_HOME at the end.
@@ -11,10 +11,10 @@ process is calling it, and its R_HOME may not be unset.
  1 file changed, 3 insertions(+)
 
 diff --git a/src/cpp/core/r_util/REnvironmentPosix.cpp b/src/cpp/core/r_util/REnvironmentPosix.cpp
-index 83b60d7a1b..a909631e25 100644
+index dbc9a9a1af..8ec66fd840 100644
 --- a/src/cpp/core/r_util/REnvironmentPosix.cpp
 +++ b/src/cpp/core/r_util/REnvironmentPosix.cpp
-@@ -489,6 +489,7 @@ bool detectRLocationsUsingR(const std::string& rScriptPath,
+@@ -492,6 +492,7 @@ bool detectRLocationsUsingR(const std::string& rScriptPath,
     // (the normal semantics of invoking the R script are that it overwrites
     // R_HOME and prints a warning -- this warning is co-mingled with the
     // output of R and messes up our parsing)
@@ -22,7 +22,7 @@ index 83b60d7a1b..a909631e25 100644
     core::system::setenv("R_HOME", "");
  
     // if no R path was specified for a module, the module binary path MUST be specified
-@@ -598,6 +599,8 @@ bool detectRLocationsUsingR(const std::string& rScriptPath,
+@@ -601,6 +602,8 @@ bool detectRLocationsUsingR(const std::string& rScriptPath,
        return false;
     }
  
@@ -32,5 +32,5 @@ index 83b60d7a1b..a909631e25 100644
  }
  #endif
 -- 
-2.31.1
+2.33.0
 

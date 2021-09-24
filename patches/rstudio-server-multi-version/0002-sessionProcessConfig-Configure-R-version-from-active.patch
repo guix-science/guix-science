@@ -1,4 +1,4 @@
-From 6172ab0908e8b80bd5838ed4336335d224b80941 Mon Sep 17 00:00:00 2001
+From 8202e0ae8276285afcdeee1fbec50a744a7171ff Mon Sep 17 00:00:00 2001
 From: Ricardo Wurmus <rekado@elephly.net>
 Date: Fri, 18 Dec 2020 10:32:01 +0100
 Subject: [PATCH 2/7] sessionProcessConfig: Configure R version from active
@@ -13,11 +13,11 @@ be used to launch the embedded R.
 Configure R environment using the R version that has been recorded in
 the active session.
 ---
- src/cpp/server/ServerSessionManager.cpp | 26 ++++++++++++++++++++++++-
- 1 file changed, 25 insertions(+), 1 deletion(-)
+ src/cpp/server/ServerSessionManager.cpp | 44 ++++++++++++++++++++++++-
+ 1 file changed, 43 insertions(+), 1 deletion(-)
 
 diff --git a/src/cpp/server/ServerSessionManager.cpp b/src/cpp/server/ServerSessionManager.cpp
-index 6e37578cab..86d212779a 100644
+index 22f138a6ad..01be702a83 100644
 --- a/src/cpp/server/ServerSessionManager.cpp
 +++ b/src/cpp/server/ServerSessionManager.cpp
 @@ -2,6 +2,7 @@
@@ -43,20 +43,34 @@ index 6e37578cab..86d212779a 100644
  #include <monitor/MonitorClient.hpp>
  #include <session/SessionConstants.hpp>
  
-@@ -156,7 +161,26 @@ core::system::ProcessConfig sessionProcessConfig(
+@@ -156,7 +161,44 @@ core::system::ProcessConfig sessionProcessConfig(
     std::copy(extraArgs.begin(), extraArgs.end(), std::back_inserter(args));
  
     // append R environment variables
 -   r_util::RVersion rVersion = r_environment::rVersion();
 +   // Get the active session (e.g. after switching projects) and set R
 +   // variables according to the configured R version.
-+   core::system::User user;
-+   core::system::User::getUserFromIdentifier(context.username, user);
-+   FilePath userScratchPath_ = core::system::xdg::userDataDir(context.username);
++
++   // We cannot use core::system::userHomePath because it always
++   // returns the server user's home directory.  This is /root when
++   // rserver runs as root.  Instead we want to get the home directory
++   // of the *target* user for which rsession will be run.  This is
++   // why we launch a shell to determine the user's home directory.
++   core::system::ProcessOptions poptions;
++   core::system::ProcessResult presult;
++   Error rError = core::system::runCommand(
++            "/bin/sh -c 'echo -n ~" + context.username + "'",
++            poptions,
++            &presult);
++   if (rError)
++      LOG_ERROR(rError);
++   
++   FilePath homeDir = FilePath(presult.stdOut);
++   FilePath userScratchPath_ = core::system::xdg::userDataDir(context.username, homeDir);
 +
 +   r_util::ActiveSessions activeSessions(userScratchPath_);
 +   std::vector<boost::shared_ptr<r_util::ActiveSession> > sessions =
-+     activeSessions.list(user.getHomePath(), false);
++     activeSessions.list(homeDir, false);
 +
 +   r_util::RVersion rVersion;
 +   if (sessions.size() > 0) {
@@ -65,6 +79,10 @@ index 6e37578cab..86d212779a 100644
 +     std::string errorMsg;
 +     bool success = r_environment::detectRVersion(FilePath((*sessions.front()).rVersionHome()).completePath("bin/R"),
 +                                   &rVersion, &errorMsg);
++
++     if (!success) {
++       rVersion = r_environment::rVersion();
++     }
 +   } else {
 +     rVersion = r_environment::rVersion();
 +   }
@@ -72,5 +90,5 @@ index 6e37578cab..86d212779a 100644
     environment.insert(environment.end(), rEnvVars.begin(), rEnvVars.end());
     
 -- 
-2.31.1
+2.33.0
 

@@ -1,4 +1,4 @@
-From 28a8054858657014cb83703be222a06f3aa06119 Mon Sep 17 00:00:00 2001
+From 4063e89423325632efc734ae3d2e143f354392cf Mon Sep 17 00:00:00 2001
 From: Ricardo Wurmus <rekado@elephly.net>
 Date: Fri, 18 Dec 2020 10:35:39 +0100
 Subject: [PATCH 3/7] NewProjectWizard: Unhide version selector widget.
@@ -11,10 +11,10 @@ Do not hide the widget.
  1 file changed, 1 deletion(-)
 
 diff --git a/src/gwt/src/org/rstudio/studio/client/projects/ui/newproject/NewProjectWizard.java b/src/gwt/src/org/rstudio/studio/client/projects/ui/newproject/NewProjectWizard.java
-index 08ece8ab26..3a19f4eeab 100644
+index f386b99af1..d39ef19bf9 100644
 --- a/src/gwt/src/org/rstudio/studio/client/projects/ui/newproject/NewProjectWizard.java
 +++ b/src/gwt/src/org/rstudio/studio/client/projects/ui/newproject/NewProjectWizard.java
-@@ -70,7 +70,6 @@ public class NewProjectWizard extends Wizard<NewProjectInput,NewProjectResult>
+@@ -71,7 +71,6 @@ public class NewProjectWizard extends Wizard<NewProjectInput,NewProjectResult>
           rVersionSelector_.setRVersion(rVersion);
           addLeftWidget(rVersionSelector_);
           rVersionSelector_.getElement().getStyle().setMarginRight(8, Unit.PX);
@@ -23,5 +23,5 @@ index 08ece8ab26..3a19f4eeab 100644
        
        openInNewWindow_ = new CheckBox("Open in new session");
 -- 
-2.31.1
+2.33.0
 

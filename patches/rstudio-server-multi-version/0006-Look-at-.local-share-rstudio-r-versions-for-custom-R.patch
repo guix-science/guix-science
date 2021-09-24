@@ -1,4 +1,4 @@
-From e309b35a2f59a268442de8e1684ddd72fc9e5166 Mon Sep 17 00:00:00 2001
+From b5f4604100d06bc52b31a5e661bc8d4f3cef3259 Mon Sep 17 00:00:00 2001
 From: Ricardo Wurmus <rekado@elephly.net>
 Date: Sun, 20 Dec 2020 00:25:42 +0100
 Subject: [PATCH 6/7] Look at ~/.local/share/rstudio/r-versions for custom R
@@ -68,10 +68,10 @@ index 840429edf5..3cf9b7d79e 100644
     bool detectRVersion(const core::FilePath& rScriptPath,
                         core::r_util::RVersion* pVersion,
 diff --git a/src/cpp/session/SessionClientInit.cpp b/src/cpp/session/SessionClientInit.cpp
-index 52523fc896..34dad727c4 100644
+index 6d9e5a064b..52bf324cb2 100644
 --- a/src/cpp/session/SessionClientInit.cpp
 +++ b/src/cpp/session/SessionClientInit.cpp
-@@ -511,8 +511,14 @@ void handleClientInit(const boost::function<void()>& initFunction,
+@@ -515,8 +515,14 @@ void handleClientInit(const boost::function<void()>& initFunction,
     sessionInfo["multi_session"] = options.multiSession();
  
     // Read versions from /etc/rstudio/r-versions
@@ -88,5 +88,5 @@ index 52523fc896..34dad727c4 100644
       {
         json::Object rVersionJson;
 -- 
-2.31.1
+2.33.0
 

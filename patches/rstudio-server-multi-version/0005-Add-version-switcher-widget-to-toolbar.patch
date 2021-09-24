@@ -1,4 +1,4 @@
-From 3a70a198af9771dc080ab3d790cab38d47196042 Mon Sep 17 00:00:00 2001
+From 0bf91a24f1d087bc78b501e0493eea7f02a9b9d3 Mon Sep 17 00:00:00 2001
 From: Ricardo Wurmus <rekado@elephly.net>
 Date: Sat, 19 Dec 2020 23:33:16 +0100
 Subject: [PATCH 5/7] Add version switcher widget to toolbar.
@@ -14,10 +14,10 @@ Subject: [PATCH 5/7] Add version switcher widget to toolbar.
  create mode 100644 src/gwt/src/org/rstudio/studio/client/application/ui/RVersionPopupMenu.java
 
 diff --git a/src/gwt/src/org/rstudio/core/client/ElementIds.java b/src/gwt/src/org/rstudio/core/client/ElementIds.java
-index 9a62c2f5b1..7ef305d552 100644
+index e47990a68d..eaffa48271 100644
 --- a/src/gwt/src/org/rstudio/core/client/ElementIds.java
 +++ b/src/gwt/src/org/rstudio/core/client/ElementIds.java
-@@ -295,6 +295,8 @@ public class ElementIds
+@@ -321,6 +321,8 @@ public class ElementIds
     public final static String PROJECT_MENUBUTTON_TOOLBAR_SUFFIX = "toolbar";
     public final static String PROJECT_MENUBUTTON_MENUBAR_SUFFIX = "menubar";
  
@@ -27,7 +27,7 @@ index 9a62c2f5b1..7ef305d552 100644
     public final static String BUILD_MORE_MENUBUTTON = "build_more_menubutton";
     public final static String BUILD_BOOKDOWN_MENUBUTTON = "build_bookdown_menubutton";
 diff --git a/src/gwt/src/org/rstudio/studio/client/RStudioGinjector.java b/src/gwt/src/org/rstudio/studio/client/RStudioGinjector.java
-index 5ee1e0b025..1517834382 100644
+index 486146b30e..2bb2acb895 100644
 --- a/src/gwt/src/org/rstudio/studio/client/RStudioGinjector.java
 +++ b/src/gwt/src/org/rstudio/studio/client/RStudioGinjector.java
 @@ -41,6 +41,7 @@ import org.rstudio.studio.client.application.AriaLiveService;
@@ -38,7 +38,7 @@ index 5ee1e0b025..1517834382 100644
  import org.rstudio.studio.client.application.ui.addins.AddinsToolbarButton;
  import org.rstudio.studio.client.application.ui.impl.DesktopApplicationHeader;
  import org.rstudio.studio.client.application.ui.impl.WebApplicationHeader;
-@@ -226,6 +227,7 @@ public interface RStudioGinjector extends Ginjector
+@@ -227,6 +228,7 @@ public interface RStudioGinjector extends Ginjector
     void injectMembers(CodeFilesList codeFilesList);
     void injectMembers(ToolbarPopupMenu toolbarPopupMenu);
     void injectMembers(ProjectPopupMenu projectPopupMenu);
@@ -230,10 +230,10 @@ index 0000000000..ca66b2f53f
 +   private EventBus events_;
 +}
 diff --git a/src/gwt/src/org/rstudio/studio/client/workbench/commands/Commands.cmd.xml b/src/gwt/src/org/rstudio/studio/client/workbench/commands/Commands.cmd.xml
-index 8f53957924..47c5fbb89a 100644
+index c036e2d519..0ff515aa02 100644
 --- a/src/gwt/src/org/rstudio/studio/client/workbench/commands/Commands.cmd.xml
 +++ b/src/gwt/src/org/rstudio/studio/client/workbench/commands/Commands.cmd.xml
-@@ -1312,6 +1312,17 @@ well as menu structures (for main menu and popup menus).
+@@ -1324,6 +1324,17 @@ well as menu structures (for main menu and popup menus).
          desc="Edit options for the current project"
          windowMode="main"/>
  
@@ -252,7 +252,7 @@ index 8f53957924..47c5fbb89a 100644
          menuLabel=""
          buttonLabel=""
 diff --git a/src/gwt/src/org/rstudio/studio/client/workbench/commands/Commands.java b/src/gwt/src/org/rstudio/studio/client/workbench/commands/Commands.java
-index 803f79ecc9..1c84e2c039 100644
+index 37a88a2369..cbe16750f4 100644
 --- a/src/gwt/src/org/rstudio/studio/client/workbench/commands/Commands.java
 +++ b/src/gwt/src/org/rstudio/studio/client/workbench/commands/Commands.java
 @@ -2,6 +2,7 @@
@@ -263,7 +263,7 @@ index 803f79ecc9..1c84e2c039 100644
   *
   * Unless you have received this program directly from RStudio pursuant
   * to the terms of a commercial license agreement with RStudio, then
-@@ -231,6 +232,18 @@ public abstract class
+@@ -232,6 +233,18 @@ public abstract class
     public abstract AppCommand projectSweaveOptions();
     public abstract AppCommand setWorkingDirToProjectDir();
  
@@ -283,5 +283,5 @@ index 803f79ecc9..1c84e2c039 100644
     public abstract AppCommand consoleClear();
     public abstract AppCommand interruptR();
 -- 
-2.31.1
+2.33.0
 
