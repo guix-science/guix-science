@@ -214,7 +214,7 @@ for assistive technology like screen readers.")
        ("openssl" ,openssl)
        ;; for libuuid
        ("util-linux" ,util-linux "lib")
-       ("pandoc" ,ghc-pandoc)
+       ("pandoc" ,pandoc)
        ("which" ,which)
        ("mathjax" ,mathjax) ; XXX: not sure this is the correct version, but
        ; any 2.7 patch release should work, right?
