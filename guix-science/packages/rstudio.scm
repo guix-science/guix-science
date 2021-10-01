@@ -75,18 +75,18 @@ for assistive technology like screen readers.")
 (define-public rstudio-server
   (package
     (name "rstudio-server")
-    (version "1.4.1717")
+    (version "2021.09.0+351")
     (source (origin
               (method git-fetch)
               (uri (git-reference
                     (url "https://github.com/rstudio/rstudio.git")
-                    (commit (string-append "v" version))))
+                    (commit version)))
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "0lcnx5spcp5dypvdb7jf8515gnrwx5gk374xf7lri47wqwv5pkgm"))
+                "1lxncx6m2gakjpwzz3nflv5ljk69abwa8zizhvcysr7s192hsbv5"))
               (patches
-               (search-patches "rstudio-server-1.4.1717-unbundle.patch"
+               (search-patches "rstudio-server-2021.09.0+351-unbundle.patch"
                                "rstudio-server-1.4.1103-soci-searchpath.patch"))
               (modules '((guix build utils)))
               (snippet
@@ -166,11 +166,12 @@ for assistive technology like screen readers.")
            (lambda* (#:key inputs #:allow-other-keys)
              (setenv "JAVA_HOME" (assoc-ref inputs "jdk"))
              ;; set proper version information
-             (match (string-split ,version #\.)
-               ((major minor patch)
+             (match (string-split ,version (char-set #\. #\+))
+               ((major minor patch suffix)
                 (setenv "RSTUDIO_VERSION_MAJOR" major)
                 (setenv "RSTUDIO_VERSION_MINOR" minor)
-                (setenv "RSTUDIO_VERSION_PATCH" patch)))
+                (setenv "RSTUDIO_VERSION_PATCH" patch)
+                (setenv "RSTUDIO_VERSION_SUFFIX" (string-append "+" suffix))))
              (setenv "PACKAGE_OS" "GNU Guix")
              ;; Otherwise fuse-box will try to write to /gnu/store/…/.fusebox.
              (setenv "FUSEBOX_TEMP_FOLDER" "/tmp/")
@@ -193,7 +194,7 @@ for assistive technology like screen readers.")
      `(("unzip" ,unzip)
        ;; gwt-components are built using ant
        ("ant" ,ant)
-       ("jdk" ,icedtea "jdk")
+       ("jdk" ,openjdk11 "jdk")
        ;; For building panmirror. XXX: Maybe put panmirror into its own package?
        ("node" ,node)
        ("node-fuse-box" ,node-fuse-box-3.7.1)
@@ -327,11 +328,6 @@ user's @file{~/.local/share/rstudio/r-versions}.")))
                               "/bin/qmake")))
        ((#:phases phases)
         `(modify-phases ,phases
-           (add-after 'unpack 'relax-qt-version
-             (lambda _
-               (substitute* "src/cpp/desktop/CMakeLists.txt"
-                 (("5\\.4") "5.9"))
-               #t))
            (add-after 'install 'wrap-program
              (lambda* (#:key inputs outputs #:allow-other-keys)
                (let* ((out (assoc-ref outputs "out"))
