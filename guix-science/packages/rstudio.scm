@@ -1,6 +1,7 @@
 ;;;
 ;;; Copyright © 2019, 2020 Lars-Dominik Braun <ldb@leibniz-psychology.org>
 ;;; Copyright © 2020 Roel Janssen <roel@gnu.org>
+;;; Copyright © 2021 Mădălin Ionel Patrașcu <madalinionel.patrascu@mdc-berlin.de>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU General Public License as published by
@@ -38,6 +39,7 @@
   #:use-module (gnu packages compression)
   #:use-module (gnu packages cran)
   #:use-module (gnu packages databases)
+  #:use-module (gnu packages gtk)
   #:use-module (gnu packages haskell-xyz)
   #:use-module (gnu packages java)
   #:use-module (gnu packages linux)
@@ -336,10 +338,15 @@ user's @file{~/.local/share/rstudio/r-versions}.")))
                                          (assoc-ref inputs "qtwebengine")
                                          "/lib/qt5/libexec/QtWebEngineProcess")))
                  (wrap-program (string-append bin "/rstudio")
-                   `("QTWEBENGINEPROCESS_PATH" ":" = (,qtwebengine-path))))
+                   `("QTWEBENGINEPROCESS_PATH" ":" = (,qtwebengine-path))
+
+                   ;; For GtkFileChooserDialog.
+                   `("GSETTINGS_SCHEMA_DIR" = (,(string-append (assoc-ref inputs "gtk+")
+                                  "/share/glib-2.0/schemas")))))
                #t))))))
     (inputs
-     `(("qtbase" ,qtbase-5)
+     `(("gtk+" ,gtk+)
+       ("qtbase" ,qtbase-5)
        ("qtdeclarative" ,qtdeclarative)
        ("qtlocation" ,qtlocation)
        ("qtsvg" ,qtsvg)
