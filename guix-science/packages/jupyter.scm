@@ -47,64 +47,85 @@
 (define-public python-jupyterlab-server
   (package
     (name "python-jupyterlab-server")
-    (version "1.2.0")
+    (version "2.9.0")
     (source
      (origin
        (method url-fetch)
        (uri (pypi-uri "jupyterlab_server" version))
        (sha256
         (base32
-         "132xby7531rbrjg9bqvsx86birr1blynjxy8gi5kcnb6x7fxjcal"))))
+         "1adw3al6nn92555j3lvzhh5m093gqpfr5a06k34y5i3pk6svnl5q"))))
     (build-system python-build-system)
     (propagated-inputs
-     `(("python-jinja2" ,python-jinja2)
-       ("python-json5" ,python-json5)
-       ("python-jsonschema" ,python-jsonschema)
-       ("python-notebook" ,python-notebook)
-       ("python-requests" ,python-requests)))
+     (list python-babel python-entrypoints python-jinja2 python-json5 python-jsonschema
+           python-packaging
+           python-requests
+           python-jupyter-server))
     (native-inputs
-     `(("python-pytest" ,python-pytest)
-       ("python-ipykernel" ,python-ipykernel)))
+     (list python-pytest python-ipykernel))
     (arguments
-     `(#:phases
+     `(#:tests? #f
+       #:phases
        (modify-phases %standard-phases
          ;; python setup.py test does not invoke pytest?
          (replace 'check
-           (lambda _
-             (invoke "pytest" "-vv"))))))
-    (home-page "https://jupyter.org")
+           (lambda* (#:key tests? #:allow-other-keys)
+             (when tests?
+               (invoke "pytest" "-vv")))))))
+    (home-page "https://jupyterlab-server.readthedocs.io/")
     (synopsis "JupyterLab Server")
     (description "A set of server components for JupyterLab and JupyterLab like
 applications")
     (license license:bsd-3)))
 
+(define-public python-nbclassic
+  (package
+    (name "python-nbclassic")
+    (version "0.3.4")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (pypi-uri "nbclassic" version))
+        (sha256
+          (base32 "0y2m1zr9x03ys8dz5slga9v51snfsg67c9id6gykiz0897phf2zh"))))
+    (build-system python-build-system)
+    (arguments `(#:tests? #f))
+    (propagated-inputs (list python-jupyter-server python-notebook))
+;    (native-inputs
+;      (list python-pytest
+;            python-pytest-console-scripts
+;            python-pytest-tornasync))
+    (home-page "https://github.com/jupyterlab/nbclassic")
+    (synopsis "Jupyter Notebook as a Jupyter Server extension.")
+    (description "Jupyter Notebook as a Jupyter Server extension.")
+    (license #f)))
+
 (define-public python-jupyterlab
   (package
     (name "python-jupyterlab")
-    (version "2.2.9")
+    (version "3.2.5")
     (source
      (origin
        (method url-fetch)
        (uri (pypi-uri "jupyterlab" version))
        (sha256
         (base32
-         "1iixsfhvdh95f13lm0hz280wixdnphxns6wchgfm6dqpxbnzis1v"))
-       (patches (search-patches "python-jupyterlab-copy-nometa.patch"))))
+         "0jl7c8asqdc0dfnfy9jvkdaz09jm70y9g0q50b92cn0g7d3qzcii"))
+       ;(patches (search-patches "python-jupyterlab-copy-nometa.patch"))
+      )
+     )
     (build-system python-build-system)
     (propagated-inputs
-     `(("python-jinja2" ,python-jinja2)
-       ("python-jupyterlab-server"
-        ,python-jupyterlab-server)
-       ("python-notebook" ,python-notebook)
-       ("python-tornado" ,python-tornado-6)
-       ;; Required to rebuild assets.
-       ("node" ,node)))
+     (list python-jinja2
+           python-jupyterlab-server
+           python-notebook
+           python-tornado-6
+           python-nbclassic
+           ;; Required to rebuild assets.
+           node))
     (native-inputs
-     `(("python-pytest" ,python-pytest)
-       ("python-pytest-check-links"
-        ,python-pytest-check-links)
-       ("python-requests" ,python-requests)
-       ("python-ipykernel" ,python-ipykernel)))
+     (list python-pytest python-pytest-check-links python-requests
+           python-ipykernel python-jupyter-packaging))
     (arguments
      ;; testing requires npm, so disabled for now
      '(#:tests? #f
@@ -122,13 +143,20 @@ applications")
          ;; Remove circular dependency on jupyterhub to keep 'sanity-check happy.
          (add-after 'unpack 'disable-jupyterhub
            (lambda _
-             (substitute* "setup.py"
+             (substitute* "setup.cfg"
                ((".*jupyter-labhub = .*") ""))))
-         ;; 'build does not respect configure-flags
-         (replace 'build
+         (delete 'build)
+         ;; Files are set to a timestamp in 1970, but ZIP only supports
+         ;; >1980. Fortunately python-wheel respects this envvar.
+         (add-before 'install 'set-SOURCE_DATE_EPOCH
            (lambda _
-             (invoke "python" "setup.py" "build" "--skip-npm"))))
-       #:configure-flags (list "--skip-npm")))
+             (setenv "SOURCE_DATE_EPOCH" "1531865062")))
+         ;; For some reason the setup.py-based installer is broken and does not install/build(?) assets.
+         (replace 'install
+           (lambda* (#:key outputs inputs configure-flags #:allow-other-keys)
+             (let* ((out (assoc-ref outputs "out")))
+               (setenv "HOME" "/tmp")
+               (invoke "pip" "install" "--prefix" out "--no-build-isolation" ".")))))))
     (home-page "https://jupyter.org")
     (synopsis
      "The JupyterLab notebook server extension")
