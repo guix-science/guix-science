@@ -119,6 +119,11 @@ applications")
                  (("sys\\.prefix")
                   (string-append "'" out "'"))))
              #t))
+         ;; Remove circular dependency on jupyterhub to keep 'sanity-check happy.
+         (add-after 'unpack 'disable-jupyterhub
+           (lambda _
+             (substitute* "setup.py"
+               ((".*jupyter-labhub = .*") ""))))
          ;; 'build does not respect configure-flags
          (replace 'build
            (lambda _
