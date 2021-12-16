@@ -159,60 +159,21 @@ programs for performing some common and uncommon tasks with FASTQ files.")
                                 version ".tar.gz"))
             (sha256
              (base32 "06pfg2ldra5g6d14xrxprn35y994w44g0zik2d7npddd0wncxcgq"))))
-   (build-system gnu-build-system)
+   (build-system python-build-system)
    (arguments
     `(#:tests? #f ; There are no tests.
       #:phases
       (modify-phases %standard-phases
-        (delete 'configure)
-        (replace 'build
+        (add-after 'unpack 'use-system-hdf5
           (lambda* (#:key inputs outputs #:allow-other-keys)
             (setenv "HDF5_INCLUDE_DIR" (string-append (assoc-ref inputs "hdf5") "/include"))
-            (setenv "HDF5_LIB_DIR" (string-append (assoc-ref inputs "hdf5") "/lib"))
-            ;; TODO: Check for return value.
-            (substitute* "python/Makefile"
-              (("install: check_virtualenv") "install:"))
-            (system* "make" "-C" "python" "install")))
-        (replace 'install
-          (lambda* (#:key inputs outputs #:allow-other-keys)
-            (let* ((out (assoc-ref outputs "out"))
-                   (python (assoc-ref inputs "python"))
-                   (site-dir (string-append out "/lib/python3.6"
-                                            "/site-packages/fast5/"))
-                   (bin (string-append out "/bin"))
-                   (include (string-append out "/include")))
-              (mkdir-p site-dir)
-              (mkdir-p bin)
-              (install-file "python/fast5/fast5.pyx" site-dir)
-              (install-file "python/bin/f5ls" bin)
-              (install-file "python/bin/f5pack" bin)
-
-              ;; Patch /usr/bin/env.
-              (substitute* (list (string-append bin "/f5ls")
-                                 (string-append bin "/f5pack"))
-                (("/usr/bin/env python") (string-append python "/bin/python3")))
-
-              ;; Wrap the environments of main programs so that
-              ;; these work as expected.
-              (wrap-program (string-append bin "/f5ls")
-                `("PYTHONPATH" ":" prefix (,bin ,(getenv "PYTHONPATH")
-                                                ,site-dir)))
-              (wrap-program (string-append bin "/f5pack")
-                `("PYTHONPATH" ":" prefix (,bin ,(getenv "PYTHONPATH")
-                                                ,site-dir)))
-
-              (for-each (lambda (file)
-                          (install-file file include))
-                        (find-files "src")))
-            #t)))))
-   (native-inputs
-    `(("which" ,which)))
+            (setenv "HDF5_LIB_DIR" (string-append (assoc-ref inputs "hdf5") "/lib"))))
+        (add-after 'unpack 'chdir
+          (lambda _
+            (chdir "python"))))))
    (inputs
-    `(("python" ,python-3)
-      ("python-setuptools" ,python-setuptools)
-      ("python-cython" ,python-cython)
-      ("hdf5" ,hdf5)
-      ("gcc" ,gcc-9)))
+    `(("python-cython" ,python-cython)
+      ("hdf5" ,hdf5)))
    (propagated-inputs
     `(("python-dateutil" ,python-dateutil)))
    (home-page "https://github.com/mateidavid/fast5")
