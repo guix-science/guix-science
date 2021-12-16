@@ -2210,6 +2210,7 @@ workflow for CaVEMan SNV analysis.")
        ("gcc" ,gcc)))
     (inputs
      `(("python2-numpy" ,python2-numpy)
+       ("python2-argparse" ,python2-argparse)
        ("zlib" ,zlib)
        ("r" ,r-minimal)))
     (home-page "http://cistrome.org/BETA/")
