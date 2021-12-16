@@ -356,7 +356,7 @@ mappability data (files created by GEM).")
     (inputs
      `(("cmake" ,cmake)
        ("boost" ,boost)
-       ("python-pyflow" ,python-pyflow)
+       ("python2-pyflow" ,python2-pyflow)
        ("python" ,python-2)
        ("cppcheck" ,cppcheck)
        ("doxygen" ,doxygen)
