@@ -145,6 +145,15 @@ applications")
            (lambda _
              (substitute* "setup.cfg"
                ((".*jupyter-labhub = .*") ""))))
+         ;; Jupyterlab tries to write settings to /gnu/store, which is the first
+         ;; entry in config_paths. Instead use the proper function, which usually
+         ;; returns a writable directory.
+         (add-after 'unpack 'patch-config-path
+           (lambda _
+             (substitute* "jupyterlab/commands.py"
+               (("jupyter_config_path\\(\\)\\[0\\]") "jupyter_config_dir()")
+               (("from jupyter_core.paths import jupyter_config_path")
+                 "from jupyter_core.paths import jupyter_config_dir"))))
          (delete 'build)
          ;; Files are set to a timestamp in 1970, but ZIP only supports
          ;; >1980. Fortunately python-wheel respects this envvar.
