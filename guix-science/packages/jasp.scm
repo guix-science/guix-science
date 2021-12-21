@@ -53,7 +53,8 @@
                (base32
                 "05r2gdq7lxmndxzg5h8nmahvrksv9v4xh40ls0azn0wfrpcsnrlq"))
               (patches
-               (search-patches "jasp-0.14.0.0-noupdate.patch"))))
+               (search-patches "jasp-0.14.0.0-noupdate.patch"
+                               "jasp-0.14.0.0-includes.patch"))))
     (build-system qt-build-system)
     (arguments
      '(#:tests? #f ; There are tests in JASP-Tests, but they need special setup

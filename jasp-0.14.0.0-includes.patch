@@ -1,0 +1,53 @@
+Add missing includes for GCC 10.
+
+--- a/JASP-Common/column.cpp	1970-01-01 01:00:01.000000000 +0100
++++ b/JASP-Column/column.cpp	2021-12-21 10:30:32.455931317 +0100
+@@ -21,6 +21,7 @@
+ 
+ #include <sstream>
+ #include <string>
++#include <cfloat>
+ 
+ #include <boost/lexical_cast.hpp>
+ #include <boost/algorithm/string/predicate.hpp>
+--- a/JASP-Engine/rbridge.cpp	1970-01-01 01:00:01.000000000 +0100
++++ b/JASP-Engine/rbridge.cpp	2021-12-21 10:36:47.825085783 +0100
+@@ -15,6 +15,8 @@
+ // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ //
+ 
++#include <cmath>
++
+ #include "rbridge.h"
+ #include "columnencoder.h"
+ #include "jsonredirect.h"
+--- a/JASP-Desktop/widgets/boundqmltextinput.cpp	1970-01-01 01:00:01.000000000 +0100
++++ b/JASP-Desktop/widgets/boundqmltextinput.cpp	2021-12-21 10:40:18.119960946 +0100
+@@ -16,6 +16,8 @@
+ // <http://www.gnu.org/licenses/>.
+ //
+ 
++#include <cmath>
++
+ #include "boundqmltextinput.h"
+ #include "../analysis/analysisform.h"
+ #include "../analysis/jaspcontrolbase.h"
+--- a/JASP-Desktop/data/filtermodel.cpp	1970-01-01 01:00:01.000000000 +0100
++++ b/JASP-Desktop/data/filtermodel.cpp	2021-12-21 10:43:56.571897913 +0100
+@@ -1,3 +1,5 @@
++#include <cmath>
++
+ #include "filtermodel.h"
+ #include "utilities/jsonutilities.h"
+ #include "columnencoder.h"
+--- a/JASP-Desktop/widgets/listmodeltableviewbase.cpp	1970-01-01 01:00:01.000000000 +0100
++++ b/JASP-Desktop/widgets/listmodeltableviewbase.cpp	2021-12-21 10:47:06.104957449 +0100
+@@ -16,6 +16,8 @@
+ // <http://www.gnu.org/licenses/>.
+ //
+ 
++#include <cmath>
++
+ #include "log.h"
+ #include <QSize>
+ #include <fstream>
