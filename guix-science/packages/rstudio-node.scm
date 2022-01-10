@@ -9776,8 +9776,11 @@
         #:phases
         (modify-phases
           %standard-phases
-          (delete 'configure)
-          (delete 'build))))
+          ;; stylis is just a peerDependency.
+          (add-after 'patch-dependencies 'delete-dependencies
+            (lambda args
+              (delete-dependencies
+               `("stylis")))))))
     (home-page
       "https://github.com/thysultan/stylis.js")
     (synopsis
