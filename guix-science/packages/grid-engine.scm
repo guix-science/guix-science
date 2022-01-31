@@ -63,7 +63,7 @@
        ("tcsh" ,tcsh)
        ("inetutils" ,inetutils)
        ("hwloc" ,hwloc "lib")
-       ("openssl" ,openssl-1.0)
+       ("openssl" ,openssl)
        ("coreutils" ,coreutils)
        ("tcl" ,tcl)
        ("linux-pam" ,linux-pam)
