@@ -1,0 +1,38 @@
+Description: Fix FTBFS with g++ 10
+Author: Pierre Gruet <pgtdebian@free.fr>
+Bug-Debian: https://bugs.debian.org/957310
+Forwarded: no
+Last-Update: 2020-11-26
+--- a/source/libs/japi/drmaa2_list_dict.h
++++ b/source/libs/japi/drmaa2_list_dict.h
+@@ -10,7 +10,7 @@
+    struct _drmaa2_node *next;
+ } _drmaa2_Node;
+ 
+-/* static */ struct drmaa2_list_s
++/* static */ extern struct drmaa2_list_s
+ {
+    _drmaa2_Node   *head;
+    _drmaa2_Node   *tail;
+@@ -33,7 +33,7 @@
+   struct _drmaa2_dictentry_t* next;
+ } _drmaa2_dictentry_t;
+ 
+-/* static */ struct drmaa2_dict_s
++/* static */ extern struct drmaa2_dict_s
+ {
+   _drmaa2_dictentry_t    *head;
+   _drmaa2_dictentry_t    *tail;
+diff --git a/source/3rdparty/qmake/make.h b/source/3rdparty/qmake/make.h
+index 46d523a4c..87e871bc6 100644
+--- a/source/3rdparty/qmake/make.h
++++ b/source/3rdparty/qmake/make.h
+@@ -348,7 +348,7 @@ extern int unixy_shell;
+ #endif
+ #ifdef SET_STACK_SIZE
+ # include <sys/resource.h>
+-struct rlimit stack_limit;
++extern struct rlimit stack_limit;
+ #endif
+ 
+ struct floc

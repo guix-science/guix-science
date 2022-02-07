@@ -55,7 +55,9 @@
                     version "/sge-" version ".tar.gz"))
               (sha256
                (base32
-                "0ra7m9mf09zzcf815y3zqzqkj95v9zm24nhhvzmdh2bsqgdmk59w"))))
+                "0ra7m9mf09zzcf815y3zqzqkj95v9zm24nhhvzmdh2bsqgdmk59w"))
+              (patches (search-patches "grid-engine-core-openssl-1.1.patch"
+                                       "grid-engine-core-extern_qualifier.patch"))))
     (build-system gnu-build-system)
     (supported-systems '("x86_64-linux"))
     (inputs
