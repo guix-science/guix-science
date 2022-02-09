@@ -1,5 +1,6 @@
 ;;;
 ;;; Copyright © 2020, 2021 Lars-Dominik Braun <ldb@leibniz-psychology.org>
+;;; Copyright © 2022 Ricardo Wurmus <rekado@elephly.net>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU General Public License as published by
@@ -159,6 +160,29 @@ graph specification.")
 structural equations, with new methods for non-linear, latent, and composite
 variables, standardized coefficients, query-based prediction and indirect
 effects.")
+    (license license:gpl3)))
+
+;; This contains a lot of minified JavaScript with no obvious source
+;; files.
+(define-public r-shinywidgets
+  (package
+    (name "r-shinywidgets")
+    (version "0.6.4")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (cran-uri "shinyWidgets" version))
+       (sha256
+        (base32 "1j7pii40zc60ny1d5027pjagi1rrcnb9kxn4q9jmd9xv84y5b8sj"))))
+    (properties `((upstream-name . "shinyWidgets")))
+    (build-system r-build-system)
+    (propagated-inputs
+     (list r-bslib r-htmltools r-jsonlite r-sass r-shiny))
+    (home-page "https://github.com/dreamRs/shinyWidgets")
+    (synopsis "Custom inputs widgets for Shiny")
+    (description
+     "This package provides a collection of custom input controls and user
+interface components for Shiny applications.")
     (license license:gpl3)))
 
 ;; Not upstreamable, contains precompiled jars.
