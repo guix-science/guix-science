@@ -19,6 +19,7 @@
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
   #:use-module (guix download)
+  #:use-module (guix git-download)
   #:use-module (guix build-system r)
   #:use-module (gnu packages)
   #:use-module (gnu packages cran)
@@ -274,4 +275,50 @@ retrieval metrics (Okapi BM25), handling of multi-word expressions, keyword
 detection (Rapid Automatic Keyword Extraction, noun phrase extraction,
 syntactical patterns) sentiment scoring and semantic similarity analysis.")
     (license license:mpl2.0)))
+
+;; Cannot upstream, because we are using a git version and the project
+;; is kind of “special interest”, since its only purpose is to talk
+;; to the formr.org web service.
+(define-public r-formr
+  (let ((commit "8f77582a70781f2ccb184e967ed120452478e0b5"))
+    (package
+     (name "r-formr")
+     (version (string-append "0.7.4-" (string-take commit 7)))
+     (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/rubenarslan/formr.git")
+                    (commit commit)))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "1wjfrr37k4sj1fvny245skz2cnfy7mhl0kk88j07wsf4z70dvsvf"))))
+     (build-system r-build-system)
+     (propagated-inputs
+       (list
+         r-dplyr
+         r-ggplot2
+         r-scales
+         r-haven
+         r-tidyr
+         r-knitr
+         r-httr
+         r-curl
+         r-jsonlite
+         r-lubridate
+         r-commonmark
+         r-rmarkdown
+         r-keyring))
+     (home-page
+       "https://formr.org/")
+     (synopsis
+       "Helper functions for formr survey framework")
+     (description
+       "The formr R package provides a few convenience functions
+that may be useful to the users of formr (formr.org), an online
+survey framework which heavily relies on R via openCPU.
+Some of the functions are for conveniently generating individual
+feedback graphics, some are just shorthands to make certain common
+operations in formr more palatable to R novices.")
+     (license license:bsd-2))))
 
