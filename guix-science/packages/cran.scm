@@ -345,3 +345,26 @@ scaffolds, helper dependency functions, an embedded Babel transpiler,
 and examples.")
     (license license:expat)))
 
+;; Contains minified JavaScript
+(define-public r-reactable
+  (package
+    (name "r-reactable")
+    (version "0.2.3")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (cran-uri "reactable" version))
+       (sha256
+        (base32 "17wl75cblm0rgq3chl96vj7wmbcmszss1zjppfccz1hcimfmlrpx"))))
+    (properties `((upstream-name . "reactable")))
+    (build-system r-build-system)
+    (propagated-inputs
+     (list r-digest r-htmltools r-htmlwidgets r-jsonlite r-reactr))
+    (home-page "https://glin.github.io/reactable/")
+    (synopsis "Interactive data tables based on React Table'")
+    (description
+     "This package provides interactive data tables for R, based on
+the React Table JavaScript library.  It provides an HTML widget that
+can be used in R Markdown documents and Shiny applications, or viewed
+from an R console.")
+    (license license:expat)))
