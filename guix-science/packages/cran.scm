@@ -322,3 +322,26 @@ feedback graphics, some are just shorthands to make certain common
 operations in formr more palatable to R novices.")
      (license license:bsd-2))))
 
+;; Contains minified JavaScript
+(define-public r-reactr
+  (package
+    (name "r-reactr")
+    (version "0.4.4")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (cran-uri "reactR" version))
+       (sha256
+        (base32 "15c0ij3xglsdavkpzgnkbyl5yb39jrn6zhlrdjiwp1m9cnrqzf2w"))))
+    (properties `((upstream-name . "reactR")))
+    (build-system r-build-system)
+    (propagated-inputs (list r-htmltools))
+    (native-inputs (list r-knitr))
+    (home-page "https://github.com/react-R/reactR")
+    (synopsis "React helpers")
+    (description
+     "This package makes it easy to use React in R with htmlwidget
+scaffolds, helper dependency functions, an embedded Babel transpiler,
+and examples.")
+    (license license:expat)))
+
