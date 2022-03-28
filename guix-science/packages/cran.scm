@@ -24,6 +24,7 @@
   #:use-module (gnu packages)
   #:use-module (gnu packages cran)
   #:use-module (gnu packages gcc)
+  #:use-module (gnu packages haskell-xyz)
   #:use-module (gnu packages statistics))
 
 ;; Not upstreamable: Bundles lots of JavaScript libraries, minified bootstrap,
@@ -368,3 +369,88 @@ the React Table JavaScript library.  It provides an HTML widget that
 can be used in R Markdown documents and Shiny applications, or viewed
 from an R console.")
     (license license:expat)))
+
+;; Dependency of r-papaja
+(define-public r-rmdfiltr
+  (package
+    (name "r-rmdfiltr")
+    (version "0.1.3")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (cran-uri "rmdfiltr" version))
+        (sha256
+          (base32 "0llnn4pdfznidalm4f7fpyxbhzsqv1096fkbsl1pgf4f7ll6w7a7"))))
+    (properties `((upstream-name . "rmdfiltr")))
+    (build-system r-build-system)
+    (inputs (list pandoc))
+    (propagated-inputs (list r-assertthat r-rmarkdown))
+    (native-inputs (list r-knitr))
+    (home-page "https://github.com/crsh/rmdfiltr")
+    (synopsis "'Lua'-Filters for R Markdown")
+    (description
+      "This package provides a collection of 'Lua' filters that extend the
+functionality of R Markdown templates (e.g., count words or post-process
+citations).")
+    (license license:expat)))
+
+;; Dependency of r-papaja
+(define-public r-tinylabels
+  (package
+    (name "r-tinylabels")
+    (version "0.2.3")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (cran-uri "tinylabels" version))
+        (sha256
+          (base32 "0knqcdnlrydbfklizvx9mp304sjz6wp54nbx1zhy2g2730nwa61k"))))
+    (properties `((upstream-name . "tinylabels")))
+    (build-system r-build-system)
+    (native-inputs (list r-knitr))
+    (home-page "https://github.com/mariusbarth/tinylabels")
+    (synopsis "Lightweight Variable Labels")
+    (description
+      "Assign, extract, or remove variable labels from R vectors.  Lightweight and
+dependency-free.")
+    (license license:expat)))
+
+;; No recent releases, so just a random commit.
+(define-public r-papaja
+  (let ((commit "5e28378a85e83296c1e593b0d2e08e173d663279") (revision "1"))
+    (package
+      (name "r-papaja")
+      (version (git-version "0.1.0.9999" revision commit))
+      (source
+        (origin
+          (method git-fetch)
+          (uri (git-reference
+                 (url "https://github.com/crsh/papaja.git")
+                 (commit commit)))
+          (file-name (git-file-name name version))
+          (sha256
+            (base32 "0pf43n47zy69501z1hc2gw73cvs5gcnp27c62xnpg87hnvxy8b0j"))))
+      (properties `((upstream-name . "papaja")))
+      (build-system r-build-system)
+      (propagated-inputs
+        (list r-bookdown
+              r-broom
+              r-glue
+              r-knitr
+              r-rmarkdown
+              r-rmdfiltr
+              r-tinylabels
+              r-yaml
+              r-zip))
+      (native-inputs (list r-knitr))
+      (home-page "https://github.com/crsh/papaja.git")
+      (synopsis
+        "Prepare American Psychological Association Journal Articles with R Markdown")
+      (description
+        "Tools to create dynamic, submission-ready manuscripts, which conform to American
+Psychological Association manuscript guidelines.  We provide R Markdown document
+formats for manuscripts (PDF and Word) and revision letters (PDF).  Helper
+functions facilitate reporting statistical analyses or create publication-ready
+tables and plots.")
+      (license license:expat))))
+
