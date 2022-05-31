@@ -1,5 +1,5 @@
-;;;
 ;;; Copyright © 2016-2021 Roel Janssen <roel@gnu.org>
+;;; Copyright © 2022 Ricardo Wurmus <rekado@elephly.net>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU General Public License as published by
@@ -1818,6 +1818,65 @@ the cloud environments of ICGC.")
      (description "MetaMaps is tool specifically developed for the analysis
 of long-read (PacBio/Oxford Nanopore) metagenomic datasets.")
      (license license:public-domain))))
+
+(define-public igv
+  (package
+    (name "igv")
+    (version "2.8.10")
+    (source
+     (origin
+       (method url-fetch)
+       ;; There is no version available without jdk, so use it and deblob.
+       ;; The source code is available at https://github.com/igvteam/igv/
+       (uri (string-append
+             "http://data.broadinstitute.org/igv/projects/downloads/"
+             "2.8/IGV_Linux_" version "_WithJava.zip"))
+       (sha256
+        (base32 "017q32lnbfz5gsvak1dfa0anzg1g0h34mkjxcggyq8ncr0vq4s7v"))
+       (modules '((guix build utils)))
+       (snippet
+        '(delete-file-recursively "jdk-11"))))
+    (build-system gnu-build-system)
+    (propagated-inputs
+     (list openjdk11))
+    (native-inputs
+     (list unzip))
+    (arguments
+     `(#:tests? #f  ; No tests available.
+       #:phases
+       (modify-phases %standard-phases
+         (delete 'configure) ; Nothing to configure.
+         (delete 'build) ; This is a binary package only.
+         (replace 'install
+           (lambda* (#:key inputs outputs #:allow-other-keys)
+             (let* ((out (assoc-ref outputs "out"))
+                    (bin (string-append out "/bin"))
+                    (lib (string-append out "/lib"))
+                    (share (string-append out "/share/igv")))
+               (mkdir-p share)
+               (mkdir-p lib)
+               (mkdir-p bin)
+               (copy-recursively "lib" lib)
+               (substitute* "igv.sh"
+                 (("prefix=")
+                  (string-append "prefix=" lib " # "))
+                 (("\\$\\{prefix\\}/igv.args")
+                  (string-append share "/igv.args"))
+                 (("--module-path=\"\\$\\{prefix\\}/lib\"")
+                  (string-append "--module-path=" lib))
+                 (("exec java")
+                  (string-append "exec " (assoc-ref inputs "openjdk11")
+                                 "/bin/java")))
+               (install-file "igv.args" share)
+               (install-file "igv.sh" bin)))))))
+   (home-page "https://www.broadinstitute.org/software/igv/")
+   (synopsis "Integrative Genomics Viewer")
+   (description "The Integrative Genomics Viewer (IGV) is a high-performance
+visualization tool for interactive exploration of large, integrated
+genomic datasets.  It supports a wide variety of data types, including
+array-based and next-generation sequence data, and genomic
+annotations.")
+   (license license:expat)))
 
 (define-public iq-tree
   (package
