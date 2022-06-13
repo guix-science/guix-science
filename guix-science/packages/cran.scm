@@ -25,7 +25,8 @@
   #:use-module (gnu packages cran)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages haskell-xyz)
-  #:use-module (gnu packages statistics))
+  #:use-module (gnu packages statistics)
+  #:use-module (gnu packages tex))
 
 ;; Not upstreamable: Bundles lots of JavaScript libraries, minified bootstrap,
 ;; font-awesome, …
@@ -441,7 +442,35 @@ dependency-free.")
               r-rmdfiltr
               r-tinylabels
               r-yaml
-              r-zip))
+              r-zip
+              texlive-amsmath
+              texlive-latex-graphics
+              texlive-hyperref
+              texlive-latex-titlesec
+              texlive-caption
+              texlive-latex-framed
+              texlive-xcolor
+              texlive-tools
+              texlive-latex-multirow
+              texlive-latex-threeparttable
+              texlive-etoolbox
+              texlive-apa6
+              texlive-latex-geometry
+              texlive-booktabs
+              texlive-latex-fancyhdr
+              texlive-endfloat
+              texlive-was ; upgreek.sty
+              texlive-threeparttablex
+              texlive-latex-environ
+              texlive-latex-trimspaces
+              texlive-xpatch
+              texlive-lineno
+              texlive-csquotes
+              texlive-grfext
+              (texlive-updmap.cfg (list
+                                   texlive-amsfonts
+                                   texlive-times
+                                   texlive-lm))))
       (native-inputs (list r-knitr))
       (home-page "https://github.com/crsh/papaja.git")
       (synopsis
