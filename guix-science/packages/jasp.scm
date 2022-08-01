@@ -1,5 +1,6 @@
 ;;;
 ;;; Copyright © 2020 Lars-Dominik Braun <ldb@leibniz-psychology.org>
+;;; Copyright © 2022 Ricardo Wurmus <rekado@elephly.net>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU General Public License as published by
@@ -124,8 +125,8 @@
      `(("qtwebengine" ,qtwebengine)
        ("qtsvg" ,qtsvg)
        ("qtwebchannel" ,qtwebchannel)
-       ("qtquickcontrols" ,qtquickcontrols) ; qtquick styles
-       ("qtquickcontrols2" ,qtquickcontrols2)
+       ("qtquickcontrols" ,qtquickcontrols-5) ; qtquick styles
+       ("qtquickcontrols2" ,qtquickcontrols2-5)
        ("qtdeclarative" ,qtdeclarative)
        ("qtgraphicaleffects" ,qtgraphicaleffects)
        ("boost" ,boost)
