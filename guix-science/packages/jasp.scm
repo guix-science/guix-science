@@ -122,12 +122,12 @@
     (native-inputs
      `(("qtbase" ,qtbase-5)))             ; qmake
     (inputs
-     `(("qtwebengine" ,qtwebengine)
-       ("qtsvg" ,qtsvg)
-       ("qtwebchannel" ,qtwebchannel)
+     `(("qtwebengine" ,qtwebengine-5)
+       ("qtsvg" ,qtsvg-5)
+       ("qtwebchannel" ,qtwebchannel-5)
        ("qtquickcontrols" ,qtquickcontrols-5) ; qtquick styles
        ("qtquickcontrols2" ,qtquickcontrols2-5)
-       ("qtdeclarative" ,qtdeclarative)
+       ("qtdeclarative" ,qtdeclarative-5)
        ("qtgraphicaleffects" ,qtgraphicaleffects)
        ("boost" ,boost)
        ("libarchive" ,libarchive)
