@@ -1087,10 +1087,9 @@ indexing classes and BAM sequence alignment functionality.")
    (arguments
     `(#:tests? #f))
    (inputs
-    `(("libmaus" ,libmaus)
-      ("zlib" ,zlib)))
+    (list libmaus zlib))
    (native-inputs
-    `(("pkg-config" ,pkg-config)))
+    (list pkg-config))
    (home-page "https://github.com/gt1/biobambam")
    (synopsis "Collection of tools to work with BAM files")
    (description "This package contains the following programs: bamcollate2,
