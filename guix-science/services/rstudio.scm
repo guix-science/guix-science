@@ -34,6 +34,7 @@
             rstudio-server-configuration-package
             rstudio-server-configuration-default-r
             rstudio-server-configuration-server-user
+            rstudio-server-configuration-default-user
             rstudio-server-configuration-pam
             rstudio-server-configuration-auth-none?
             rstudio-server-configuration-www-address
@@ -50,6 +51,9 @@
                (default r-minimal))
   (server-user rstudio-server-configuration-server-user
                (default "rstudio-server"))
+  ;; This only makes sense when auth-none? is #true.
+  (default-user rstudio-server-configuration-default-user
+               (default #false))
   (pam         rstudio-server-configuration-pam
                (default (pam-entry
                          (control "required")
@@ -84,15 +88,10 @@
            (session (list pam))))))
 
 (define (rstudio-server-shepherd-services config)
-  (define environment
-    #~(list "LC_ALL=en_US.utf8"
-            (string-append "GUIX_LOCPATH=" #$glibc-utf8-locales
-                           "/lib/locale")))
-
   (match config
     (($ <rstudio-server-configuration>
         package default-r
-        server-user pam
+        server-user default-user pam
         auth-none?
         www-address www-port)
      (list (shepherd-service
@@ -110,7 +109,13 @@
                         ,(string-append "--www-port=" #$www-port)
                         ,(string-append "--server-user=" #$server-user)
                         "--server-daemonize=0")
-                      #:environment-variables #$environment))
+                      #:environment-variables
+                      (list "LC_ALL=en_US.utf8"
+                            (string-append "GUIX_LOCPATH=" #$glibc-utf8-locales
+                                           "/lib/locale")
+                            #$@(if default-user
+                                   (list #~(string-append "USER=" #$default-user))
+                                   #~()))))
             (stop #~(make-kill-destructor)))))))
 
 (define rstudio-server-service-type
