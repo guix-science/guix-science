@@ -1061,9 +1061,9 @@ between some other projects, specifically AscatNGS and Battenburg.")
               "0g92bl37ci8pzkgi2xnn2bck7y655jwcb1bm3mg42mj5lf5x2i5b"))))
    (build-system gnu-build-system)
    (native-inputs
-    `(("pkg-config" ,pkg-config)))
+    (list pkg-config))
    (inputs
-    `(("zlib" ,zlib)))
+    (list zlib))
    (home-page "https://github.com/gt1/libmaus")
    (synopsis "Collection of bioinformatics data structures and algorithms")
    (description "This package contains a collection of bioinformatics data
