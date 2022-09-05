@@ -39,6 +39,7 @@
             rstudio-server-configuration-auth-none?
             rstudio-server-configuration-www-address
             rstudio-server-configuration-www-port
+            rstudio-server-configuration-extra-options
 
             rstudio-server-service-type))
 
@@ -63,7 +64,9 @@
   (www-address rstudio-server-configuration-www-address
                (default "127.0.0.1"))
   (www-port    rstudio-server-configuration-www-port
-               (default "8899")))
+               (default "8899"))
+  (extra-options rstudio-server-configuration-extra-options
+                 (default (list))))
 
 (define (rstudio-server-accounts config)
   (let ((username (rstudio-server-configuration-server-user config)))
@@ -93,7 +96,8 @@
         package default-r
         server-user default-user pam
         auth-none?
-        www-address www-port)
+        www-address www-port
+        extra-options)
      (list (shepherd-service
             (provision '(rstudio-server))
             (documentation "Run RStudio Server.")
@@ -108,7 +112,8 @@
                         ,(string-append "--www-address=" #$www-address)
                         ,(string-append "--www-port=" #$www-port)
                         ,(string-append "--server-user=" #$server-user)
-                        "--server-daemonize=0")
+                        "--server-daemonize=0"
+                        ,@extra-options)
                       #:environment-variables
                       (list "LC_ALL=en_US.utf8"
                             (string-append "GUIX_LOCPATH=" #$glibc-utf8-locales
