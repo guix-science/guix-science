@@ -113,7 +113,7 @@
                         ,(string-append "--www-port=" #$www-port)
                         ,(string-append "--server-user=" #$server-user)
                         "--server-daemonize=0"
-                        ,@extra-options)
+                        #$@extra-options)
                       #:environment-variables
                       (list "LC_ALL=en_US.utf8"
                             (string-append "GUIX_LOCPATH=" #$glibc-utf8-locales
