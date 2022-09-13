@@ -177,37 +177,38 @@ based on the Jupyter Notebook and Architecture.")
 ;; Cannot be upstreamed, bundles lots of JavaScript.
 (define-public python-jupyterhub
   (package
-   (name "python-jupyterhub")
-   (version "1.4.1")
-   (source (origin
-            (method url-fetch)
-            (uri (pypi-uri "jupyterhub" version))
-            (sha256
-             (base32
-              "16aibgv34ndvkll3ax1an8m859jcf05ybqwnjwrhp3nvlhc0f6zf"))))
-   (build-system python-build-system)
-   (arguments
+    (name "python-jupyterhub")
+    (version "3.0.0")
+    (source (origin
+              (method url-fetch)
+              (uri (pypi-uri "jupyterhub" version))
+              (sha256
+               (base32
+                "0sgvqzxsy2r9880yymiwrbcgwr2z1h8n2nzvcraybwqch2yzxk85"))))
+    (build-system python-build-system)
+    (arguments
     `(#:tests? #f))
-   (propagated-inputs
-    `(("python-alembic" ,python-alembic)
-      ("python-async-generator" ,python-async-generator)
-      ("python-certipy" ,python-certipy)
-      ("python-dateutil" ,python-dateutil)
-      ("python-entrypoints" ,python-entrypoints)
-      ("python-jinja2" ,python-jinja2)
-      ("python-oauthlib" ,python-oauthlib)
-      ("python-pamela" ,python-pamela)
-      ("python-prometheus-client" ,python-prometheus-client)
-      ("python-requests" ,python-requests)
-      ("python-sqlalchemy" ,python-sqlalchemy)
-      ("python-tornado" ,python-tornado-6)
-      ("python-traitlets" ,python-traitlets)
-      ("python-jupyter-telemetry" ,python-jupyter-telemetry)
-      ("python-notebook" ,python-notebook)))
-   (home-page "https://jupyter.org")
-   (synopsis "JupyterHub: A multi-user server for Jupyter notebooks")
-   (description "JupyterHub: A multi-user server for Jupyter notebooks")
-   (license license:bsd-3)))
+    (propagated-inputs (list python-alembic
+                             python-async-generator
+                             python-certipy
+                             python-dateutil
+                             python-importlib-metadata
+                             python-jinja2
+                             python-jupyter-telemetry
+                             python-oauthlib
+                             python-packaging
+                             python-pamela
+                             python-prometheus-client
+                             python-psutil
+                             python-requests
+                             python-sqlalchemy
+                             python-tornado-6
+                             python-traitlets
+                             python-notebook))
+    (home-page "https://jupyter.org")
+    (synopsis "JupyterHub: A multi-user server for Jupyter notebooks")
+    (description "JupyterHub: A multi-user server for Jupyter notebooks")
+    (license license:bsd-3)))
 
 ;; Cannot be upstreamed: Depends on JupyterHub
 (define-public python-batchspawner
