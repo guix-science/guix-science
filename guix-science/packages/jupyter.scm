@@ -36,6 +36,7 @@
   #:use-module (gnu packages tex)
   #:use-module (gnu packages time)
   #:use-module (gnu packages xml)
+  #:use-module (guix-science packages jupyter-node)
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix git-download)
@@ -187,7 +188,23 @@ based on the Jupyter Notebook and Architecture.")
                 "0sgvqzxsy2r9880yymiwrbcgwr2z1h8n2nzvcraybwqch2yzxk85"))))
     (build-system python-build-system)
     (arguments
-    `(#:tests? #f))
+     '(#:tests? #f ; Difficult to get them working.
+       #:phases
+       (modify-phases %standard-phases
+         (add-after 'unpack 'guix-modifications
+           (lambda* (#:key outputs inputs #:allow-other-keys)
+             ;; Guix uses GUIX_PYTHONPATH instead of PYTHONPATH.
+             (substitute* "jupyterhub/spawner.py"
+               (("(\\s+)('PYTHONPATH',)" indent var)
+                (string-append indent var "\n" indent "'GUIX_PYTHONPATH',")))
+             (substitute* "jupyterhub/proxy.py"
+               (("'configurable-http-proxy'")
+                (string-append "'" (search-input-file inputs "/bin/configurable-http-proxy") "'")))))
+         (replace 'check
+           (lambda* (#:key tests? #:allow-other-keys)
+             (when tests?
+               (invoke "pytest" "-vv" "jupyterhub/tests")))))))
+    (inputs (list configurable-http-proxy))
     (propagated-inputs (list python-alembic
                              python-async-generator
                              python-certipy
@@ -205,6 +222,17 @@ based on the Jupyter Notebook and Architecture.")
                              python-tornado-6
                              python-traitlets
                              python-notebook))
+    (native-inputs (list python-attrs
+                         python-beautifulsoup4
+                         python-cryptography
+                         python-mock
+                         python-nbclassic
+                         python-pytest
+                         python-pytest-asyncio
+                         python-pytest-tornado
+                         python-pytest-cov
+                         python-requests-mock
+                         python-urllib3))
     (home-page "https://jupyter.org")
     (synopsis "JupyterHub: A multi-user server for Jupyter notebooks")
     (description "JupyterHub: A multi-user server for Jupyter notebooks")
