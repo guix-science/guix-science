@@ -75,7 +75,7 @@ for assistive technology like screen readers.")
 (define-public rstudio-server
   (package
     (name "rstudio-server")
-    (version "2021.09.2+382")
+    (version "2021.09.3+396")
     (source (origin
               (method git-fetch)
               (uri (git-reference
@@ -84,7 +84,7 @@ for assistive technology like screen readers.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1lj7bdc12p17x9yac8m95z585caikqlk5a9s036bv6b1v6l516r2"))
+                "1kn00pd26cl4avykrgrxjq05v45sah0d3i45s1c1hzhhs5a1wgad"))
               (patches
                (search-patches "rstudio-server-2021.09.0+351-unbundle.patch"
                                "rstudio-server-1.4.1103-soci-searchpath.patch"))
