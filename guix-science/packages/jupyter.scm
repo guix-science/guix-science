@@ -1,5 +1,6 @@
 ;;;
 ;;; Copyright © 2019, 2020 Lars-Dominik Braun <ldb@leibniz-psychology.org>
+;;; Copyright © 2022 Ricardo Wurmus <rekado@elephly.net>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU General Public License as published by
@@ -329,4 +330,25 @@ batch resource managers.")
 spawners.  The inspiration for their development was to allow users to select
 from a range of pre-defined batch job profiles, but their operation is
 completely generic.")
+    (license license:bsd-3)))
+
+;; Cannot be upstreamed: Depends on JupyterHub
+(define-public python-sudospawner
+  (package
+    (name "python-sudospawner")
+    (version "0.5.2")
+    (source (origin
+              (method url-fetch)
+              (uri (pypi-uri "sudospawner" version))
+              (sha256
+               (base32
+                "1qdvpyw0krndcgqb656dy5l64p2smxdimsqylfrlnpp0cj0xvgax"))))
+    (build-system python-build-system)
+    (propagated-inputs (list python-jupyterhub python-notebook))
+    (home-page "https://jupyter.org")
+    (synopsis "Spawner for JupyterHub using sudo")
+    (description "The SudoSpawner enables JupyterHub to spawn
+single-user servers without being root, by spawning an intermediate
+process via @command{sudo}, which takes actions on behalf of the
+user.")
     (license license:bsd-3)))
