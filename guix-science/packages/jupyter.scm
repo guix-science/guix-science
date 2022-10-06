@@ -352,3 +352,36 @@ single-user servers without being root, by spawning an intermediate
 process via @command{sudo}, which takes actions on behalf of the
 user.")
     (license license:bsd-3)))
+
+;; Cannot be upstreamed: Depends on JupyterHub
+(define-public python-systemdspawner
+  (package
+    (name "python-systemdspawner")
+    (version "0.16")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/jupyterhub/systemdspawner.git")
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "0ddx68k4b7nzszv0ms4fdcf4zzvn2scqlw57zy8wwhbx94ljravp"))))
+    (build-system python-build-system)
+    (arguments
+     (list
+      #:tests? #false ;requires systemd-run
+      #:phases
+      '(modify-phases %standard-phases
+         (replace 'check
+           (lambda* (#:key tests? #:allow-other-keys)
+             (when tests?
+               (invoke "pytest" "-vv")))))))
+    (propagated-inputs (list python-jupyterhub python-tornado-6))
+    (native-inputs
+     (list python-pytest python-pytest-asyncio))
+    (home-page "https://jupyter.org")
+    (synopsis "Spawn JupyterHub single-user notebook servers with systemd")
+    (description "The systemdspawner enables JupyterHub to spawn
+single-user notebook servers using systemd.")
+    (license license:bsd-3)))
