@@ -1143,9 +1143,9 @@
     (home-page
       "https://github.com/winstonjs/winston-transport#readme")
     (synopsis
-      "Base stream implementations for winston@3 and up.")
+      "Base stream implementations for winston@@3 and up.")
     (description
-      "Base stream implementations for winston@3 and up.")
+      "Base stream implementations for winston@@3 and up.")
     (license license:expat)))
 
 (define-public node-winston-3.8.2
