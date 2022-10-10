@@ -424,7 +424,7 @@
       "Return an array free of duplicate values. Fastest ES5 implementation.")
     (description
       "Return an array free of duplicate values. Fastest ES5 implementation.")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-is-number-2.1.0
   (package
@@ -662,7 +662,7 @@
       "Temporarily substitute tokens in the given `string` with placeholders, then put them back after transforming the string.")
     (description
       "Temporarily substitute tokens in the given `string` with placeholders, then put them back after transforming the string.")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-braces-1.8.5
   (package
@@ -992,7 +992,7 @@
       "Returns an object with the (non-glob) base path and the actual pattern.")
     (description
       "Returns an object with the (non-glob) base path and the actual pattern.")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-is-dotfile-1.0.3
   (package
@@ -1081,7 +1081,7 @@
       "Returns `true` if the value is a primitive. ")
     (description
       "Returns `true` if the value is a primitive. ")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-is-equal-shallow-0.1.3
   (package
@@ -3332,7 +3332,7 @@
       "atob for Node.JS and Linux / Mac / Windows CLI (it's a one-liner)")
     (description
       "atob for Node.JS and Linux / Mac / Windows CLI (it's a one-liner)")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-decode-uri-component-0.2.0
   (package
@@ -4062,7 +4062,7 @@
       "ECMAScript JS AST traversal functions")
     (description
       "ECMAScript JS AST traversal functions")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-esutils-2.0.3
   (package
@@ -4089,7 +4089,7 @@
       "utility box for ECMAScript language tools")
     (description
       "utility box for ECMAScript language tools")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-esprima-4.0.1
   (package
@@ -4116,7 +4116,7 @@
       "ECMAScript parsing infrastructure for multipurpose analysis")
     (description
       "ECMAScript parsing infrastructure for multipurpose analysis")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-deep-is-0.1.3
   (package
@@ -4143,7 +4143,7 @@
       "node's assert.deepEqual algorithm except for NaN being equal to NaN")
     (description
       "node's assert.deepEqual algorithm except for NaN being equal to NaN")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-word-wrap-1.2.3
   (package
@@ -4196,7 +4196,7 @@
       "prelude.ls is a functionally oriented utility library. It is powerful and flexible. Almost all of its functions are curried. It is written in, and is the recommended base library for, LiveScript.")
     (description
       "prelude.ls is a functionally oriented utility library. It is powerful and flexible. Almost all of its functions are curried. It is written in, and is the recommended base library for, LiveScript.")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-type-check-0.3.2
   (package
@@ -4348,7 +4348,7 @@
     (home-page "http://github.com/estools/escodegen")
     (synopsis "ECMAScript code generator")
     (description "ECMAScript code generator")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-negotiator-0.6.2
   (package
@@ -6774,7 +6774,7 @@
       "Lightweight library for composing asynchronous and event-based operations in JavaScript")
     (description
       "Lightweight library for composing asynchronous and event-based operations in JavaScript")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-rx-lite-aggregates-4.0.8
   (package
@@ -6803,7 +6803,7 @@
       "Lightweight library with aggregate functions for composing asynchronous and event-based operations in JavaScript")
     (description
       "Lightweight library with aggregate functions for composing asynchronous and event-based operations in JavaScript")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-is-fullwidth-code-point-2.0.0
   (package
@@ -7385,7 +7385,7 @@
       "Convert bytes to other sizes for prettier logging")
     (description
       "Convert bytes to other sizes for prettier logging")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-app-root-path-1.4.0
   (package
@@ -7611,7 +7611,7 @@
       "A JavaScript library for escaping JavaScript strings while generating the shortest possible valid output.")
     (description
       "A JavaScript library for escaping JavaScript strings while generating the shortest possible valid output.")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-regjsparser-0.6.7
   (package
@@ -7640,7 +7640,7 @@
       "Parsing the JavaScript's RegExp in JavaScript.")
     (description
       "Parsing the JavaScript's RegExp in JavaScript.")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-unicode-canonical-property-names-ecmascript-1.0.4
   (package
@@ -8192,7 +8192,7 @@
       "An RFC 3986/3987 compliant, scheme extendable URI/IRI parsing/validating/resolving library for JavaScript.")
     (description
       "An RFC 3986/3987 compliant, scheme extendable URI/IRI parsing/validating/resolving library for JavaScript.")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-ajv-6.12.6
   (package
@@ -8366,7 +8366,7 @@
       "JSON Schema validation and specifications")
     (description
       "JSON Schema validation and specifications")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-core-util-is-1.0.2
   (package
@@ -9403,7 +9403,7 @@
       "Runtime library for TypeScript helper functions")
     (description
       "Runtime library for TypeScript helper functions")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-merge-1.2.1
   (package
@@ -9459,7 +9459,7 @@
       "Execute shell command forwarding all stdio.")
     (description
       "Execute shell command forwarding all stdio.")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-watch-1.0.2
   (package
@@ -9516,7 +9516,7 @@
       "A very light-weight in-code option parsers for node.js.")
     (description
       "A very light-weight in-code option parsers for node.js.")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-ultron-1.0.2
   (package
@@ -10001,7 +10001,7 @@
       "HTML pretty printer CLI utility (based on jsbeautifier)")
     (description
       "HTML pretty printer CLI utility (based on jsbeautifier)")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-ie-array-find-polyfill-1.1.0
   (package
@@ -11453,7 +11453,7 @@
       "Option parsing for Node, supporting types, shorthands, etc. Used by npm.")
     (description
       "Option parsing for Node, supporting types, shorthands, etc. Used by npm.")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-touch-2.0.2
   (package
@@ -12147,7 +12147,7 @@
       "JavaScript parser, mangler/compressor and beautifier toolkit")
     (description
       "JavaScript parser, mangler/compressor and beautifier toolkit")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-commander-2.14.1
   (package
@@ -12206,7 +12206,7 @@
       "JavaScript parser, mangler/compressor and beautifier toolkit for ES6+")
     (description
       "JavaScript parser, mangler/compressor and beautifier toolkit for ES6+")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-commander-2.20.3
   (package
@@ -12297,7 +12297,7 @@
       "JavaScript parser, mangler/compressor and beautifier toolkit for ES6+")
     (description
       "JavaScript parser, mangler/compressor and beautifier toolkit for ES6+")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-biblatex-csl-converter-1.9.5
   (package
@@ -13797,7 +13797,7 @@
       "Provides boundary functions, (upper-bound and lower-bound).")
     (description
       "Provides boundary functions, (upper-bound and lower-bound).")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-structured-source-3.0.2
   (package
@@ -13827,7 +13827,7 @@
       "Provides StructuredSource and functionality for converting range and loc vice versa.")
     (description
       "Provides StructuredSource and functionality for converting range and loc vice versa.")
-    (license #f)))
+    (license (license:non-copyleft "unknown"))))
 
 (define-public node-concat-stream-2.0.0
   (package
