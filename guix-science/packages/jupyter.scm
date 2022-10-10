@@ -100,7 +100,7 @@ applications")
     (home-page "https://github.com/jupyterlab/nbclassic")
     (synopsis "Jupyter Notebook as a Jupyter Server extension.")
     (description "Jupyter Notebook as a Jupyter Server extension.")
-    (license #f)))
+    (license license:bsd-3)))
 
 (define-public python-jupyterlab
   (package
