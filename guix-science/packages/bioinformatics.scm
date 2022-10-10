@@ -1930,7 +1930,7 @@ file the lists the enriched domains and their posterior probabilities.")
     (home-page "http://search.cpan.org/dist/FindBin-libs")
     (synopsis "")
     (description "")
-    (license #f)))
+    (license (package-license perl))))
 
 (define-public perl-prokka
   (package
