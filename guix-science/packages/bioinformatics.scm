@@ -1163,7 +1163,7 @@ Pan-Cancer Analysis Project")
     (home-page "http://search.cpan.org/dist/Bio-Pipeline-Comparison")
     (synopsis "Comparative assesment of variant calling (CAVar)")
     (description "")
-    (license #f)))
+    (license license:gpl3+)))
 
 (define-public perl-cgpvcf
   (package
