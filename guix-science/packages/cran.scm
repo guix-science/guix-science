@@ -416,70 +416,64 @@ citations).")
 dependency-free.")
     (license license:expat)))
 
-;; No recent releases, so just a random commit.
 (define-public r-papaja
-  (let ((commit "5e28378a85e83296c1e593b0d2e08e173d663279") (revision "1"))
-    (package
-      (name "r-papaja")
-      (version (git-version "0.1.0.9999" revision commit))
-      (source
-        (origin
-          (method git-fetch)
-          (uri (git-reference
-                 (url "https://github.com/crsh/papaja.git")
-                 (commit commit)))
-          (file-name (git-file-name name version))
-          (sha256
-            (base32 "0pf43n47zy69501z1hc2gw73cvs5gcnp27c62xnpg87hnvxy8b0j"))))
-      (properties `((upstream-name . "papaja")))
-      (build-system r-build-system)
-      (propagated-inputs
-        (list r-bookdown
-              r-broom
-              r-glue
-              r-knitr
-              r-rmarkdown
-              r-rmdfiltr
-              r-tinylabels
-              r-yaml
-              r-zip
-              texlive-amsmath
-              texlive-latex-graphics
-              texlive-hyperref
-              texlive-latex-titlesec
-              texlive-caption
-              texlive-latex-framed
-              texlive-xcolor
-              texlive-tools
-              texlive-latex-multirow
-              texlive-latex-threeparttable
-              texlive-etoolbox
-              texlive-apa6
-              texlive-latex-geometry
-              texlive-booktabs
-              texlive-latex-fancyhdr
-              texlive-endfloat
-              texlive-was ; upgreek.sty
-              texlive-threeparttablex
-              texlive-latex-environ
-              texlive-latex-trimspaces
-              texlive-xpatch
-              texlive-lineno
-              texlive-csquotes
-              texlive-grfext
-              (texlive-updmap.cfg (list
-                                   texlive-amsfonts
-                                   texlive-times
-                                   texlive-lm))))
-      (native-inputs (list r-knitr))
-      (home-page "https://github.com/crsh/papaja.git")
-      (synopsis
-        "Prepare American Psychological Association Journal Articles with R Markdown")
-      (description
-        "Tools to create dynamic, submission-ready manuscripts, which conform to American
-Psychological Association manuscript guidelines.  We provide R Markdown document
-formats for manuscripts (PDF and Word) and revision letters (PDF).  Helper
-functions facilitate reporting statistical analyses or create publication-ready
-tables and plots.")
-      (license license:expat))))
-
+  (package
+    (name "r-papaja")
+    (version "0.1.1")
+    (source
+      (origin
+        (method url-fetch)
+        (uri (cran-uri "papaja" version))
+        (sha256
+          (base32 "1pvknpvfns1r5bwadm58n4xjrlwgqfyhz9diy72zabbksxddqa26"))))
+    (properties `((upstream-name . "papaja")))
+    (build-system r-build-system)
+    (propagated-inputs
+      (list r-bookdown
+            r-broom
+            r-glue
+            r-knitr
+            r-rmarkdown
+            r-rmdfiltr
+            r-tinylabels
+            r-yaml
+            r-zip
+            texlive-amsmath
+            texlive-latex-graphics
+            texlive-hyperref
+            texlive-latex-titlesec
+            texlive-caption
+            texlive-latex-framed
+            texlive-xcolor
+            texlive-tools
+            texlive-latex-multirow
+            texlive-latex-threeparttable
+            texlive-etoolbox
+            texlive-apa6
+            texlive-latex-geometry
+            texlive-booktabs
+            texlive-latex-fancyhdr
+            texlive-endfloat
+            texlive-was ; upgreek.sty
+            texlive-threeparttablex
+            texlive-latex-environ
+            texlive-latex-trimspaces
+            texlive-xpatch
+            texlive-lineno
+            texlive-csquotes
+            texlive-grfext
+            (texlive-updmap.cfg (list
+                                 texlive-amsfonts
+                                 texlive-times
+                                 texlive-lm))))
+    (native-inputs (list r-knitr))
+    (home-page "https://github.com/crsh/papaja")
+    (synopsis
+      "Prepare American Psychological Association Journal Articles with R Markdown")
+    (description
+      "Tools to create dynamic, submission-ready manuscripts, which conform to American
+ychological Association manuscript guidelines.  We provide R Markdown document
+rmats for manuscripts (PDF and Word) and revision letters (PDF).  Helper
+nctions facilitate reporting statistical analyses or create publication-ready
+bles and plots.")
+    (license license:expat)))
