@@ -18,6 +18,7 @@
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (guix packages)
   #:use-module (guix download)
+  #:use-module (guix git-download)
   #:use-module (guix build-system r)
   #:use-module (gnu packages)
   #:use-module (gnu packages bioconductor)
@@ -31,12 +32,15 @@
   (package
     (name "r-isee")
     (version "2.6.0")
-    (source
-     (origin
-       (method url-fetch)
-       (uri (bioconductor-uri "iSEE" version))
-       (sha256
-        (base32 "13x4xiy1qy2bz6yg06gx4lqly5ql6gbkbflvck1i1xws5kdc62z3"))))
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://git.bioconductor.org/packages/iSEE")
+                    (commit "9c0e8e01d657ea60696eca72514293d3f2720c4b")))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "1d58irf9ch1kfy1sbzldci71k8aqrfg8jn9qqdk973iwc7xsgfi2"))))
     (properties `((upstream-name . "iSEE")))
     (build-system r-build-system)
     (propagated-inputs
