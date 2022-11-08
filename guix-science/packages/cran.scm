@@ -501,3 +501,66 @@ bles and plots.")
      "This package provides full screen and partial loading screens
 for Shiny with spinners, progress bars, and notifications.")
     (license license:expat)))
+
+;; TODO: still have to remove these:
+;; materialDesign-1.0/js/material.min.js
+;; materialDesign-1.0/js/ripples.min.js
+(define-public r-shinydashboardplus
+  (package
+    (name "r-shinydashboardplus")
+    (version "2.0.3")
+    (source (origin
+              (method url-fetch)
+              (uri (cran-uri "shinydashboardPlus" version))
+              (sha256
+               (base32
+                "10sdb1vddx2ij867pqijr63l4233hw1vnn7mzbs0z23g77x8ra29"))
+              (modules '((guix build utils)))
+              (snippet
+               `(with-directory-excursion
+                    ,(string-append "inst/shinydashboardPlus-" version
+                                    "/js/")
+                  (for-each delete-file-recursively
+                            '("app.min.js"
+                              "shinydashboardPlus.min.js"
+                              "shinydashboardPlus.min.js.map"))))))
+    (properties `((upstream-name . "shinydashboardPlus")))
+    (build-system r-build-system)
+    (arguments
+     (list
+      ;; The tests launch a shinyApp; they are interactive tests that
+      ;; will block forever, so we just don't run them.
+      #:tests? #false
+      #:phases
+      `(modify-phases %standard-phases
+         (add-after 'unpack 'process-javascript
+           (lambda _
+             (with-directory-excursion
+                 ,(string-append "inst/shinydashboardPlus-" version
+                                 "/js/")
+               (let ((mapping
+                      `(("app.js" . "app.min.js")
+                        ("shinydashboardPlus.js" . "shinydashboardPlus.min.js"))))
+                 (for-each (lambda (source target)
+                             (format #true "Processing ~a --> ~a~%"
+                                     source target)
+                             (invoke "esbuild" source "--minify"
+                                     (string-append "--outfile=" target)))
+                           (map car mapping)
+                           (map cdr mapping)))))))))
+    (propagated-inputs
+     (list r-fresh
+           r-htmltools
+           r-lifecycle
+           r-shiny
+           r-shinydashboard
+           r-waiter))
+    (native-inputs
+     (list esbuild r-knitr))
+    (home-page "https://github.com/RinteRface/shinydashboardPlus")
+    (synopsis "Add more AdminLTE2 components to shinydashboard")
+    (description
+     "This package extends shinydashboard with AdminLTE2 components.
+AdminLTE2 is a Bootstrap 3 dashboard template.  Customize boxes, add
+timelines and a lot more.")
+    (license license:gpl2+)))
