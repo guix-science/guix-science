@@ -26,7 +26,8 @@
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages haskell-xyz)
   #:use-module (gnu packages statistics)
-  #:use-module (gnu packages tex))
+  #:use-module (gnu packages tex)
+  #:use-module (gnu packages web))
 
 ;; Not upstreamable: Bundles lots of JavaScript libraries, minified bootstrap,
 ;; font-awesome, …
