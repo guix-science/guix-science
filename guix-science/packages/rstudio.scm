@@ -38,6 +38,7 @@
   #:use-module (gnu packages compression)
   #:use-module (gnu packages cran)
   #:use-module (gnu packages databases)
+  #:use-module (gnu packages file)
   #:use-module (gnu packages haskell-xyz)
   #:use-module (gnu packages java)
   #:use-module (gnu packages linux)
@@ -46,6 +47,7 @@
   #:use-module (gnu packages serialization)
   #:use-module (gnu packages statistics)
   #:use-module (gnu packages sqlite)
+  #:use-module (gnu packages ssh)
   #:use-module (gnu packages tls)
   #:use-module (gnu packages web)
   #:use-module (guix-science packages rstudio-node))
@@ -144,6 +146,13 @@ for assistive technology like screen readers.")
                (("/usr/bin/unzip") (string-append (assoc-ref inputs "unzip") "/bin/unzip")))
              (substitute* "src/cpp/core/system/Architecture.cpp"
                (("/usr/bin/uname") (string-append (assoc-ref inputs "coreutils") "/bin/uname")))
+             (substitute* "src/cpp/session/SessionModuleContext.cpp"
+               (("cmd\\(\"file\"\\)") (string-append "cmd(\"" (assoc-ref inputs "file") "/bin/file\")")))
+             (substitute* "src/cpp/session/modules/SessionGit.cpp"
+               (("\"ssh-add") (string-append "\"" (assoc-ref inputs "openssh") "/bin/ssh-add"))
+               (("\"ssh-agent") (string-append "\"" (assoc-ref inputs "openssh") "/bin/ssh-agent")))
+             (substitute* "src/cpp/session/modules/SessionSVN.cpp"
+               (("\"patch\"") (string-append "\"" (assoc-ref inputs "patch") "/bin/patch\"")))
              (substitute* "src/gwt/build.xml"
                ;; Fix path to node binary
                (("\"[^\"]+/bin/node\"")
@@ -229,6 +238,12 @@ for assistive technology like screen readers.")
        ("postgresql" ,postgresql)
        ("sqlite" ,sqlite)
        ("soci" ,soci)
+       ;; For `file` utility, binary file detection
+       ("file" ,file)
+       ;; For `patch` utility, apply SVN patches
+       ("patch" ,patch)
+       ;; For `ssh-add`/`ssh-agent`
+       ("openssh" ,openssh)
        ;; For panmirror.
        ("node-biblatex-csl-converter-1.9.5" ,node-biblatex-csl-converter-1.9.5)
        ("node-clipboard-2.0.6" ,node-clipboard-2.0.6)
