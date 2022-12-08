@@ -17,6 +17,7 @@
 
 (define-module (guix-science packages CERN)
   #:use-module  ((guix licenses) #:prefix license:)
+  #:use-module  (guix build-system trivial)
   #:use-module  (gnu packages algebra)	 ;; FFTW
   #:use-module  (gnu packages astronomy) ;; cfitsio
   #:use-module  (gnu packages backup)
@@ -74,7 +75,16 @@
 	    c-ares-1.18.1
 	    
 	    ;; libcern
-	    nodejs-16.13.1
+	    CLHEP-2.3.4         ;; Ok
+	    nodejs-16.13.1      ;; Ok
+	    OpenScientist-batch ;; TODO: deprecated but still needed
+	    
+	    ;; Deja fournie par Guix
+	    ;; cairo
+	    ;; clang
+	    ;; cmake
+	    ;; coin3d
+	    ;; openmpi
 	    
 	    ;; Others
 	    dcap-2.47.12  ;; Ok
@@ -389,6 +399,124 @@ devices.")
    (properties '((max-silent-time . 7200) ;2h, needed on ARM
                  (timeout . 21600)	  ;6h
                  (cpe-name . "node.js")))))
+
+;; TODO
+(define-public OpenScientist-batch
+  (package
+   (name "OpenScientist-batch")
+   (version "16.11.8")
+   (source (origin
+	    (method url-fetch)
+            (uri "https://softinex.lal.in2p3.fr/down_load/OpenScientist/16.11.8/osc_batch_source_16.11.8.zip")
+	    (sha256
+             (base32
+	      "0pn3y9v1q8x67v5nr2p17mv1qx1hhz0hz0sj1kn6y06av4xg83kl"))))
+   (build-system trivial-build-system)
+   (inputs
+    `(("bash" ,bash)
+      ("coreutils" ,coreutils) ;; dirname
+      ("unzip" ,unzip)
+      ("findutils" ,findutils)
+      ("gcc-toolchain" ,gcc-toolchain)))
+   (arguments
+    `(#:modules ((guix build utils))
+      #:builder
+      (begin
+        (use-modules (guix build utils))
+	
+        (define (echo-var var)
+          (display (list var ": " (getenv var)))
+          (newline))
+
+	(define (set-path)
+	  (let* ((packages (alist-delete "source" %build-inputs))
+                 (packages-path (map cdr packages)))
+            (setenv
+             "PATH"
+             (apply
+              string-append
+              (getenv "PATH") ":"
+              (map (lambda (p) (string-append p "/bin:"))
+                   packages-path)))))
+	
+	(define (patch-source-shebangs dir)
+          (for-each
+           patch-shebang
+           (find-files dir
+                       (lambda (file stat)
+                         ;; Filter out symlinks.                                
+                         (eq? 'regular (stat:type stat)))
+                       #:stat lstat)))
+
+	(let* ((source (assoc-ref %build-inputs "source"))
+	       (coreutils-dir (assoc-ref %build-inputs "coreutils"))
+	       (unzip-dir (assoc-ref %build-inputs "unzip"))
+	       (unzip-bin (string-append unzip-dir "/bin/unzip"))
+	       (GCC_DIR (assoc-ref %build-inputs "gcc-toolchain"))
+	       )
+
+	  (setenv "GUIX_LD_WRAPPER_ALLOW_IMPURITIES" "no")
+	  (setenv "LIBRARY_PATH" (string-append GCC_DIR "/lib"))
+	  
+	  (set-path)
+	  (setenv
+           "CPLUS_INCLUDE_PATH"
+	   (string-append
+	    ;; Pour <linux/errno.h>
+	    (string-append GCC_DIR "/include" ":")
+	    ))
+	
+	  (display (list "build-inputs" %build-inputs)) (newline)
+          (display (list "pwd: " (getcwd))) (newline)
+	  (display (list "source: " source)) (newline)
+          (display (list "env: " (environ))) (newline)
+
+	  (invoke unzip-bin source)
+
+	  (chdir "OpenScientist")
+	  (substitute* '("osc_batch/obuild/sh/build"
+			 "obuild/obuild/sh/build_app_owrap")
+		       (("/bin/mkdir")
+			(string-append coreutils-dir "/bin/mkdir"))
+		       (("/bin/rm")
+			(string-append coreutils-dir "/bin/rm")))
+	  
+	  (patch-source-shebangs (getcwd))
+	  
+	  (setenv "osc_home" (getcwd))
+	  (setenv "OBUILD_PATH" (getcwd))
+
+	  (display "Running BUILD") (newline)
+	  
+	  (chdir "osc_batch/obuild")
+	  (invoke "sh/build" "-x")
+	  
+	  ))))
+
+   (home-page "https://softinex.lal.in2p3.fr/OpenScientist/16.11.8_1/index.html")
+   (synopsis "OpenScientist is now deprecated")
+   (description "OpenScientist is an integration of open source products working together to do scientific visualization and data analysis, in particular for high energy physics (HEP).")
+   (license license:gpl2)))
+
+(define-public CLHEP-2.3.4
+  (package
+   (name "CLHEP-2.3.4")
+   (version "2.3.4.3")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://gitlab.cern.ch/CLHEP/CLHEP/-/archive/CLHEP_2_3_4_3/CLHEP-CLHEP_2_3_4_3.tar.gz")
+     (sha256
+      (base32
+       "0h1mpc795lzq0z562jiq8w7rv0l1kwjjb98ynydqmxb0djnsmsli"))))
+   (build-system cmake-build-system)
+   (inputs
+    `())
+   
+   (home-page "https://proj-clhep.web.cern.ch/proj-clhep/")
+   (synopsis "HEP-specific foundation and utility classes")
+   (description "HEP-specific foundation and utility classes such as random generators, physics vectors, geometry and linear algebra. CLHEP is structured in a set of packages independent of any external package")
+   (license license:gpl3+)))
 
 ;; ---------------------------------------- ;; 
 
