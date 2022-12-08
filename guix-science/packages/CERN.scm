@@ -18,6 +18,8 @@
 (define-module (guix-science packages CERN)
   #:use-module  ((guix licenses) #:prefix license:)
   #:use-module  (guix build-system trivial)
+  #:use-module  (guix build-system python)  
+  #:use-module  (guix gexp)
   #:use-module  (gnu packages algebra)	 ;; FFTW
   #:use-module  (gnu packages astronomy) ;; cfitsio
   #:use-module  (gnu packages backup)
@@ -46,7 +48,12 @@
   #:use-module  (gnu packages perl)
   #:use-module  (gnu packages pkg-config)
   #:use-module  (gnu packages python)
+  #:use-module  (gnu packages python-build)
+  #:use-module  (gnu packages python-crypto) ;; python-cryptography
+  #:use-module  (gnu packages python-web) ;; python-oauthlib
   #:use-module  (gnu packages python-xyz) ;; numpy
+  #:use-module  (gnu packages time)
+  #:use-module  (gnu packages databases)
   #:use-module  (gnu packages tbb)
   #:use-module  (gnu packages tls) ;; openssl
   #:use-module  (gnu packages version-control) ;; git
@@ -78,6 +85,9 @@
 	    CLHEP-2.3.4         ;; Ok
 	    nodejs-16.13.1      ;; Ok
 	    OpenScientist-batch ;; TODO: deprecated but still needed
+	    cubix-3.0           ;; TODO depends on ROOT
+	    dawn-3.91a          ;; TODO configure is an interactive script
+	    dirac-8.0.6         ;; TODO: need rucio-clients etc.
 	    
 	    ;; Deja fournie par Guix
 	    ;; cairo
@@ -516,6 +526,181 @@ devices.")
    (home-page "https://proj-clhep.web.cern.ch/proj-clhep/")
    (synopsis "HEP-specific foundation and utility classes")
    (description "HEP-specific foundation and utility classes such as random generators, physics vectors, geometry and linear algebra. CLHEP is structured in a set of packages independent of any external package")
+   (license license:gpl3+)))
+
+;; TODO depend on ROOT
+(define-public cubix-3.0
+  (package
+   (name "cubix-3.0")
+   (version "3.0")
+   (source (origin
+	    (method url-fetch)
+            (uri "https://gitlab.in2p3.fr/dudouet/Cubix/-/archive/Cubix-3.0/Cubix-Cubix-3.0.tar.gz")
+	    (sha256
+             (base32
+	      "1vpymb22k727h62n0bzb30bc2h85kh7qimjwnd7zik6q32vhi2mr"))))
+   (build-system cmake-build-system)
+   (inputs
+    `(("bash" ,bash)
+      ("gcc-toolchain" ,gcc-toolchain)))
+   (arguments `())
+   (home-page "https://gitlab.in2p3.fr/dudouet/Cubix")
+   (synopsis "Cubix")
+   (description "Cubix")
+   (license license:expat)))
+
+;; https://geant4.kek.jp/~tanaka/DAWN/About_DAWN.html
+
+;; TODO: configure is an interactive script !
+(define-public dawn-3.91a
+  (package
+   (name "dawn-3.91a")
+   (version "3.91a")
+   (source (origin
+	    (method url-fetch)
+            (uri "http://geant4.kek.jp/~tanaka/src/dawn_3_91a.tgz")
+	    (sha256
+             (base32
+	      "1x7mpi77jylsv8mzsqs0ppchbq147azd0b94i2qq2xhis7m5bn41"))))
+   (build-system cmake-build-system)
+   (inputs
+    `(("bash" ,bash)
+      ("gcc-toolchain" ,gcc-toolchain)))
+   (arguments `())
+   (home-page "http://geant4.kek.jp/~tanaka")
+   (synopsis "Dawn")
+   (description "Fukui Renderer DAWN (Drawer for Academic WritiNgs)")
+   (license license:expat)))
+
+(define-public python-authlib
+  (package
+   (name "python-authlib")
+   (version "1.2.0")
+   (source (origin
+	    (method url-fetch)
+            (uri "https://github.com/lepture/authlib/archive/refs/tags/v1.2.0.tar.gz")
+	    (sha256
+             (base32
+	      "1r3mk46g7b0x6p32js1wh6qwgg67m8knbk6dp6hxzl66yd83i6h4"))))
+   (build-system python-build-system)
+   (inputs
+    `(("python-3.9" ,python-3.9)
+      ("python-cryptography" ,python-cryptography)
+      ))
+   (arguments `(#:tests? #f))
+   (home-page "https://github.com/lepture/authlib")
+   (synopsis "Python authlib")
+   (description "The ultimate Python library in building OAuth and OpenID Connect servers. JWS, JWK, JWA, JWT are included.")
+   (license license:expat)))
+
+(define-public python-dominate
+  (package
+   (name "python-dominate")
+   (version "2.7.0")
+   (source (origin
+	    (method url-fetch)
+            (uri "https://github.com/Knio/dominate/archive/refs/tags/2.7.0.tar.gz")
+	    (sha256
+             (base32
+	      "03y2xlmf3fd01x7gds27kx09274sz9h1a3yj6bbbj98fq493zgzj"))))
+   (build-system python-build-system)
+   (inputs
+    `(("python-3.9" ,python-3.9)
+      ))
+   (arguments `(#:tests? #f))
+   (home-page "https://github.com/Knio/dominate")
+   (synopsis "Dominate")
+   (description "Dominate is a Python library for creating and manipulating HTML documents using an elegant DOM API. It allows you to write HTML pages in pure Python very concisely, which eliminates the need to learn another template language, and lets you take advantage of the more powerful features of Python.")
+   (license license:gpl3+)))
+
+(define-public python-typing-extensions-4.4.0
+  (package
+   (name "python-typing-extensions-4.4.0")
+   (version "4.4.0")
+   (source (origin
+	    (method url-fetch)
+            (uri "https://github.com/python/typing_extensions/archive/refs/tags/4.4.0.tar.gz")
+	    (sha256
+             (base32
+	      "0rbfvnri7g43jn05izx1lfay0aa7a22rxvwlr8npwsl5p1pm6hqq"))))
+   (build-system python-build-system)
+   (inputs
+    `(("python-3.9" ,python-3.9)
+      ;; ("python-wheel" ,python-wheel)
+      ("python-pypa-build" ,python-pypa-build)
+      ("python-flit-core" ,python-flit-core)
+      ))
+   (arguments
+     (list
+      #:tests? #f       ;requires Python's test module, not available in Guix   
+      #:phases
+      #~(modify-phases %standard-phases
+        ;; (add-after 'unpack 'enter-source-directory
+	;; 	     (lambda _ (chdir "src") #t))
+          ;; XXX: PEP 517 manual build copied from python-isort.                
+          (replace 'build
+            (lambda _
+              (invoke "python" "-m" "build" "--wheel" "--no-isolation" ".")))
+          (replace 'check
+            (lambda* (#:key tests? #:allow-other-keys)
+              (when tests?
+                (invoke "python" "src/test_typing_extensions.py"))))
+          (replace 'install
+            (lambda _
+              (let ((whl (car (find-files "dist" "\\.whl$"))))
+                (invoke "pip" "--no-cache-dir" "--no-input"
+                        "install" "--no-deps" "--prefix" #$output whl)))))))
+   (home-page "https://github.com/python/typing_extensions")
+   (synopsis "Typing Extensions")
+   (description "The typing_extensions module serves two related purposes:
+    - Enable use of new type system features on older Python versions. For example, typing.TypeGuard is new in Python 3.10, but typing_extensions allows users on previous Python versions to use it too.
+    - Enable experimentation with new type system PEPs before they are accepted and added to the typing module.")
+   (license license:psfl)))
+
+;; TODO
+(define-public dirac-8.0.6
+  (package
+   (name "dirac-8.0.6")
+   (version "8.0.6")
+   (source (origin
+	    (method url-fetch)
+            (uri "https://github.com/DIRACGrid/DIRAC/archive/refs/tags/v8.0.6.tar.gz")
+	    (sha256
+             (base32
+	      "1f7r9d843xfcq1jbm5csajdmhndrghdli9nwkhzv20s0qg6rm8cv"))))
+   (build-system python-build-system)
+   (inputs
+    `(
+      ("python-3.9" ,python-3.9)
+      ("python-authlib" ,python-authlib)
+      ("python-boto3" ,python-boto3)
+      ("python-botocore" ,python-botocore)
+      ("python-cachetools" ,python-cachetools)
+      ("python-certifi" ,python-certifi)
+      ("python-dateutil" ,python-dateutil)
+      ("python-dominate" ,python-dominate)
+      ("python-importlib-metadata" ,python-importlib-metadata)
+      ("python-m2crypto" ,python-m2crypto)
+      ("python-pexpect" ,python-pexpect)
+      ("python-prompt-toolkit" ,python-prompt-toolkit)
+      ("python-psutil" ,python-psutil)
+      ("python-pyasn1" ,python-pyasn1)
+      ("python-pyasn1-modules" ,python-pyasn1-modules)
+      ("python-pyjwt" ,python-pyjwt)
+      ("python-pyparsing" ,python-pyparsing)
+      ("python-pytz" ,python-pytz)
+      ("python-requests" ,python-requests)
+      ("python-setuptools" ,python-setuptools)
+      ("python-sqlalchemy" ,python-sqlalchemy)
+      ("python-typing-extensions" ,python-typing-extensions-4.4.0) ;; >= 4.3.0 !
+      ("python-wheel" ,python-wheel)
+      ;; TODO: rucio-clients diraccfg db12 fts3 gfal2-python 
+
+      ))
+   (arguments `())
+   (home-page "http://diracgrid.org/")
+   (synopsis "DIRAC")
+   (description "DIRAC provides a complete solution to one or more user community requiring access to distributed resources. DIRAC builds a layer between the users and the resources offering a common interface to a number of heterogeneous providers, integrating them in a seamless manner, providing interoperability, at the same time as an optimized, transparent and reliable usage of the resources.")
    (license license:gpl3+)))
 
 ;; ---------------------------------------- ;; 
