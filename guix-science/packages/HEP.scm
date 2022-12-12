@@ -827,7 +827,7 @@ devices.")
 
 ;; https://cern.ch/geant4-data/datasets/G4PARTICLEXS.4.0.tar.gz
 (define-public G4PARTICLEXS-4.0
-  (let ((version "2.1"))
+  (let ((version "4.0"))
     (origin
      (method url-fetch)
      (uri (string-append
@@ -1091,6 +1091,18 @@ devices.")
       ("G4ABLA" ,G4ABLA-3.1)
       ("G4INCL" ,G4INCL-1.0)
       ("G4ENSDFSTATE" ,G4ENSDFSTATE-2.3)
+      ))
+
+   (inputs
+    `(("coreutils" ,coreutils)
+      ("gcc-toolchain" ,gcc-toolchain)
+      ("xerces-c" ,xerces-c) ;; pour GDML
+      ("expat" ,expat)
+      ("CLHEP" ,CLHEP-2.4.6.0)
+      ("python2" ,python-2)
+      ("python3" ,python-3.9)
+      ("perl" ,perl)
+      ("tcsh" ,tcsh)
       ))
    
    ))
