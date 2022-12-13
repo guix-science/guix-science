@@ -15,7 +15,7 @@
 ;;; along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-(define-module (guix-science packages HEP)
+(define-module (guix-science packages physics)
   #:use-module  ((guix licenses) #:prefix license:)
   #:use-module  (guix build-system trivial)
   #:use-module  (guix build-system python)  
@@ -88,9 +88,11 @@
 	    cubix-3.0           ;; TODO depends on ROOT
 	    dawn-3.91a          ;; TODO configure is an interactive script
 	    dirac-8.0.6         ;; TODO needs rucio-clients etc.
-
+	    TALYS-1.96          ;; Ok
+	    
+	    
 	    ;; Geant 4 ;; Ok
-	    G4NDL-4.6
+	    G4NDL-4.6         
 	    G4EMLOW-7.9.1
 	    G4PhotonEvaporation-5.5
 	    G4RadioactiveDecay-5.4
@@ -102,7 +104,7 @@
 	    G4INCL-1.0
 	    G4ENSDFSTATE-2.2
 	    GEANT4-10.04
-	    GEANT4-11.1.0
+	    GEANT4-11.1.0     ;; Ok        
 	    
 	    ;; Already in Guix:
 	    ;; cairo
@@ -119,6 +121,7 @@
 	    libAfterImage ;; Failed
 	    vdt		  ;; Ok
 	    Unuran-1.8.1  ;; Ok
+	    ROOT-5.28     ;; TODO
 	    ROOT-6.18.04  ;; Error
             ROOT-6.20.02  ;; Error
 
@@ -535,6 +538,46 @@ devices.")
      (sha256
       (base32
        "0h1mpc795lzq0z562jiq8w7rv0l1kwjjb98ynydqmxb0djnsmsli"))))
+   (build-system cmake-build-system)
+   (inputs
+    `())
+   
+   (home-page "https://proj-clhep.web.cern.ch/proj-clhep/")
+   (synopsis "HEP-specific foundation and utility classes")
+   (description "HEP-specific foundation and utility classes such as random generators, physics vectors, geometry and linear algebra. CLHEP is structured in a set of packages independent of any external package")
+   (license license:gpl3+)))
+
+(define-public CLHEP-2.4.6.0
+  (package
+   (name "CLHEP-2.4.6.0")
+   (version "2.4.6.0")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://gitlab.cern.ch/CLHEP/CLHEP/-/archive/CLHEP_2_4_6_0/CLHEP-CLHEP_2_4_6_0.tar.gz")
+     (sha256
+      (base32
+       "1cqcrbdaanvc76sjc513b8hn47pz5mdspcgvjsrpc4i2si3grpzj"))))
+   (build-system cmake-build-system)
+   (inputs
+    `())
+   
+   (home-page "https://proj-clhep.web.cern.ch/proj-clhep/")
+   (synopsis "HEP-specific foundation and utility classes")
+   (description "HEP-specific foundation and utility classes such as random generators, physics vectors, geometry and linear algebra. CLHEP is structured in a set of packages independent of any external package")
+   (license license:gpl3+)))
+
+(define-public CLHEP-2.4.6.2
+  (package
+   (name "CLHEP-2.4.6.2")
+   (version "2.4.6.2")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://gitlab.cern.ch/CLHEP/CLHEP/-/archive/CLHEP_2_4_6_2/CLHEP-CLHEP_2_4_6_2.tar.gz")
+     (sha256
+      (base32
+       "18sm14ikdz8hym5b2c9yb5l4hvzjk77jfasahb8zs41fcx6r9gwp"))))
    (build-system cmake-build-system)
    (inputs
     `())
@@ -1098,7 +1141,7 @@ devices.")
       ("gcc-toolchain" ,gcc-toolchain)
       ("xerces-c" ,xerces-c) ;; pour GDML
       ("expat" ,expat)
-      ("CLHEP" ,CLHEP-2.4.6.0)
+      ("CLHEP" ,CLHEP-2.4.6.2)
       ("python2" ,python-2)
       ("python3" ,python-3.9)
       ("perl" ,perl)
@@ -1107,6 +1150,74 @@ devices.")
    
    ))
 
+(define-public TALYS-1.96
+  (package
+   (name "TALYS-1.96")
+   (version "1.96")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://tendl.web.psi.ch/tendl_2019/talys/talys.tar")
+     (sha256
+      (base32 "1g8mj7jj8ld5mzj8k79hbypfhhzksx5k0b8fqmavlrlvx424v9zz"))))
+   (build-system trivial-build-system)
+   (inputs
+    `(("bash" ,bash)
+      ("coreutils" ,coreutils)
+      ("sed" ,sed)
+      ("tar" ,tar)
+      ("gzip" ,gzip)
+      ("gfortran-toolchain" ,gfortran-toolchain)
+      
+      ))
+   (arguments
+    `(#:modules ((guix build utils))
+      #:builder
+      (begin
+        (use-modules (guix build utils))
+
+	(define (set-path)
+	  (let* ((packages (alist-delete "source" %build-inputs))
+                 (packages-path (map cdr packages)))
+            (setenv
+             "PATH"
+             (apply
+              string-append
+              (getenv "PATH") ":"
+              (map (lambda (p) (string-append p "/bin:"))
+                   packages-path)))))
+	
+	(let* ((source (assoc-ref %build-inputs "source"))
+	       (out (assoc-ref %outputs "out"))
+	       (GFORTRAN_DIR (assoc-ref %build-inputs "gfortran-toolchain"))
+	       (BASH (string-append (assoc-ref %build-inputs "bash") "/bin/bash"))
+	       (TAR (string-append (assoc-ref %build-inputs "tar") "/bin/tar"))
+	       )
+
+	  (setenv "GUIX_LD_WRAPPER_ALLOW_IMPURITIES" "no")
+	  (setenv "LIBRARY_PATH" (string-append GFORTRAN_DIR "/lib"))
+
+	  (set-path)
+
+	  (setenv "HOME" out)
+	  (mkdir-p (string-append out "/bin"))
+	  
+	  (invoke TAR "xvf" source)
+	  (chdir "talys")
+	  (invoke BASH "talys.setup")
+
+	  ))))
+	  
+
+   (home-page "https://tendl.web.psi.ch/tendl_2021/talys.html")
+   (synopsis "TALYS")
+   (description "TALYS is an open source software package (GPL license)
+for the simulation of nuclear reactions.")
+   (license license:gpl3+)))
+
+   
+  ""
+  ""
 
 ;; ---------------------------------------- ;; 
 
