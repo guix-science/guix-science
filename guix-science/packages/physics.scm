@@ -45,13 +45,17 @@
   #:use-module  (gnu packages llvm)  ;; llvm clang
   #:use-module  (gnu packages maths) ;; openblas gsl
   #:use-module  (gnu packages pcre)
+  #:use-module  (gnu packages pdf) ;; poppler-qt5
   #:use-module  (gnu packages perl)
+  #:use-module  (gnu packages fontutils) ;; fontconfig
   #:use-module  (gnu packages pkg-config)
   #:use-module  (gnu packages python)
   #:use-module  (gnu packages python-build)
   #:use-module  (gnu packages python-crypto) ;; python-cryptography
   #:use-module  (gnu packages python-web) ;; python-oauthlib
-  #:use-module  (gnu packages python-xyz) ;; numpy
+  #:use-module  (gnu packages python-xyz) ;; numpy 
+  #:use-module  (gnu packages qt)
+  #:use-module  (gnu packages libreoffice) ;; hunspell
   #:use-module  (gnu packages shells)
   #:use-module  (gnu packages time)
   #:use-module  (gnu packages databases)
@@ -89,7 +93,8 @@
 	    dawn-3.91a          ;; TODO configure is an interactive script
 	    dirac-8.0.6         ;; TODO needs rucio-clients etc.
 	    TALYS-1.96          ;; Ok
-	    
+	    texworks-0.6.7      ;; Ok
+	    timing-gen-0.9.8    ;; Ok
 	    
 	    ;; Geant 4 ;; Ok
 	    G4NDL-4.6         
@@ -112,6 +117,9 @@
 	    ;; cmake ;; I don't know if all these old versions are still needed
 	    ;; coin3d
 	    ;; openmpi
+	    ;; tcl
+	    ;; texlive
+	    ;; 
 	    
 	    ;; Others:
 	    
@@ -1189,20 +1197,16 @@ devices.")
 	
 	(let* ((source (assoc-ref %build-inputs "source"))
 	       (out (assoc-ref %outputs "out"))
-	       (GFORTRAN_DIR (assoc-ref %build-inputs "gfortran-toolchain"))
 	       (BASH (string-append (assoc-ref %build-inputs "bash") "/bin/bash"))
-	       (TAR (string-append (assoc-ref %build-inputs "tar") "/bin/tar"))
+	       (TAR  (string-append (assoc-ref %build-inputs "tar") "/bin/tar"))
 	       )
-
-	  (setenv "GUIX_LD_WRAPPER_ALLOW_IMPURITIES" "no")
-	  (setenv "LIBRARY_PATH" (string-append GFORTRAN_DIR "/lib"))
 
 	  (set-path)
 
-	  (setenv "HOME" out)
 	  (mkdir-p (string-append out "/bin"))
 	  
 	  (invoke TAR "xvf" source)
+	  
 	  (chdir "talys")
 	  (invoke BASH "talys.setup")
 
@@ -1215,10 +1219,93 @@ devices.")
 for the simulation of nuclear reactions.")
    (license license:gpl3+)))
 
-   
-  ""
-  ""
+(define-public texworks-0.6.7
+  (package
+   (name "texworks-0.6.7")
+   (version "0.6.7")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://github.com/TeXworks/texworks/archive/release-0.6.7.zip")
+     (sha256
+      (base32 "0vwxq3i120ngr9z2hbdgrav91x64k94kss7wyxxpr48bv209pwlm"))))
+  (build-system cmake-build-system)
+  (inputs
+   `(("unzip" ,unzip)
+     ("qt5" ,qtbase-5)
+     ("qttools" ,qttools-5)
+     ("qtdeclarative-5" ,qtdeclarative-5)
+     ("qtscript" ,qtscript)
+     ("zlib" ,zlib)
+     ("pkg-config" ,pkg-config)
+     ("hunspell" ,hunspell)
+     ("poppler-qt5" ,poppler-qt5)
+     ("fontconfig" ,fontconfig)
+     ))
+  (arguments `(#:tests? #f))
+  (home-page "https://www.tug.org/texworks/")
+  (synopsis "TeXworks")
+  (description "The TeXworks project is an effort to build a simple TeX front-end program (working environment) that will be available for all today's major desktop operating systems")
+  (license license:gpl2+)))
 
+(define-public timing-gen-0.9.8
+  (package
+   (name "timing-gen-0.9.8")
+   (version "0.9.8")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://sourceforge.net/projects/timing-gen/files/timing-gen-0.9.8.tgz")
+     (sha256
+      (base32 "1k9x9rcbqg9xax5z8w1fglycf5z8wiaym5kp3naia6m9ny959i3z"))))
+   (build-system trivial-build-system)
+   (inputs `(("gzip" ,gzip)
+	     ("tar" ,tar)))
+
+   (arguments
+    `(#:modules ((guix build utils))
+      #:builder
+      (begin
+        (use-modules (guix build utils))
+
+	(define (set-path)
+	  (let* ((packages (alist-delete "source" %build-inputs))
+                 (packages-path (map cdr packages)))
+            (setenv
+             "PATH"
+             (apply
+              string-append
+              (getenv "PATH") ":"
+              (map (lambda (p) (string-append p "/bin:"))
+                   packages-path)))))
+	
+	(let* ((source (assoc-ref %build-inputs "source"))
+	       (out (assoc-ref %outputs "out"))
+	       (TAR (string-append (assoc-ref %build-inputs "tar") "/bin/tar"))
+	       )
+
+	  (setenv "GUIX_LD_WRAPPER_ALLOW_IMPURITIES" "no")
+
+	  (set-path)
+	  (mkdir-p (string-append out "/bin"))
+	  (mkdir-p (string-append out "/share/doc"))
+	  (mkdir-p (string-append out "/share/samples"))
+	  
+	  (invoke TAR "zxvf" source)
+	  (chdir "timing-gen-0.9.8")
+	  (copy-recursively "doc" (string-append out "/share/doc"))
+	  (copy-recursively "samples" (string-append out "/share/samples"))
+	  (copy-file "timing-gen" (string-append out "/bin/timing-gen"))
+	  (copy-file "timing-gen-viewer" (string-append out "/bin/timing-gen-viewer"))
+	  
+	  ))))
+
+   (home-page "https://sourceforge.net/projects/timing-gen/")
+   (synopsis "Timing Gen")
+   (description "Timing-gen is a tool to generate high quality Postscript timing
+diagrams from text input files.")
+   (license license:expat)))
+   
 ;; ---------------------------------------- ;; 
 
 (define-public dcap-2.47.12 ;; Ok
