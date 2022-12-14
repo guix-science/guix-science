@@ -16,10 +16,11 @@
 
 
 (define-module (guix-science packages physics)
-  #:use-module  ((guix licenses) #:prefix license:)
+  #:use-module  (guix gexp)
   #:use-module  (guix build-system trivial)
   #:use-module  (guix build-system python)  
-  #:use-module  (guix gexp)
+  #:use-module  (guix git-download)
+  #:use-module  ((guix licenses) #:prefix license:)
   #:use-module  (gnu packages algebra)	 ;; FFTW
   #:use-module  (gnu packages astronomy) ;; cfitsio
   #:use-module  (gnu packages backup)
@@ -40,6 +41,7 @@
   #:use-module  (gnu packages autotools)
   #:use-module  (gnu packages boost)
   #:use-module  (gnu packages less)
+  #:use-module  (gnu packages geo)
   #:use-module  (gnu packages image) ;; libjpeg
   #:use-module  (gnu packages linux)
   #:use-module  (gnu packages llvm)  ;; llvm clang
@@ -95,6 +97,8 @@
 	    TALYS-1.96          ;; Ok
 	    texworks-0.6.7      ;; Ok
 	    timing-gen-0.9.8    ;; Ok
+	    gammaware-AGATAD_P2_COM_001 ;; TODO: depends on ROOT
+	    GATE ;; TODO: depends on ROOT
 	    
 	    ;; Geant 4 ;; Ok
 	    G4NDL-4.6         
@@ -116,10 +120,10 @@
 	    ;; clang
 	    ;; cmake ;; I don't know if all these old versions are still needed
 	    ;; coin3d
+	    ;; gnuplot
 	    ;; openmpi
 	    ;; tcl
 	    ;; texlive
-	    ;; 
 	    
 	    ;; Others:
 	    
@@ -617,7 +621,7 @@ devices.")
    (license license:expat)))
 
 ;; https://geant4.kek.jp/~tanaka/DAWN/About_DAWN.html
-
+;; https://twiki.cern.ch/twiki/bin/view/CLIC/DawnVisualization
 ;; TODO: configure is an interactive script !
 (define-public dawn-3.91a
   (package
@@ -1305,7 +1309,444 @@ for the simulation of nuclear reactions.")
    (description "Timing-gen is a tool to generate high quality Postscript timing
 diagrams from text input files.")
    (license license:expat)))
+
+;; TODO: depends on ROOT
+(define-public gammaware-AGATAD_P2_COM_001
+  (package
+   (name "gammaware-AGATAD_P2_COM_001")
+   (version "AGATAD_P2_COM_001")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://gitlab.in2p3.fr/IPNL_GAMMA/gammaware/-/archive/AGATAD_P2_COM_001/gammaware-AGATAD_P2_COM_001.tar.gz")
+     (sha256
+      (base32
+       "1gmnrrnw7sg7d9y80761y89a35z01568jbj59sdi4mjigffijd3x"))))
+   (build-system cmake-build-system)
+   (inputs
+    `(("bash" ,bash)
+      ("gcc-toolchain" ,gcc-toolchain)
+      ))
+
+   (home-page "https://gitlab.in2p3.fr/IPNL_GAMMA/gammaware")
+   (synopsis "gammaware")
+   (description "General Tools to play with gamma-ray spectroscopy related data")
+   (license license:gpl2+)))
+
+'(define-public GATE
+  "http://www.opengatecollaboration.org/"
+  ;; Gate 10.1:
+  ;; - Geant 4 10.7
+  ;; - ROOT 6
+  ;; - gcc 4.8 to 7.3
+  ;; - cmake >= 3.3
+  )
+
+;; TODO: Pargate (parallel Gate)
+
+;; TODO: gf3 -> Radware
+
+;; TODO: fluka: source code behind a registration page
+;; https://fluka.cern/download/latest-fluka-release
+;; https://flukafiles.web.cern.ch/flukafiles/fluka-4-3.0_src/fluka-4-3.0.src.tgz
+
+(define-public OscProb-1.4.1 ;; TODO: depends on ROOT
+  (package
+   (name "OscProb-1.4.1")
+   (version "1.4.1")
+   (source (origin
+            (method url-fetch)
+            (uri "https://github.com/joaoabcoelho/OscProb/archive/refs/tags/v1.4.1.tar.gz")
+            (sha256
+             (base32 "1fgzkc7l9c3bh0m9bzikcfffsr2hvz9clczws646mk8sgy1dpgjb"))))
+   (build-system gnu-build-system)
+   ;; No configure, only Makefile
+   (home-page "https://github.com/joaoabcoelho/OscProb")
+   (synopsis "OscProb")
+   (description
+    "OscProb is a small set of classes aimed at computing exact neutrino
+oscillation probabilities with a few different models.")
+   (license license:expat)))
+
+(define-public globes-3.0.11
+  (package
+   (name "globes-3.0.11")
+   (version "3.0.11")
+   (source (origin
+            (method url-fetch)
+            (uri "https://www.mpi-hd.mpg.de/personalhomes/globes/download/globes-3.0.11.tar.gz")
+            (sha256
+             (base32 "1lbwdbh1bn3ayn85p08ifzvxrjmyi1vdxcj48v9zl20g39ssvypb"))))
+   (build-system gnu-build-system)
+   (inputs
+    `(("bash" ,bash)
+      ("gcc-toolchain" ,gcc-toolchain)
+      ("gsl" ,gsl)
+      ("OscProb" ,OscProb-1.4.1)
+      ))
+   (home-page "https://www.mpi-hd.mpg.de/personalhomes/globes")
+   (synopsis "Globes")
+   (description
+    "Globes: General Long Baseline Experiment Simulator. GLoBES is a
+sophisticated software package for the simulation of long baseline
+neutrino oscillation experiments. ")
+   (license license:gpl2+)))
+
+(define-public python-jmespath-0.7.1
+  (package
+   (name "python-jmespath-0.7.1")
+   (version "0.7.1")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://github.com/jmespath/jmespath.py/archive/refs/tags/0.7.1.tar.gz")
+     (sha256
+      (base32
+       "1yg99hqq56064365sj0k4dyiyyqxh2096h39c5pj37k2nf3ql5bx"))))
+   (build-system python-build-system)
+   (native-inputs
+    (list python-nose))
+   (synopsis "JSON Matching Expressions")
+   (description "JMESPath (pronounced james path) is a Python
+library that allows one to declaratively specify
+how to extract elements from a JSON document.")
+   (home-page "https://github.com/jmespath/jmespath.py")
+   (license license:expat)))
+
+(define-public python-boto3-1.21.13
+  (package
+   (name "python-boto3-1.21.13")
+   (version "1.21.13")
+   (home-page "https://github.com/boto/boto3")
+   (source (origin
+            (method url-fetch)
+	    (uri "https://github.com/boto/boto3/archive/refs/tags/1.21.13.tar.gz")
+            (sha256
+             (base32
+              "1ad6zmkphx59kgilc4c6ah6w9zyaxdkn5kdcy1x4dn95dvbwb81y"))))
+   (arguments `(#:tests? #f))
+   (build-system python-build-system)
+   (native-inputs
+    (list python-nose python-mock python-pytest))
+   (propagated-inputs
+    (list python-botocore python-s3transfer))
+   (inputs `(("python-jmespath" ,python-jmespath-0.7.1)
+	     ))
+   (synopsis "AWS SDK for Python")
+   (description
+    "Boto3 is a Python library for writing programs that interact with                       
+@acronym{AWS,Amazon Web Services}.")
+   (license license:asl2.0)))
+
+(define-public python-prometheus-client-0.13.1
+  (package
+   (name "python-prometheus-client-0.13.1")
+   (version "0.13.1")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://github.com/prometheus/client_python/archive/refs/tags/v0.13.1.tar.gz")
+     (sha256
+      (base32
+       "10515ihb6p1qpjxzf2f8f7w4abdqfiy7rl9il73gk52gfriqkmjj"))))
+   (build-system python-build-system)
+   (arguments '(#:tests? #f))
+   (propagated-inputs (list python-twisted))
+   (home-page "https://github.com/prometheus/client_python")
+   (synopsis "Python client for the Prometheus monitoring system")
+   (description
+    "The prometheus_client package supports exposing
+metrics from software written in Python, so that
+they can be scraped by a Prometheus service.
+Metrics can be exposed through a standalone web
+server, or through Twisted, WSGI and the node
+exporter textfile collector.")
+   (license license:asl2.0)))
+
+(define-public python-beaker-1.12.0
+(package
+   (name "python-beaker-1.12.0")
+   (version "1.12.0")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://github.com/bbangert/beaker/archive/refs/tags/1.12.0.tar.gz")
+     (sha256
+      (base32
+       "09kzimi2p8r18a9r7x1f302xfxnppf2h4pl2cj1nda41dsz1g1z8"))))
+   (build-system python-build-system)
+   (arguments '(#:tests? #f))
+   (inputs
+    `(("python-3.9" ,python-3.9)
+      ))
+   (home-page "https://github.com/bbangert/beaker")
+   (synopsis "Python beaker")
+   (description
+    "Beaker is a web session and general caching
+library that includes WSGI middleware for use in
+web applications.")
+   (license license:expat)))
+
+(define-public python-pyjwkest-1.4.0
+(package
+   (name "python-pyjwkest-1.4.0")
+   (version "1.4.0")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://github.com/IdentityPython/pyjwkest/archive/refs/tags/v1.4.0.tar.gz")
+     (sha256
+      (base32
+       "086lprhhjhx4hi7f966m34izqrdjwxm4n2x54l2hbphvl87jlz6s"))))
+   (build-system python-build-system)
+   (arguments '(#:tests? #f))
+   (inputs
+    `(("python-3.9" ,python-3.9)
+      ("python-future" ,python-future)
+      ("python-six" ,python-six)
+      ("python-requests" ,python-requests)
+      ("python-pycryptodomex" ,python-pycryptodomex)
+      ))
+   (home-page "https://github.com/IdentityPython/pyjwkest")
+   (synopsis "Python pyjwkest")
+   (description
+    "Implementation of JWT, JWS, JWE and JWK")
+   (license license:asl2.0)))  
+
+(define-public python-pyoidc-1.3.0
+  (package
+   (name "python-pyoidc-1.3.0")
+   (version "1.3.0")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://github.com/OpenIDC/pyoidc/archive/refs/tags/1.3.0.tar.gz")
+     (sha256
+      (base32
+       "10bdaiiisiha4sxg6irq9nwiy2h6si356bq4ml9pp888ajcyp9n8"))))
+   (build-system python-build-system)
+   (arguments '(#:tests? #f))
+   (inputs
+    `(("python-3.9" ,python-3.9)
+      ("python-typing-extensions-4.4.0" ,python-typing-extensions-4.4.0)
+      ("python-defusedxml" ,python-defusedxml)
+      ("python-cryptography" ,python-cryptography)
+      ("python-beaker-1.12.0" ,python-beaker-1.12.0)
+      ("python-mako" ,python-mako)
+      ("python-pyjwkest-1.4.0" ,python-pyjwkest-1.4.0)
+      ("python-requests" ,python-requests)
+      ("python-pycryptodomex" ,python-pycryptodomex)
+      ("python-future" ,python-future)
+      ))
+   (home-page "https://github.com/OpenIDC/pyoidc")
+   (synopsis "Python pyoidc")
+   (description
+    "This is a complete implementation of OpenID
+Connect as specified in the OpenID Connect Core
+specification. And as a side effect, a complete
+implementation of OAuth2.0 too.")
+   (license license:asl2.0)))
+
+(define-public python-flask-2.0.3
+  (package
+    (name "python-flask-2.0.3")
+    (version "2.0.3")
+    (source (origin
+              (method url-fetch)
+              (uri "https://github.com/pallets/flask/archive/refs/tags/2.0.3.tar.gz")
+              (sha256
+               (base32
+		"090wxkld1151yb2jf5b365qihk21v0sfx0ldn7n7m2d68z0gfhr9"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           (lambda* (#:key tests? #:allow-other-keys)
+             (when tests?
+               (invoke "pytest" "-vv" "tests")))))))
+    (native-inputs
+     (list python-pytest))
+    (propagated-inputs
+     (list python-asgiref               ;async extra                                          
+           python-click
+           python-importlib-metadata
+           python-itsdangerous
+           python-jinja2
+           python-werkzeug))
+    (home-page "https://palletsprojects.com/p/flask/")
+    (synopsis "Microframework based on Werkzeug, Jinja2 and good intentions")
+    (description "Flask is a micro web framework based on the Werkzeug toolkit                
+and Jinja2 template engine.  It is called a micro framework because it does not               
+presume or force a developer to use a particular tool or library.")
+    (license license:bsd-3)))
+
+(define-public python-redis-4.1.4
+  (package
+    (name "python-redis-4.1.4")
+    (version "4.1.4")
+    (source
+     (origin
+       (method url-fetch)
+       (uri "https://github.com/redis/redis-py/archive/refs/tags/v4.1.4.tar.gz")
+       (sha256
+        (base32
+	 "1jw44i8ly74hddxgiqm6ldhq25wxs0h7yrz0rxw110h0j7c93xjv"))))
+    (build-system python-build-system)
+    ;; Tests require a running Redis server.
+    (arguments '(#:tests? #f))
+    (inputs
+     `(("python-3.9" ,python-3.9)
+       ;; packaging>=20.4
+       ("python-packaging" ,python-packaging)
+       ;; deprecated>=1.2.3
+       ("python-deprecated" ,python-deprecated)
+       ))
+    ;; As long as we are not running test, we do not need this input :-)
+    ;;(native-inputs
+    ;; `(("python-pytest" ,python-pytest)))
+    (home-page "https://github.com/andymccurdy/redis-py")
+    (synopsis "Redis Python client")
+    (description
+     "This package provides a Python interface to the Redis key-value store.")
+    (license license:expat)))
+
+(define-public python-google-auth-2.6.0
+  (package
+   (name "python-google-auth-2.6.0")
+   (version "2.6.0")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://github.com/googleapis/google-auth-library-python/archive/refs/tags/v2.6.0.tar.gz")
+     (sha256
+      (base32
+       "1zgjjmsp5daavsqfwlfrnidmnjfpknb9nnfascgs41nm39hp0z17"))))
+   (build-system python-build-system)
+   (arguments
+    `(#:tests? #f
+
+      #:phases
+      (modify-phases %standard-phases
+		     (replace 'check
+			      (lambda* (#:key tests? #:allow-other-keys)
+				       (when tests?
+					 (invoke "pytest")))))))
+   (propagated-inputs
+    (list python-cachetools
+          python-cryptography
+          python-pyasn1-modules
+          python-rsa
+          python-six))
+   (native-inputs
+    (list python-flask
+          python-freezegun
+          python-oauth2client
+          python-pyopenssl
+          python-pytest
+          python-pytest-localserver
+          python-pyu2f
+          python-requests
+          python-responses))
+   (home-page "https://github.com/googleapis/google-auth-library-python")
+   (synopsis "Google Authentication Library")
+   (description "This library simplifies using Google's various
+server-to-server authentication mechanisms to access Google APIs.")
+   (license license:asl2.0)))
+
+(define-public python-geoip2-4.5.0
+  (package
+    (name "python-geoip2")
+    (version "4.5.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri "https://github.com/maxmind/GeoIP2-python/archive/refs/tags/v4.5.0.tar.gz")
+       (sha256
+        (base32
+	 "0hy4s73w2ldy55h58dbardbswv4v81ng5xhb5j0vc7lnzhk61qdh"))))
+    (build-system python-build-system)
+    (arguments
+     `(#:tests? #f)) ;; Tests require a copy of the maxmind database
+    (inputs
+     (list python-maxminddb python-requests
+	   ;; Requirement.parse('aiohttp<4.0.0,>=3.6.2')
+	   python-aiohttp
+	   ))
+    (home-page "https://www.maxmind.com/")
+    (synopsis "MaxMind GeoIP2 API")
+    (description "Provides an API for the GeoIP2 web services and databases.
+The API also works with MaxMind’s free GeoLite2
+databases.")
+    (license license:asl2.0)))
+
+;; http://rucio.cern.ch/
+(define-public rucio-1.30.0
+  (package
+   (name "rucio-1.30.0")
+   (version "1.30.0")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://github.com/rucio/rucio/archive/refs/tags/1.30.0.tar.gz")
+     (sha256
+      (base32 "1pwxm5flqqcin6xsh9v07drbjjdn28gi7m0j7m5z900cnxryi1bm"))))
+      (build-system python-build-system)
+   (inputs
+    `(("python-3.9" ,python-3.9)
+      ("bash" ,bash)
+      ("python-boto3" ,python-boto3-1.21.13) ;;
+      ("python-prometheus-client-0.13.1" ,python-prometheus-client-0.13.1)
+      ("python-pyoidc-1.3.0" ,python-pyoidc-1.3.0)
+      ("python-flask-2.0.3" ,python-flask-2.0.3)
+      ("python-redis-4.1.4" ,python-redis-4.1.4)
+      ("python-google-auth-2.6.0" ,python-google-auth-2.6.0)
+      ;; geoip2==4.5.0
+      ("python-geoip2-4.5.0" ,python-geoip2-4.5.0)
+
+      ))
+   (arguments
+    `(#:tests? #f
+
+      #:phases
+      (modify-phases
+       %standard-phases
+       (add-before 'build ;; For python-build-system
+		   'patches
+		   (lambda*
+		    (#:key inputs #:allow-other-keys)
+		    (let ((BASH_DIR (assoc-ref inputs "bash")))
+		    (substitute*
+		     '("setuputil.py"
+		       "tools/generate_version.py"
+		       "tools/prepare-commit-msg"
+		       "tools/test/oracle_setup.sh"
+		       "tools/test/run_tests.py"
+		       "tools/add_header")
+		     (("/bin/sh")
+                      (string-append BASH_DIR "/bin/sh")))))))))
+
    
+   (home-page "https://github.com/rucio/rucio/")
+   (synopsis "Rucio")
+   (description "Rucio is a software framework that provides functionality to
+organize, manage, and access large volumes of scientific data using
+customisable policies. The data can be spread across globally
+distributed locations and across heterogeneous data centers, uniting
+different storage and network technologies as a single federated
+entity. Rucio offers advanced features such as distributed data
+recovery or adaptive replication, and is highly scalable, modular, and
+extensible. Rucio has been originally developed to meet the
+requirements of the high-energy physics experiment ATLAS, and is
+continuously extended to support LHC experiments and other diverse
+scientific communities.")
+   (license license:asl2.0)))
+
+
+  
+  
+
+
 ;; ---------------------------------------- ;; 
 
 (define-public dcap-2.47.12 ;; Ok
