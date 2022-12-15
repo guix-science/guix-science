@@ -16,40 +16,43 @@
 
 
 (define-module (guix-science packages physics)
-  #:use-module  (guix gexp)
-  #:use-module  (guix build-system trivial)
-  #:use-module  (guix build-system python)  
-  #:use-module  (guix git-download)
   #:use-module  ((guix licenses) #:prefix license:)
+  #:use-module  (gnu packages adns)  ;; c-ares
   #:use-module  (gnu packages algebra)	 ;; FFTW
   #:use-module  (gnu packages astronomy) ;; cfitsio
+  #:use-module  (gnu packages autotools)
   #:use-module  (gnu packages backup)
+  #:use-module  (gnu packages base)
   #:use-module  (gnu packages base) ;; gnu-make
   #:use-module  (gnu packages bash)
-  #:use-module  (gnu packages check) 
-  #:use-module  (gnu packages shells)
-  #:use-module  (gnu packages base)
+  #:use-module  (gnu packages boost)
   #:use-module  (gnu packages bootstrap)
+  #:use-module  (gnu packages check) 
   #:use-module  (gnu packages commencement) ;; gcc-toolchain
   #:use-module  (gnu packages compression)  ;; zlib lz4
+  #:use-module  (gnu packages databases)
   #:use-module  (gnu packages digest)
-  #:use-module  (gnu packages gcc)
-  #:use-module  (gnu packages glib)
-  #:use-module  (gnu packages fontutils) ;; freetype
-  #:use-module  (gnu packages serialization)
   #:use-module  (gnu packages documentation)
-  #:use-module  (gnu packages autotools)
-  #:use-module  (gnu packages boost)
-  #:use-module  (gnu packages less)
+  #:use-module  (gnu packages file) 
+  #:use-module  (gnu packages fontutils) ;; fontconfig
+  #:use-module  (gnu packages fontutils) ;; freetype
+  #:use-module  (gnu packages gcc)
   #:use-module  (gnu packages geo)
+  #:use-module  (gnu packages gl)
+  #:use-module  (gnu packages glib)
+  #:use-module  (gnu packages icu4c) 
   #:use-module  (gnu packages image) ;; libjpeg
+  #:use-module  (gnu packages less)
+  #:use-module  (gnu packages libevent) ;; libuv
+  #:use-module  (gnu packages libreoffice) ;; hunspell
   #:use-module  (gnu packages linux)
   #:use-module  (gnu packages llvm)  ;; llvm clang
   #:use-module  (gnu packages maths) ;; openblas gsl
+  #:use-module  (gnu packages monitoring)
+  #:use-module  (gnu packages openstack)
   #:use-module  (gnu packages pcre)
   #:use-module  (gnu packages pdf) ;; poppler-qt5
   #:use-module  (gnu packages perl)
-  #:use-module  (gnu packages fontutils) ;; fontconfig
   #:use-module  (gnu packages pkg-config)
   #:use-module  (gnu packages python)
   #:use-module  (gnu packages python-build)
@@ -57,24 +60,24 @@
   #:use-module  (gnu packages python-web) ;; python-oauthlib
   #:use-module  (gnu packages python-xyz) ;; numpy 
   #:use-module  (gnu packages qt)
-  #:use-module  (gnu packages libreoffice) ;; hunspell
+  #:use-module  (gnu packages serialization)
   #:use-module  (gnu packages shells)
-  #:use-module  (gnu packages time)
-  #:use-module  (gnu packages databases)
+  #:use-module  (gnu packages shells)
   #:use-module  (gnu packages tbb)
+  #:use-module  (gnu packages time)
   #:use-module  (gnu packages tls) ;; openssl
   #:use-module  (gnu packages version-control) ;; git
+  #:use-module  (gnu packages web)   ;; http-parser
   #:use-module  (gnu packages xml)
   #:use-module  (gnu packages xorg) ;; libx11
-  #:use-module  (gnu packages gl)
-  #:use-module  (gnu packages adns)  ;; c-ares
-  #:use-module  (gnu packages web)   ;; http-parser
-  #:use-module  (gnu packages icu4c) 
-  #:use-module  (gnu packages libevent) ;; libuv
   #:use-module  (gnu packages)
   #:use-module  (guix build-system cmake)
   #:use-module  (guix build-system gnu)
+  #:use-module  (guix build-system python)  
+  #:use-module  (guix build-system trivial)
   #:use-module  (guix download)
+  #:use-module  (guix gexp)
+  #:use-module  (guix git-download)
   #:use-module  (guix packages)
   #:use-module  (guix utils)
   
@@ -1413,6 +1416,33 @@ how to extract elements from a JSON document.")
    (home-page "https://github.com/jmespath/jmespath.py")
    (license license:expat)))
 
+(define-public python-botocore-local
+  ;; Note: When updating botocore, also make sure that boto3 and awscli
+  ;; are compatible.
+  (package
+   (name "python-botocore-local")
+   (version "1.24.35")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (pypi-uri "botocore" version))
+     (sha256
+      (base32
+       "0rv8mvhq5s373zdjs2yb45hzvqcqdh2lp2rbb21jjc8ciwnl5d9n"))))
+   (build-system python-build-system)
+   (arguments
+    ;; FIXME: Many tests are failing.
+    '(#:tests? #f))
+   (propagated-inputs
+    (list python-dateutil
+	  python-jmespath-0.7.1
+	  python-urllib3))
+   (home-page "https://github.com/boto/botocore")
+   (synopsis "Low-level interface to AWS")
+   (description "Botocore is a Python library that provides a low-level
+interface to the Amazon Web Services (AWS) API.")
+   (license license:asl2.0)))
+
 (define-public python-boto3-1.21.13
   (package
    (name "python-boto3-1.21.13")
@@ -1429,8 +1459,9 @@ how to extract elements from a JSON document.")
    (native-inputs
     (list python-nose python-mock python-pytest))
    (propagated-inputs
-    (list python-botocore python-s3transfer))
-   (inputs `(("python-jmespath" ,python-jmespath-0.7.1)
+    (list python-botocore-local
+	  python-s3transfer))
+   (inputs `(("python-jmespath-0.7.1" ,python-jmespath-0.7.1)
 	     ))
    (synopsis "AWS SDK for Python")
    (description
@@ -1656,37 +1687,497 @@ server-to-server authentication mechanisms to access Google APIs.")
 
 (define-public python-geoip2-4.5.0
   (package
-    (name "python-geoip2-4.5.0")
-    (version "4.5.0")
+   (name "python-geoip2-4.5.0")
+   (version "4.5.0")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://github.com/maxmind/GeoIP2-python/archive/refs/tags/v4.5.0.tar.gz")
+     (sha256
+      (base32
+       "0hy4s73w2ldy55h58dbardbswv4v81ng5xhb5j0vc7lnzhk61qdh"))))
+   (build-system python-build-system)
+   (arguments
+    `(#:tests? #f ;; Tests require a copy of the maxmind database
+
+      #:phases
+      (modify-phases
+       %standard-phases
+       (add-before 'build ;; For python-build-system
+		   'patches
+		   (lambda*
+		    (#:key inputs #:allow-other-keys)
+		    (substitute*
+		     "geoip2/__init__.py"
+		     (("4.4.0") "4.5.0"))
+		    )))))
+   (inputs
+    `(("python-3.9" ,python-3.9)
+      ;; Requirement.parse('aiohttp<4.0.0,>=3.6.2')
+      ("python-aiohttp" ,python-aiohttp)
+      ;; maxminddb<3.0.0,>=2.2.0
+      ("python-maxminddb" ,python-maxminddb)
+      ;; urllib3<2.0.0,>=1.25.2
+      ("python-urllib3" ,python-urllib3)
+      ;; requests<3.0.0,>=2.24.0
+      ("python-requests" ,python-requests)
+      ))
+   (home-page "https://www.maxmind.com/")
+   (synopsis "MaxMind GeoIP2 API")
+   (description "Provides an API for the GeoIP2 web services and databases.
+The API also works with MaxMind’s free GeoLite2
+databases.")
+   (license license:asl2.0)))
+
+(define-public python-stomp-6.1.1
+  (package
+   (name "python-stomp-6.1.1")
+   (version "6.1.1")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://github.com/jasonrbriggs/stomp.py/archive/refs/tags/v6.1.1.tar.gz")
+     (sha256
+      (base32
+       "005vjc5nasp1z75mrvr3gl6yd9mld8q1mim6mjv0brq9ldnbwd67"))))
+   (build-system gnu-build-system)
+   (arguments
+    `(#:tests? #f
+
+      #:phases
+      (modify-phases
+       %standard-phases
+       (delete 'configure)
+       (add-before
+	'build
+	'patches-stomp
+	(lambda*
+	 _
+	 (substitute*
+	  "Makefile"
+	  (("python") "python3")
+	  (("poetry update") "# poetry update")
+	  (("all: test install") "all: install")
+	  (("install: updateversion test") "install: updateversion")
+	  )
+	 ))
+       (add-before
+	'build
+	'home
+	(lambda*
+	 (#:key outputs #:allow-other-keys)
+	 ;; To avoid this error:
+	 ;; virtualenv: error: argument dest: the destination . is not write-able at /
+	 (setenv
+	  "HOME"
+	  (assoc-ref outputs "out"))))
+
+;; $ python
+;; Python 3.9.9 (main, Jan  1 1970, 00:00:01) 
+;; [GCC 10.3.0] on linux
+;; Type "help", "copyright", "credits" or "license" for more information.
+;; >>> import stomp
+;; >>> print(stomp.__file__)
+;; .../python3.9/site-packages/stomp/__init__.py
+
+;; $ python3
+;; Python 3.9.9 (main, Jan  1 1970, 00:00:01) 
+;; [GCC 10.3.0] on linux
+;; Type "help", "copyright", "credits" or "license" for more information.
+;; >>> import stomp
+;; >>> stomp.__file__
+;; '.../.guix-profile/lib/python3.9/site-packages/stomp/__init__.py'
+;; >>> stomp.__version__
+;; (6, 1, 1)
+       
+       (add-after
+	'install
+	'install-stomp
+	(lambda*
+	 (#:key outputs #:allow-other-keys)
+	 (let* ((DIR (assoc-ref outputs "out"))
+		(suffix "/lib/python3.9/site-packages/stomp")
+		(INSTALL (string-append DIR suffix)))
+
+	   (substitute*
+	    "stomp/__init__.py"
+	    (("__version__ = \\(6, 1, 1\\)")
+	     "__version__ = \"6.1.1\""))
+	 
+	   (mkdir-p INSTALL)
+	   (copy-recursively "stomp" INSTALL))))
+       
+       )))
+   (inputs
+    `(("python-3.9" ,python-3.9)
+      ("which" ,which)
+      ("poetry" ,poetry)
+      ;; docopt<0.7.0,>=0.6.2 
+      ("python-docopt" ,python-docopt)
+      ;; websocket-client<2.0.0,>=1.2.3
+      ("python-websocket-client" ,python-websocket-client)
+      ))
+   (home-page "https://github.com/jasonrbriggs/stomp.py")
+   (synopsis "Stomp")
+   (description "stomp.py is a Python client library for accessing messaging
+servers (such as ActiveMQ, Artemis or RabbitMQ) using the
+STOMP protocol (STOMP v1.0, STOMP v1.1 and STOMP v1.2). It
+can also be run as a standalone, command-line client for
+testing. NOTE: Stomp.py has officially ended support for
+Python2.x. See python3statement.org for more information.")
+   (license license:asl2.0)))
+
+(define-public python-pymemcache-3.5.2
+  (package
+   (name "python-pymemcache-3.5.2")
+   (version "3.5.2")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://github.com/pinterest/pymemcache/archive/refs/tags/v3.5.2.tar.gz")
+     (sha256
+      (base32
+       "1rajzwp5grmq9yy1qinq7wzd3ilqnvq5sxkvi95agclb2m7pgzi9"))))
+   (build-system python-build-system)
+   (arguments
+    `(#:tests? #f))
+   (inputs
+    `(("python-3.9" ,python-3.9)
+      ("python-six" ,python-six)
+      ))
+   (home-page "https://github.com/pinterest/pymemcache")
+   (synopsis "pymemcache")
+   (description "A comprehensive, fast, pure-Python memcached client.")
+   (license license:asl2.0)))
+
+(define-public python-sqlalchemy-1.4.31
+  (package
+    (name "python-sqlalchemy-1.4.31")
+    (version "1.4.31")
+    (source
+     (origin
+      (method url-fetch)
+      (uri "https://github.com/sqlalchemy/sqlalchemy/archive/refs/tags/rel_1_4_31.tar.gz")
+      (sha256
+       (base32 "0vn70i1frr2mi9x0xc4ymczhfi736gvmngrfm2snrd4fildvqfvd"))))
+    (build-system python-build-system)
+    (native-inputs
+     (list python-cython ; for C extensions
+           python-pytest python-mock python-pytest-xdist)) ; for tests
+    (propagated-inputs
+     (list python-greenlet))
+    (arguments
+     (list
+      #:phases
+      #~(modify-phases %standard-phases
+          (replace 'check
+            (lambda* (#:key tests? #:allow-other-keys)
+              (when tests?
+                (invoke "pytest" "-vv"
+                        "-n" (number->string (parallel-job-count))
+                        ;; The memory usage tests are very expensive and run in
+                        ;; sequence; skip them.
+                        "-k" "not test_memusage.py")))))))
+    (home-page "https://www.sqlalchemy.org")
+    (synopsis "Database abstraction library")
+    (description
+     "SQLAlchemy is the Python SQL toolkit and Object Relational Mapper that
+gives application developers the full power and flexibility of SQL.  It
+provides a full suite of well known enterprise-level persistence patterns,
+designed for efficient and high-performing database access, adapted into a
+simple and Pythonic domain language.")
+    (license license:x11)))
+
+(define-public python-magic-0.4.25
+  (package
+    (name "python-magic-0.4.25")
+    (version "0.4.25")
+    (home-page "https://github.com/ahupp/python-magic")
     (source
      (origin
        (method url-fetch)
-       (uri "https://github.com/maxmind/GeoIP2-python/archive/refs/tags/v4.5.0.tar.gz")
+       (uri "https://github.com/ahupp/python-magic/archive/refs/tags/0.4.25.tar.gz")
        (sha256
         (base32
-	 "0hy4s73w2ldy55h58dbardbswv4v81ng5xhb5j0vc7lnzhk61qdh"))))
+         "0ab3wcfwxg1lmxp916ss7am44bqdhsv8ngqhd3rgyzq6jlwlh7qc"))))
     (build-system python-build-system)
     (arguments
-     `(#:tests? #f)) ;; Tests require a copy of the maxmind database
+     '(#:phases (modify-phases %standard-phases
+                  ;; Replace a specific method call with a hard-coded
+                  ;; path to the necessary libmagic.so file in the
+                  ;; store.  If we don't do this, then the method call
+                  ;; will fail to find the libmagic.so file, which in
+                  ;; turn will cause any application using
+                  ;; python-magic to fail.
+                  (add-before 'build 'hard-code-path-to-libmagic
+                    (lambda* (#:key inputs #:allow-other-keys)
+                      (let ((magic (search-input-file inputs "/lib/libmagic.so")))
+                        (substitute*
+			 "magic/loader.py"
+			 (("find_library\\('magic'\\)")
+			  (string-append "'" magic "'")))
+			)))
+                  (replace 'check
+                    (lambda* (#:key tests? #:allow-other-keys)
+                      ;; The test suite mandates this variable.
+                      (setenv "LC_ALL" "en_US.UTF-8")
+                      (if tests?
+                          (with-directory-excursion "test"
+                            (invoke "python" "./test.py")
+                            (invoke "python" "./libmagic_test.py"))
+                          (format #t "test suite not run~%")))))))
+    (native-inputs
+     (list which))
     (inputs
-     `(("python-3.9" ,python-3.9)
-       ;; Requirement.parse('aiohttp<4.0.0,>=3.6.2')
-       ("python-aiohttp" ,python-aiohttp)
-       ;; maxminddb<3.0.0,>=2.2.0
-       ("python-maxminddb" ,python-maxminddb)
-       ;; urllib3<2.0.0,>=1.25.2
-       ("python-urllib3" ,python-urllib3)
-       ;; requests<3.0.0,>=2.24.0
-       ("python-requests" ,python-requests)
-       ))
-    (home-page "https://www.maxmind.com/")
-    (synopsis "MaxMind GeoIP2 API")
-    (description "Provides an API for the GeoIP2 web services and databases.
-The API also works with MaxMind’s free GeoLite2
-databases.")
-    (license license:asl2.0)))
+     ;; python-magic needs to be able to find libmagic.so.
+     ;; Use a newer version because 5.39 returns bogus for some archives
+     ;; (notably Chromium .crx extensions), which breaks e.g. 'diffoscope'.
+     (list file-next))
+    (synopsis "File type identification using libmagic")
+    (description
+     "This module uses ctypes to access the libmagic file type
+identification library.  It makes use of the local magic database and
+supports both textual and MIME-type output.  Note that this module and
+the python-file module both provide a \"magic.py\" file; these two
+modules, which are different and were developed separately, both serve
+the same purpose: to provide Python bindings for libmagic.")
+    (license license:expat)))
 
-;; http://rucio.cern.ch/
+(define-public python-argcomplete-1.12.3
+  (package
+   (name "python-argcomplete-1.12.3")
+   (version "1.12.3")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://github.com/kislyuk/argcomplete/archive/refs/tags/v1.12.3.tar.gz")
+     (sha256
+      (base32
+       "104n9hkc32zbc2cdfdhh9c6l15fl2vdsfkl8iv4qw7ip15m52jvm"))
+     ;; (patches (search-patches "python-argcomplete-1.11.1-fish31.patch"))
+     ))
+   (build-system python-build-system)
+   (native-inputs
+    (list python-coverage
+          python-flake8
+          python-pexpect
+          python-wheel
+          tcsh
+          fish
+          bash))       ;full Bash for 'test_file_completion'
+   (home-page "https://github.com/kislyuk/argcomplete")
+   (synopsis "Shell tab completion for Python argparse")
+   (description "argcomplete provides extensible command line tab completion
+     of arguments and options for Python scripts using @code{argparse}.  It's
+     particularly useful for programs with many options or sub-parsers that can
+     dynamically suggest completions ; for example, when browsing resources over the
+     network.")
+   (license license:asl2.0)))
+
+(define-public python-urllib3-1.26.8
+  (package
+   (name "python-urllib3-1.26.8")
+   (version "1.26.8")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://github.com/urllib3/urllib3/archive/refs/tags/1.26.8.tar.gz")
+     (sha256
+      (base32
+       "1m4bspbls4pvhqidsacbllgpa4jd6va2li044k3hkslmx7jbbjx5"))))
+   (build-system python-build-system)
+   (arguments `(#:tests? #f))
+   (propagated-inputs
+    (list ;; These 5 inputs are used to build urrlib3[secure]
+     python-certifi
+     python-cryptography
+     python-idna
+     python-pyopenssl
+     python-pysocks))
+   (home-page "https://urllib3.readthedocs.io/")
+   (synopsis "HTTP library with thread-safe connection pooling")
+   (description
+    "Urllib3 supports features left out of urllib and urllib2 libraries.  It
+can reuse the same socket connection for multiple requests, it can POST files,
+supports url redirection and retries, and also gzip and deflate decoding.")
+   (license license:expat)))
+
+(define-public python-charset-normalizer-2.0.0
+  (package
+   (name "python-charset-normalizer-2.0.0")
+   (version "2.0.0")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://github.com/Ousret/charset_normalizer/archive/refs/tags/2.0.0.tar.gz")
+     (sha256
+      (base32 "1clizvyb2rps3l02d4g5brsg5bzirqx0fa98arjs43sj0bpaj134"))))
+   (build-system python-build-system)
+   (arguments
+    (list #:phases
+          #~(modify-phases %standard-phases
+			   ;; This package provides a 'normalizer' executable that only
+			   ;; depends on Python, so customize the wrap phase to avoid
+			   ;; adding pytest and friends in order to save size.
+			   ;; (See also <https://bugs.gnu.org/25235>.)
+			   (replace 'wrap
+				    (lambda* (#:key inputs outputs #:allow-other-keys)
+					     (let* ((sitedir (site-packages inputs outputs))
+						    (python (dirname (dirname
+								      (search-input-file
+								       inputs "bin/python"))))
+						    (python-sitedir
+						     (string-append python "/lib/python"
+								    (python-version python)
+								    "/site-packages")))
+					       (wrap-program (string-append #$output "/bin/normalizer")
+							     `("GUIX_PYTHONPATH" ":" suffix
+							       ,(list sitedir python-sitedir)))))))))
+   (native-inputs
+    (list python-pytest))
+   (home-page "https://github.com/ousret/charset_normalizer")
+   (synopsis "Universal Charset Detector, alternative to Chardet")
+   (description "This library helps you read text from an unknown charset
+encoding.  Motivated by @code{chardet}, it tries to resolve the issue by
+taking a new approach.  All IANA character set names for which the Python core
+library provides codecs are supported.")
+   (license license:expat)))
+
+(define-public python-requests-2.27.1
+  (package
+   (name "python-requests-2.27.1")
+   (version "2.27.1")
+   (source (origin
+            (method url-fetch)
+            (uri "https://github.com/psf/requests/archive/refs/tags/v2.27.1.tar.gz")
+            (sha256
+             (base32
+              "16a2prri2wrhiq87mh64kkx720jh1vna9c0ds1vgc56y78m5k45j"))))
+   (build-system python-build-system)
+   (propagated-inputs
+    (list python-certifi
+          python-charset-normalizer-2.0.0
+          python-idna
+          python-urllib3))
+   (arguments
+    ;; FIXME: Some tests require network access.
+    '(#:tests? #f))
+   (home-page "http://python-requests.org/")
+   (synopsis "Python HTTP library")
+   (description
+    "Requests is a Python HTTP client library.  It aims to be easier to use
+than Python’s urllib2 library.")
+   (license license:asl2.0)))
+
+(define-public python-dogpile.cache-1.1.5
+  (package
+   (name "python-dogpile.cache-1.1.5")
+   (version "1.1.5")
+   (source (origin
+            (method url-fetch)
+            (uri "https://github.com/sqlalchemy/dogpile.cache/archive/refs/tags/rel_1_1_5.tar.gz")
+            (sha256
+             (base32
+              "1jiqsz3s2a5q1j499pr6cz23d18anqsnvd5i7qjkf46hjx11r2ah"))))
+   (build-system python-build-system)
+   (arguments
+    '(#:phases
+      (modify-phases %standard-phases
+		     (replace 'check
+			      (lambda* (#:key tests? #:allow-other-keys)
+				       (when tests?
+					 (invoke "pytest")))))))
+   (native-inputs (list python-mako python-pytest))
+   (propagated-inputs (list python-decorator python-stevedore))
+   (home-page "https://github.com/sqlalchemy/dogpile.cache")
+   (synopsis "Caching front-end based on the Dogpile lock")
+   (description "@code{dogpile.cache} is a caching API which provides a
+generic interface to caching backends of any variety, and additionally
+provides API hooks which integrate these cache backends with the locking
+mechanism of @code{dogpile}.")
+   (license license:expat)))
+
+(define-public python-jsonschema-3.2.0
+  (package
+   (name "python-jsonschema-3.2.0")
+   (version "3.2.0")
+   (source (origin
+            (method url-fetch)
+            (uri (pypi-uri "jsonschema" version))
+            (sha256
+             (base32
+              "0ykr61yiiizgvm3bzipa3l73rvj49wmrybbfwhvpgk3pscl5pa68"))))
+   (build-system python-build-system)
+   (arguments
+    '(#:phases
+      (modify-phases %standard-phases
+		     (replace 'check
+			      (lambda* (#:key inputs outputs tests? #:allow-other-keys)
+				       (when tests?
+					 (setenv "JSON_SCHEMA_TEST_SUITE" "json")
+					 (invoke "trial" "jsonschema")))))))
+   (native-inputs
+    `(("python-setuptools_scm" ,python-setuptools-scm)
+      ("python-twisted" ,python-twisted)))
+   (propagated-inputs
+    (list python-attrs python-pyrsistent python-six))
+   (home-page "https://github.com/Julian/jsonschema")
+   (synopsis "Implementation of JSON Schema for Python")
+   (description
+    "Jsonschema is an implementation of JSON Schema for Python.")
+   (license license:expat)))
+
+(define-public python-paramiko-2.11.0
+  (package
+   (name "python-paramiko-2.11.0")
+   (version "2.11.0")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://github.com/paramiko/paramiko/archive/refs/tags/2.11.0.tar.gz")
+     (sha256
+      (base32 "0vdq40qddm739hf8r7v02as1xws7hkvlw8zvry06x6yrf0z6vkxw"))))
+   (build-system python-build-system)
+   (arguments
+    `( ;; FIXME: Tests require many unpackaged libraries, see dev-requirements.txt.
+      #:tests? #f))
+   (propagated-inputs
+    (list python-bcrypt python-pyasn1 python-pynacl python-cryptography))
+   (home-page "https://www.paramiko.org/")
+   (synopsis "SSHv2 protocol library")
+   (description "Paramiko is a python implementation of the SSHv2 protocol,
+providing both client and server functionality.  While it leverages a Python C
+extension for low level cryptography (PyCrypto), Paramiko itself is a pure
+Python interface around SSH networking concepts.")
+   (license license:lgpl2.1+)))
+
+(define-public python-alembic-1.7.6
+  (package
+    (name "python-alembic-1.7.6")
+    (version "1.7.6")
+    (source
+     (origin
+       (method url-fetch)
+       (uri "https://github.com/sqlalchemy/alembic/archive/refs/tags/rel_1_7_6.tar.gz")
+       (sha256
+        (base32 "169wb8yl4svznnrj9dwc8fnmaa6x1cc9vlflssy6imhy35hf5vww"))))
+    (build-system python-build-system)
+    (arguments
+     '(#:phases (modify-phases %standard-phases
+                  (replace 'check
+                    (lambda _
+                      (invoke "pytest" "-vv"))))))
+    (native-inputs
+     (list python-mock python-pytest-cov))
+    (propagated-inputs
+     (list python-dateutil python-sqlalchemy python-mako python-editor))
+    (home-page "https://bitbucket.org/zzzeek/alembic")
+    (synopsis "Database migration tool for SQLAlchemy")
+    (description
+     "Alembic is a lightweight database migration tool for usage with the                      
+SQLAlchemy Database Toolkit for Python.")
+    (license license:expat)))
+
 (define-public rucio-1.30.0
   (package
    (name "rucio-1.30.0")
@@ -1707,8 +2198,51 @@ databases.")
       ("python-flask-2.0.3" ,python-flask-2.0.3)
       ("python-redis-4.1.4" ,python-redis-4.1.4)
       ("python-google-auth-2.6.0" ,python-google-auth-2.6.0)
+      ("python-typing-extensions-4.4.0" ,python-typing-extensions-4.4.0)
+      ("python-defusedxml" ,python-defusedxml)
+      ("python-beaker-1.12.0" ,python-beaker-1.12.0)
+      ("python-pyjwkest-1.4.0" ,python-pyjwkest-1.4.0)
+      ("python-pycryptodomex" ,python-pycryptodomex)
+      ("python-future" ,python-future)
+
+      ;; Requirement.parse('aiohttp<4.0.0,>=3.6.2')
+      ("python-aiohttp" ,python-aiohttp)
+      ;; maxminddb<3.0.0,>=2.2.0
+      ("python-maxminddb" ,python-maxminddb)
+      ;; deprecated>=1.2.3
+      ("python-deprecated" ,python-deprecated)
+      ;; packaging>=20.4
+      ("python-packaging" ,python-packaging)
       ;; geoip2==4.5.0
       ("python-geoip2-4.5.0" ,python-geoip2-4.5.0)
+      ;; statsd==3.3.0
+      ("python-statsd" ,python-statsd)
+      ;; stomp.py==6.1.1
+      ("python-stomp-6.1.1" ,python-stomp-6.1.1)
+      ;; pymemcache==3.5.2
+      ("python-pymemcache-3.5.2" ,python-pymemcache-3.5.2)
+      ;; alembic~=1.7.6
+      ("python-alembic-1.7.6" ,python-alembic-1.7.6)
+      ;; SQLAlchemy==1.4.31
+      ("python-sqlalchemy-1.4.31" ,python-sqlalchemy-1.4.31)
+      ;; python-magic~=0.4.25
+      ("python-magic-0.4.25" ,python-magic-0.4.25)
+      ;; argcomplete~=1.12.3
+      ("python-argcomplete-1.12.3" ,python-argcomplete-1.12.3)
+      ;; paramiko~=2.11.0
+      ("python-paramiko-2.11.0" ,python-paramiko-2.11.0)
+      ;; jsonschema~=3.2.0
+      ("python-jsonschema-3.2.0" ,python-jsonschema-3.2.0)
+      ;; tabulate~=0.8.0
+      ("python-tabulate" ,python-tabulate)
+      ;; dogpile.cache<=1.1.5,>=1.1.2
+      ("python-dogpile.cache" ,python-dogpile.cache-1.1.5) 
+      ;; urllib3<=1.26.8,>=1.24.2
+      ("python-urllib3" ,python-urllib3-1.26.8)
+      ;; requests<=2.27.1,>=2.20.0
+      ("python-requests-2.27.1" ,python-requests-2.27.1)
+      ;; charset_normalizer~=2.0.0
+      ("python-charset-normalizer-2.0.0" ,python-charset-normalizer-2.0.0)
       ))
    (arguments
     `(#:tests? #f
@@ -1729,22 +2263,31 @@ databases.")
 		       "tools/test/run_tests.py"
 		       "tools/add_header")
 		     (("/bin/sh")
-                      (string-append BASH_DIR "/bin/sh")))))))))
-
+                      (string-append BASH_DIR "/bin/sh")))
+		    (substitute*
+		     "requirements.txt"
+		     ;; DistributionNotFound(Requirement.parse('stomp.py==6.1.1'), {'rucio'})
+		     (("stomp.py==6.1.1") "# stomp.py==6.1.1")
+		     ;; ContextualVersionConflict(alembic 1.7.6.dev0 ...)
+		     (("alembic~=1.7.6") "# alembic~=1.7.6")
+		     ;; ContextualVersionConflict(SQLAlchemy 1.4.31.dev0
+		     (("SQLAlchemy==1.4.31") "# SQLAlchemy==1.4.31")
+		     )))))))
    
-   (home-page "https://github.com/rucio/rucio/")
+   (home-page "http://rucio.cern.ch/")
    (synopsis "Rucio")
-   (description "Rucio is a software framework that provides functionality to
-organize, manage, and access large volumes of scientific data using
-customisable policies. The data can be spread across globally
-distributed locations and across heterogeneous data centers, uniting
-different storage and network technologies as a single federated
-entity. Rucio offers advanced features such as distributed data
-recovery or adaptive replication, and is highly scalable, modular, and
-extensible. Rucio has been originally developed to meet the
-requirements of the high-energy physics experiment ATLAS, and is
-continuously extended to support LHC experiments and other diverse
-scientific communities.")
+   (description "Rucio is a software framework that provides functionality
+to organize, manage, and access large volumes of scientific
+data using customisable policies. The data can be spread
+across globally distributed locations and across
+heterogeneous data centers, uniting different storage and
+network technologies as a single federated entity. Rucio
+offers advanced features such as distributed data recovery
+or adaptive replication, and is highly scalable, modular,
+and extensible. Rucio has been originally developed to meet
+the requirements of the high-energy physics experiment
+ATLAS, and is continuously extended to support LHC
+experiments and other diverse scientific communities.")
    (license license:asl2.0)))
 
 
