@@ -1656,7 +1656,7 @@ server-to-server authentication mechanisms to access Google APIs.")
 
 (define-public python-geoip2-4.5.0
   (package
-    (name "python-geoip2")
+    (name "python-geoip2-4.5.0")
     (version "4.5.0")
     (source
      (origin
@@ -1669,10 +1669,16 @@ server-to-server authentication mechanisms to access Google APIs.")
     (arguments
      `(#:tests? #f)) ;; Tests require a copy of the maxmind database
     (inputs
-     (list python-maxminddb python-requests
-	   ;; Requirement.parse('aiohttp<4.0.0,>=3.6.2')
-	   python-aiohttp
-	   ))
+     `(("python-3.9" ,python-3.9)
+       ;; Requirement.parse('aiohttp<4.0.0,>=3.6.2')
+       ("python-aiohttp" ,python-aiohttp)
+       ;; maxminddb<3.0.0,>=2.2.0
+       ("python-maxminddb" ,python-maxminddb)
+       ;; urllib3<2.0.0,>=1.25.2
+       ("python-urllib3" ,python-urllib3)
+       ;; requests<3.0.0,>=2.24.0
+       ("python-requests" ,python-requests)
+       ))
     (home-page "https://www.maxmind.com/")
     (synopsis "MaxMind GeoIP2 API")
     (description "Provides an API for the GeoIP2 web services and databases.
@@ -1703,7 +1709,6 @@ databases.")
       ("python-google-auth-2.6.0" ,python-google-auth-2.6.0)
       ;; geoip2==4.5.0
       ("python-geoip2-4.5.0" ,python-geoip2-4.5.0)
-
       ))
    (arguments
     `(#:tests? #f
