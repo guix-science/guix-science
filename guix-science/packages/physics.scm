@@ -30,6 +30,7 @@
   #:use-module  (gnu packages check) 
   #:use-module  (gnu packages commencement) ;; gcc-toolchain
   #:use-module  (gnu packages compression)  ;; zlib lz4
+  #:use-module  (gnu packages curl) 
   #:use-module  (gnu packages databases)
   #:use-module  (gnu packages digest)
   #:use-module  (gnu packages documentation)
@@ -82,6 +83,7 @@
   #:use-module  (guix utils)
   
   #:use-module  (ice-9 match)
+  #:use-module  (ice-9 regex)
 
   ;; TODO: Verify if still Ok after guix pull
   
@@ -116,7 +118,8 @@
 	    G4INCL-1.0
 	    G4ENSDFSTATE-2.2
 	    GEANT4-10.04
-	    GEANT4-11.1.0     ;; Ok        
+	    GEANT4-11.1.0 ;; Ok        
+	    ROOT-6.26.10  ;; Ok
 	    
 	    ;; Already in Guix:
 	    ;; cairo
@@ -124,18 +127,23 @@
 	    ;; cmake ;; I don't know if all these old versions are still needed
 	    ;; coin3d
 	    ;; gnuplot
+	    ;; maven
 	    ;; openmpi
 	    ;; tcl
 	    ;; texlive
 	    
 	    ;; Others:
 	    
-	    dcap-2.47.12  ;; Ok
+	    Unuran-1.8.1       ;; Ok
+	    clang-9.0.1        ;; Ok
+	    davix-0.8.3        ;; Ok
+	    dcap-2.47.12       ;; Ok
+	    libAfterImage-1.20 ;; Ok
+	    llvm-5             ;; Ok
+	    llvm-9.0.1         ;; Ok
+	    vdt		       ;; Ok
+
 	    davix-0.6.4	  ;; Failed
-	    llvm-5	  ;; Failed
-	    libAfterImage ;; Failed
-	    vdt		  ;; Ok
-	    Unuran-1.8.1  ;; Ok
 	    ROOT-5.28     ;; TODO
 	    ROOT-6.18.04  ;; Error
             ROOT-6.20.02  ;; Error
@@ -768,10 +776,15 @@ devices.")
       ("python-sqlalchemy" ,python-sqlalchemy)
       ("python-typing-extensions" ,python-typing-extensions-4.4.0) ;; >= 4.3.0 !
       ("python-wheel" ,python-wheel)
-      ;; TODO: rucio-clients diraccfg db12 fts3 gfal2-python 
+
+      ("rucio" ,rucio-1.30.0)
+
+      ;; Dependencies in environment.yml
+      ;; TODO: diraccfg db12 fts3 gfal2-python 
 
       ))
-   (arguments `())
+   (arguments `(#:tests? #f ;; No network 
+		))
    (home-page "http://diracgrid.org/")
    (synopsis "DIRAC")
    (description "DIRAC provides a complete solution to one or more user community requiring access to distributed resources. DIRAC builds a layer between the users and the resources offering a common interface to a number of heterogeneous providers, integrating them in a seamless manner, providing interoperability, at the same time as an optimized, transparent and reliable usage of the resources.")
@@ -2189,6 +2202,10 @@ SQLAlchemy Database Toolkit for Python.")
      (sha256
       (base32 "1pwxm5flqqcin6xsh9v07drbjjdn28gi7m0j7m5z900cnxryi1bm"))))
       (build-system python-build-system)
+   (propagated-inputs
+    `(("python-urllib3" ,python-urllib3-1.26.8)
+      ("python-charset-normalizer-2.0.0" ,python-charset-normalizer-2.0.0)
+      ))
    (inputs
     `(("python-3.9" ,python-3.9)
       ("bash" ,bash)
@@ -2290,7 +2307,118 @@ ATLAS, and is continuously extended to support LHC
 experiments and other diverse scientific communities.")
    (license license:asl2.0)))
 
+;; Problem: rucio-webui has no tags yet
+(define-public rucio-1.30.1
+  (package
+   (name "rucio-1.30.1")
+   (version "1.30.1")
+   (source
+    (origin
+     (method url-fetch)
+     (uri "https://github.com/rucio/rucio/archive/refs/tags/1.30.1.tar.gz")
+     (sha256
+      (base32 "1iw6njbnwjs7chqr25mylnxi5qkx35wdj8z7b90g1j5b8a884k6a"))))
+      (build-system python-build-system)
+   (inputs
+    `(("python-3.9" ,python-3.9)
+      ("bash" ,bash)
+      ("python-boto3" ,python-boto3-1.21.13) ;;
+      ("python-prometheus-client-0.13.1" ,python-prometheus-client-0.13.1)
+      ("python-pyoidc-1.3.0" ,python-pyoidc-1.3.0)
+      ("python-flask-2.0.3" ,python-flask-2.0.3)
+      ("python-redis-4.1.4" ,python-redis-4.1.4)
+      ("python-google-auth-2.6.0" ,python-google-auth-2.6.0)
+      ("python-typing-extensions-4.4.0" ,python-typing-extensions-4.4.0)
+      ("python-defusedxml" ,python-defusedxml)
+      ("python-beaker-1.12.0" ,python-beaker-1.12.0)
+      ("python-pyjwkest-1.4.0" ,python-pyjwkest-1.4.0)
+      ("python-pycryptodomex" ,python-pycryptodomex)
+      ("python-future" ,python-future)
 
+      ;; Requirement.parse('aiohttp<4.0.0,>=3.6.2')
+      ("python-aiohttp" ,python-aiohttp)
+      ;; maxminddb<3.0.0,>=2.2.0
+      ("python-maxminddb" ,python-maxminddb)
+      ;; deprecated>=1.2.3
+      ("python-deprecated" ,python-deprecated)
+      ;; packaging>=20.4
+      ("python-packaging" ,python-packaging)
+      ;; geoip2==4.5.0
+      ("python-geoip2-4.5.0" ,python-geoip2-4.5.0)
+      ;; statsd==3.3.0
+      ("python-statsd" ,python-statsd)
+      ;; stomp.py==6.1.1
+      ("python-stomp-6.1.1" ,python-stomp-6.1.1)
+      ;; pymemcache==3.5.2
+      ("python-pymemcache-3.5.2" ,python-pymemcache-3.5.2)
+      ;; alembic~=1.7.6
+      ("python-alembic-1.7.6" ,python-alembic-1.7.6)
+      ;; SQLAlchemy==1.4.31
+      ("python-sqlalchemy-1.4.31" ,python-sqlalchemy-1.4.31)
+      ;; python-magic~=0.4.25
+      ("python-magic-0.4.25" ,python-magic-0.4.25)
+      ;; argcomplete~=1.12.3
+      ("python-argcomplete-1.12.3" ,python-argcomplete-1.12.3)
+      ;; paramiko~=2.11.0
+      ("python-paramiko-2.11.0" ,python-paramiko-2.11.0)
+      ;; jsonschema~=3.2.0
+      ("python-jsonschema-3.2.0" ,python-jsonschema-3.2.0)
+      ;; tabulate~=0.8.0
+      ("python-tabulate" ,python-tabulate)
+      ;; dogpile.cache<=1.1.5,>=1.1.2
+      ("python-dogpile.cache" ,python-dogpile.cache-1.1.5) 
+      ;; urllib3<=1.26.8,>=1.24.2
+      ("python-urllib3" ,python-urllib3-1.26.8)
+      ;; requests<=2.27.1,>=2.20.0
+      ("python-requests-2.27.1" ,python-requests-2.27.1)
+      ;; charset_normalizer~=2.0.0
+      ("python-charset-normalizer-2.0.0" ,python-charset-normalizer-2.0.0)
+      ))
+   (arguments
+    `(#:tests? #f
+
+      #:phases
+      (modify-phases
+       %standard-phases
+       (add-before 'build ;; For python-build-system
+		   'patches
+		   (lambda*
+		    (#:key inputs #:allow-other-keys)
+		    (let ((BASH_DIR (assoc-ref inputs "bash")))
+		    (substitute*
+		     '("setuputil.py"
+		       "tools/generate_version.py"
+		       "tools/prepare-commit-msg"
+		       "tools/test/oracle_setup.sh"
+		       "tools/test/run_tests.py"
+		       "tools/add_header")
+		     (("/bin/sh")
+                      (string-append BASH_DIR "/bin/sh")))
+		    (substitute*
+		     "requirements.txt"
+		     ;; DistributionNotFound(Requirement.parse('stomp.py==6.1.1'), {'rucio'})
+		     (("stomp.py==6.1.1") "# stomp.py==6.1.1")
+		     ;; ContextualVersionConflict(alembic 1.7.6.dev0 ...)
+		     (("alembic~=1.7.6") "# alembic~=1.7.6")
+		     ;; ContextualVersionConflict(SQLAlchemy 1.4.31.dev0
+		     (("SQLAlchemy==1.4.31") "# SQLAlchemy==1.4.31")
+		     )))))))
+   
+   (home-page "http://rucio.cern.ch/")
+   (synopsis "Rucio")
+   (description "Rucio is a software framework that provides functionality
+to organize, manage, and access large volumes of scientific
+data using customisable policies. The data can be spread
+across globally distributed locations and across
+heterogeneous data centers, uniting different storage and
+network technologies as a single federated entity. Rucio
+offers advanced features such as distributed data recovery
+or adaptive replication, and is highly scalable, modular,
+and extensible. Rucio has been originally developed to meet
+the requirements of the high-energy physics experiment
+ATLAS, and is continuously extended to support LHC
+experiments and other diverse scientific communities.")
+   (license license:asl2.0)))
   
   
 
@@ -2368,6 +2496,7 @@ experiments and other diverse scientific communities.")
 ;;    (license license:asl2.0)))
 
 ;; TODO
+
 (define-public davix-0.6.4
   (package
    (name "davix")
@@ -2386,7 +2515,7 @@ experiments and other diverse scientific communities.")
       ("gcc-toolchain" ,gcc-toolchain)
       ("python" ,python-2.7)
       ("libxml2" ,libxml2)
-      ("openssl" ,openssl-1.0)
+      ("openssl" ,openssl-1.1)
       ("libuuid" ,util-linux+udev)
       ("boost" ,boost)
       ))
@@ -2396,24 +2525,566 @@ experiments and other diverse scientific communities.")
    (description "The davix project aims to make file management over HTTP-based protocols simple.")
    (license license:lgpl2.1+)))
 
+;; https://github.com/cern-fts/davix/archive/refs/tags/R_0_8_3.tar.gz
+(define-public davix-0.8.3
+  (package
+   (name "davix-0.8.3")
+   (version "0.8.3")
+   (source
+    (origin
+     (method git-fetch)
+     (uri (git-reference
+           (url "https://github.com/cern-fts/davix")
+           (commit (string-append "R_" (string-replace-substring version "." "_")))
+           (recursive? #t))) ;; submodules
+     (sha256
+      (base32
+       "1q17063rjw1yl8fxvwk1kvzd1i5m37jfks4hwal5mr62b9v2fv64"))))
+   (build-system cmake-build-system)
+   (inputs
+    `(("coreutils" ,coreutils)
+      ("gcc-toolchain" ,gcc-toolchain-8)
+      ("python" ,python-2.7)
+      ("libxml2" ,libxml2)
+      ("openssl" ,openssl-1.1)
+      ("libuuid" ,util-linux+udev)
+      ("boost" ,boost)
+      ("util-linux" ,util-linux "lib") ;; Pour #include <uuid/uuid.h>
+      ("curl" ,curl)
+      ;; ("googletest" ,googletest)
+      ))
+   (arguments
+    `(#:phases
+      (modify-phases
+       %standard-phases
+       (add-before
+	'configure
+      	'patch
+      	(lambda args
+          '(substitute*
+	    "src/fileops/AzureIO.cpp"
+	    (("#include <uuid/uuid.h>") "#include <linux/uuid.h>")
+	    (("uuid_t uuid") "guid_t uuid")
+	    (("uuid\\[i\\]") "uuid.b[i]") 
+      	    ))))
+
+      #:configure-flags
+      (list
+       "-DEMBEDDED_LIBCURL=FALSE"
+       "-DLIBCURL_BACKEND_BY_DEFAULT=TRUE"
+       )))
+      
+   (home-page "https://davix.web.cern.ch/")
+   (synopsis "Davix")
+   (description "The davix project aims to make file management over HTTP-based protocols simple.")
+   (license license:lgpl2.1+)))
+
+
 ;; Failed
+;; In file included from /tmp/guix-build-llvm-5.0.2.drv-0/llvm-5.0.2.src/tools/lli/lli.cpp:30:
+;; /tmp/guix-build-llvm-5.0.2.drv-0/llvm-5.0.2.src/include/llvm/ExecutionEngine/Orc/OrcRemoteTarg
+;; etClient.h: In member function <E2><80><98>llvm::Expected<std::vector<char> > llvm::orc::remot
+;; e::OrcRemoteTargetClient<ChannelT>::readMem(char*, llvm::JITTargetAddress, uint64_t)<E2><80>
+;; <99>:
+;; /tmp/guix-build-llvm-5.0.2.drv-0/llvm-5.0.2.src/include/llvm/ExecutionEngine/Orc/OrcRemoteTarg
+;; etClient.h:722:26: error: could not convert <E2><80><98>((llvm::orc::remote::OrcRemoteTargetCl
+;; ient<ChannelT>*)this)->callB<llvm::orc::remote::OrcRemoteTargetRPCAPI::ReadMem>(Src, Size)<E2>
+;; <80><99> from <E2><80><98>Expected<vector<unsigned char,allocator<unsigned char>>><E2><80><99>
+;;  to <E2><80><98>Expected<vector<char,allocator<char>>><E2><80><99>
+;;   722 |     return callB<ReadMem>(Src, Size);
+;;       |            ~~~~~~~~~~~~~~^~~~~~~~~~~
+;;       |                          |
+;;       |                          Expected<vector<unsigned char,allocator<unsigned char>>>
+
+
 (define-public llvm-5
   (package
    (inherit llvm-7)
+   (name "llvm-5")
    (version "5.0.2")
-   (source (origin
-            (method url-fetch)
-            (uri (string-append "https://releases.llvm.org/"
-				version "/llvm-"
-				version ".src.tar.xz"))
-            (sha256
-             (base32
-	      "0g1bbj2n6xv4p1n6hh17vj3vpvg56wacipc81dgwga9mg2lys8nm"))))))
+   (source
+    (origin
+     (method url-fetch)
+     (uri (string-append "https://releases.llvm.org/"
+			 version "/llvm-"
+			 version ".src.tar.xz"))
+     (sha256
+      (base32
+       "0g1bbj2n6xv4p1n6hh17vj3vpvg56wacipc81dgwga9mg2lys8nm"))
+     (modules '((guix build utils)))
+     (snippet '(substitute* ;; https://bugs.gentoo.org/655140
+		"include/llvm/ExecutionEngine/Orc/OrcRemoteTargetClient.h"
+		(("Expected<std::vector<char>> readMem")
+		 "Expected<std::vector<uint8_t>> readMem")
+		))
+     ))))
 
-;; Failed
-(define-public libAfterImage
+(define %llvm-release-monitoring-url
+  "https://github.com/llvm/llvm-project/releases")
+
+(define (llvm-uri component version)
+  ;; LLVM release candidate file names are formatted 'tool-A.B.C-rcN/tool-A.B.CrcN.src.tar.xz'
+  ;; so we specify the version as A.B.C-rcN and delete the hyphen when referencing the file name.
+  (string-append "https://github.com/llvm/llvm-project/releases/download"
+                 "/llvmorg-" version "/" component "-" (string-delete #\- version) ".src.tar.xz"))
+
+(define-public llvm-9.0.1
   (package
-   (name "libAfterImage")
+   (inherit llvm-10)
+   (name "llvm-9.0.1")
+   (version "9.0.1")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (llvm-uri "llvm" version))
+     (sha256
+      (base32
+       "16hwp3qa54c3a3v7h8nlw0fh5criqh0hlr1skybyk0cz70gyx880"))
+     (modules '((guix build utils)))
+     (snippet '(substitute*
+		;; https://github.com/root-project/cling/issues/438
+		;; Error:
+		;; llvm::orc::LegacyRTDyldObjectLinkingLayer::LinkedObjects is private within this context
+		"include/llvm/ExecutionEngine/Orc/RTDyldObjectLinkingLayer.h"
+		(("std::map<VModuleKey, std::unique_ptr<LinkedObject>> LinkedObjects;")
+		 "public:\n std::map<VModuleKey, std::unique_ptr<LinkedObject>> LinkedObjects;\n  private:\n")))
+		;; A verifier dans le code si le substitute* a bien marche
+     (patches (search-patches
+               "llvm-9-fix-bitcast-miscompilation.patch"
+               "llvm-9-fix-scev-miscompilation.patch"
+               "llvm-9-fix-lpad-miscompilation.patch"))))
+   (arguments
+    (if (target-riscv64?)
+	(substitute-keyword-arguments (package-arguments llvm-10)
+				      ((#:phases phases)
+				       `(modify-phases ,phases
+						       (add-after 'unpack 'patch-dsymutil-link
+								  (lambda _
+								    (substitute* "tools/dsymutil/CMakeLists.txt"
+										 (("endif\\(APPLE\\)")
+										  (string-append
+										   "endif(APPLE)\n\n"
+										   "if (CMAKE_HOST_SYSTEM_PROCESSOR MATCHES \"riscv64\")\n"
+										   "  target_link_libraries(dsymutil PRIVATE atomic)\n"
+										   "endif()"))))))))
+	(package-arguments llvm-10)))))
+
+(define* (clang-runtime-from-llvm llvm
+                                  #:optional
+                                  hash
+                                  (patches '()))
+  (package
+   (name "clang-runtime")
+   (version (package-version llvm))
+   (source
+    (if hash
+        (origin
+         (method url-fetch)
+         (uri (llvm-uri "compiler-rt" version))
+         (sha256 (base32 hash))
+         (patches (map search-patch patches)))
+        (llvm-monorepo (package-version llvm))))
+   (build-system cmake-build-system)
+   (native-inputs (package-native-inputs llvm))
+   (inputs
+    (list llvm))
+   (arguments
+    `( ;; Don't use '-g' during the build to save space.
+      #:build-type "Release"
+      #:tests? #f                      ; Tests require gtest
+      #:modules ((srfi srfi-1)
+                 (ice-9 match)
+                 ,@%cmake-build-system-modules)
+      #:phases (modify-phases (@ (guix build cmake-build-system) %standard-phases)
+			      (add-after 'set-paths 'hide-glibc
+					 ;; Work around https://issues.guix.info/issue/36882.  We need to
+					 ;; remove glibc from CPLUS_INCLUDE_PATH so that the one hardcoded
+					 ;; in GCC, at the bottom of GCC include search-path is used.
+					 (lambda* (#:key inputs #:allow-other-keys)
+						  (let* ((filters '("libc"))
+							 (input-directories
+							  (filter-map (lambda (input)
+									(match input
+									       ((name . dir)
+										(and (not (member name filters))
+										     dir))))
+								      inputs)))
+						    (set-path-environment-variable "CPLUS_INCLUDE_PATH"
+										   '("include")
+										   input-directories)
+						    #t))))))
+   (home-page "https://compiler-rt.llvm.org")
+   (synopsis "Runtime library for Clang/LLVM")
+   (description
+    "The \"clang-runtime\" library provides the implementations of run-time
+functions for C and C++ programs.  It also provides header files that allow C
+and C++ source code to interface with the \"sanitization\" passes of the clang
+compiler.  In LLVM this library is called \"compiler-rt\".")
+   (license (package-license llvm))
+   (properties `((release-monitoring-url . ,%llvm-release-monitoring-url)
+                 (upstream-name . "compiler-rt")))
+
+   ;; <https://compiler-rt.llvm.org/> doesn't list MIPS as supported.
+   (supported-systems (delete "mips64el-linux" %supported-systems))))
+
+(define (clang-properties version)
+  "Return package properties for Clang VERSION."
+  `((compiler-cpu-architectures
+     ("x86_64"
+      ;; This list was obtained by running:
+      ;;
+      ;;   guix shell clang -- llc -march=x86-64 -mattr=help
+      ;;
+      ;; filtered from uninteresting entries such as "i686" and "pentium".
+      ,@(if (version>=? version "10.0")	;TODO: refine
+            '("atom"
+              "barcelona"
+              "bdver1"
+              "bdver2"
+              "bdver3"
+              "bdver4"
+              "bonnell"
+              "broadwell"
+              "btver1"
+              "btver2"
+              "c3"
+              "c3-2"
+              "cannonlake"
+              "cascadelake"
+              "cooperlake"
+              "core-avx-i"
+              "core-avx2"
+              "core2"
+              "corei7"
+              "corei7-avx"
+              "generic"
+              "geode"
+              "goldmont"
+              "goldmont-plus"
+              "haswell"
+              "icelake-client"
+              "icelake-server"
+              "ivybridge"
+              "k8"
+              "k8-sse3"
+              "knl"
+              "knm"
+              "lakemont"
+              "nehalem"
+              "nocona"
+              "opteron"
+              "opteron-sse3"
+              "sandybridge"
+              "silvermont"
+              "skx"
+              "skylake"
+              "skylake-avx512"
+              "slm"
+              "tigerlake"
+              "tremont"
+              "westmere"
+              "x86-64"
+              "x86-64-v2"
+              "x86-64-v3"
+              "x86-64-v4"
+              "znver1"
+              "znver2"
+              "znver3")
+            '())))))
+
+(define* (clang-from-llvm llvm clang-runtime
+                          #:optional hash
+                          #:key (patches '()) tools-extra
+                          (properties
+                           (append `((release-monitoring-url
+                                      . ,%llvm-release-monitoring-url))
+                                   (clang-properties (package-version llvm))))
+                          (legacy-build-shared-libs? #f))
+  "Produce Clang with dependencies on LLVM and CLANG-RUNTIME, and applying the
+given PATCHES.  When TOOLS-EXTRA is given, it must point to the
+'clang-tools-extra' tarball, which contains code for 'clang-tidy', 'pp-trace',
+'modularize', and other tools.  LEGACY-BUILD-SHARED-LIBS? is used to configure
+the package to use the legacy BUILD_SHARED_LIBS CMake option, which was used
+until LLVM/Clang 14."
+  (package
+   (name "clang")
+   (version (package-version llvm))
+   (source
+    (if hash
+        (origin
+         (method url-fetch)
+         (uri (llvm-uri (if (version>=? version "9.0.1")
+                            "clang"
+                            "cfe")
+                        version))
+         (sha256 (base32 hash))
+         (patches (map search-patch patches)))
+        (llvm-monorepo (package-version llvm))))
+   ;; Using cmake allows us to treat llvm as an external library.  There
+   ;; doesn't seem to be any way to do this with clang's autotools-based
+   ;; build system.
+   (build-system cmake-build-system)
+   (native-inputs (package-native-inputs llvm))
+   (inputs
+    `(("libxml2" ,libxml2)
+      ("gcc-lib" ,gcc "lib")
+      ("clang-runtime" ,clang-runtime) ;; Added to avoid error (assoc-ref inputs "clang-runtime") = #f
+      ,@(package-inputs llvm)
+      ,@(if tools-extra
+            `(("clang-tools-extra" ,tools-extra))
+            '())))
+   (propagated-inputs
+    (list llvm clang-runtime))
+   (arguments
+    `(#:configure-flags
+      (list "-DCLANG_INCLUDE_TESTS=True"
+
+            ;; Find libgcc_s, crtbegin.o, and crtend.o.
+            (string-append "-DGCC_INSTALL_PREFIX="
+                           (assoc-ref %build-inputs "gcc-lib"))
+
+            ;; Use a sane default include directory.
+            (string-append "-DC_INCLUDE_DIRS="
+                           (assoc-ref %build-inputs "libc")
+                           "/include")
+            ,@(if (target-riscv64?)
+                  (list "-DLIBOMP_LIBFLAGS=-latomic"
+                        "-DCMAKE_SHARED_LINKER_FLAGS=-latomic")
+                  `())
+            ,@(if legacy-build-shared-libs?
+                  '()
+                  (list "-DCLANG_LINK_CLANG_DYLIB=ON")))
+
+      ,@(if (target-riscv64?)
+            `(#:make-flags '("LDFLAGS=-latomic"))
+            '())
+
+      ;; Don't use '-g' during the build to save space.
+      #:build-type "Release"
+
+      #:phases (modify-phases %standard-phases
+			      ,@(if tools-extra
+				    `((add-after 'unpack 'add-tools-extra
+						 (lambda* (#:key inputs #:allow-other-keys)
+							  ;; Unpack the 'clang-tools-extra' tarball under
+							  ;; tools/.
+							  (let ((extra (assoc-ref inputs
+										  "clang-tools-extra")))
+							    (invoke "tar" "xf" extra)
+							    (rename-file ,(string-append
+									   "clang-tools-extra-"
+									   (string-delete #\- (package-version llvm))
+									   ".src")
+									 "tools/extra")
+							    ,@(if legacy-build-shared-libs?
+								  ;; Build and link to shared libraries.
+								  '((substitute* "cmake/modules/AddClang.cmake"
+										 (("BUILD_SHARED_LIBS") "True")))
+								  '())
+							    #t))))
+				    '())
+			      (add-after 'unpack 'add-missing-triplets
+					 (lambda _
+					   ;; Clang iterates through known triplets to search for
+					   ;; GCC's headers, but does not recognize some of the
+					   ;; triplets that are used in Guix.
+					   (substitute* ,@(if (version>=? version "6.0")
+							      '("lib/Driver/ToolChains/Gnu.cpp")
+							      '("lib/Driver/ToolChains.cpp"))
+							(("\"aarch64-linux-gnu\"," all)
+							 (string-append "\"aarch64-unknown-linux-gnu\", "
+									all))
+							(("\"arm-linux-gnueabihf\"," all)
+							 (string-append all
+									" \"arm-unknown-linux-gnueabihf\","))
+							(("\"i686-pc-linux-gnu\"," all)
+							 (string-append "\"i686-unknown-linux-gnu\", "
+									all)))
+					   #t))
+			      (add-after 'unpack 'set-glibc-file-names
+					 (lambda* (#:key inputs #:allow-other-keys)
+						  (let ((libc (assoc-ref inputs "libc"))
+							(compiler-rt (assoc-ref inputs "clang-runtime"))
+							(gcc (assoc-ref inputs "gcc")))
+						    ,@(cond
+						       ((version>=? version "6.0")
+							`( ;; Link to libclang_rt files from clang-runtime.
+							  (substitute* "lib/Driver/ToolChain.cpp"
+								       (("getDriver\\(\\)\\.ResourceDir")
+									(string-append "\"" compiler-rt "\"")))
+
+							  ;; Make "LibDir" refer to <glibc>/lib so that it
+							  ;; uses the right dynamic linker file name.
+							  (substitute* "lib/Driver/ToolChains/Linux.cpp"
+								       (("(^[[:blank:]]+LibDir = ).*" _ declaration)
+									(string-append declaration "\"" libc "/lib\";\n"))
+
+								       ;; Make clang look for libstdc++ in the right
+								       ;; location.
+								       (("LibStdCXXIncludePathCandidates\\[\\] = \\{")
+									(string-append
+									 "LibStdCXXIncludePathCandidates[] = { \"" gcc
+									 "/include/c++\","))
+
+								       ;; Make sure libc's libdir is on the search path, to
+								       ;; allow crt1.o & co. to be found.
+								       (("@GLIBC_LIBDIR@")
+									(string-append libc "/lib")))))
+						       (else
+							`((substitute* "lib/Driver/Tools.cpp"
+								       ;; Patch the 'getLinuxDynamicLinker' function so that
+								       ;; it uses the right dynamic linker file name.
+								       (("/lib64/ld-linux-x86-64.so.2")
+									(string-append libc
+										       ,(glibc-dynamic-linker))))
+
+							  ;; Link to libclang_rt files from clang-runtime.
+							  ;; This substitution needed slight adjustment in 3.8.
+							  ,@(if (version>=? version "3.8")
+								'((substitute* "lib/Driver/Tools.cpp"
+									       (("TC\\.getDriver\\(\\)\\.ResourceDir")
+										(string-append "\"" compiler-rt "\""))))
+								'((substitute* "lib/Driver/ToolChain.cpp"
+									       (("getDriver\\(\\)\\.ResourceDir")
+										(string-append "\"" compiler-rt "\"")))))
+
+							  ;; Make sure libc's libdir is on the search path, to
+							  ;; allow crt1.o & co. to be found.
+							  (substitute* "lib/Driver/ToolChains.cpp"
+								       (("@GLIBC_LIBDIR@")
+									(string-append libc "/lib"))))))
+						    #t)))
+			      ;; Awkwardly, multiple phases added after the same phase,
+			      ;; e.g. unpack, get applied in the reverse order.  In other
+			      ;; words, adding 'change-directory last means it occurs
+			      ;; first after the unpack phase.
+			      ,@(if (version>=? version "14")
+				    '((add-after 'unpack 'change-directory
+						 (lambda _
+						   (chdir "clang"))))
+				    '())
+			      ,@(if (version>=? version "10")
+				    `((add-after 'install 'adjust-cmake-file
+						 (lambda* (#:key outputs #:allow-other-keys)
+							  (let ((out (assoc-ref outputs "out")))
+							    ;; Clang generates a CMake file with "targets"
+							    ;; for each installed library file.  Downstream
+							    ;; consumers of the CMake interface can use this
+							    ;; to get absolute library locations.  Including
+							    ;; this file will needlessly assert that _all_
+							    ;; libraries are available, which causes problems
+							    ;; in Guix because some are removed (see the
+							    ;; move-extra-tools phase).  Thus, remove the
+							    ;; asserts so that the main functionality works.
+							    (substitute*
+							     (string-append
+							      out
+							      "/lib/cmake/clang/ClangTargets-release.cmake")
+							     (("list\\(APPEND _IMPORT_CHECK_TARGETS.*" all)
+							      (string-append "# Disabled by Guix.\n#" all)))
+							    #t))))
+				    '())
+			      ,@(if (version>? version "3.8")
+				    `((add-after 'install 'symlink-cfi_ignorelist
+						 (lambda* (#:key inputs outputs #:allow-other-keys)
+							  (let* ((out (assoc-ref outputs "out"))
+								 (lib-share (string-append out "/lib/clang/"
+											   ,version "/share"))
+								 (compiler-rt (assoc-ref inputs "clang-runtime"))
+								 (file-name ,(if (version>=? version "13")
+										 "cfi_ignorelist.txt"
+										 "cfi_blacklist.txt"))
+								 ;; The location varies between Clang versions.
+								 (cfi-ignorelist
+								  (cond
+								   ((file-exists?
+								     (string-append compiler-rt "/" file-name))
+								    (string-append compiler-rt "/" file-name))
+								   (else (string-append compiler-rt
+											"/share/" file-name)))))
+							    (mkdir-p lib-share)
+							    ;; Symlink the ignorelist to where Clang expects
+							    ;; to find it.
+							    ;; Not all architectures support CFI.
+							    ;; see: compiler-rt/cmake/config-ix.cmake
+							    (when (file-exists? cfi-ignorelist)
+							      (symlink cfi-ignorelist
+								       (string-append lib-share "/" file-name)))))))
+				    '())
+			      (add-after 'install 'install-clean-up-/share/clang
+					 (lambda* (#:key outputs #:allow-other-keys)
+						  (let* ((out (assoc-ref outputs "out"))
+							 (compl-dir (string-append
+								     out "/etc/bash_completion.d")))
+						    (with-directory-excursion (string-append out
+											     "/share/clang")
+									      (for-each
+									       (lambda (file)
+										 (when (file-exists? file)
+										   (delete-file file)))
+									       ;; Delete extensions for proprietary text editors.
+									       '("clang-format-bbedit.applescript"
+										 "clang-format-sublime.py"
+										 ;; Delete Emacs extensions: see their respective Emacs
+										 ;; Guix package instead.
+										 "clang-rename.el" "clang-format.el"))
+									      ;; Install bash completion.
+									      (when (file-exists?  "bash-autocomplete.sh")
+										(mkdir-p compl-dir)
+										(rename-file "bash-autocomplete.sh"
+											     (string-append compl-dir "/clang")))))
+						  #t)))))
+
+   ;; Clang supports the same environment variables as GCC.
+   (native-search-paths
+    (list (search-path-specification
+           (variable "C_INCLUDE_PATH")
+           (files '("include")))
+          (search-path-specification
+           (variable "CPLUS_INCLUDE_PATH")
+           (files '("include/c++" "include")))
+          (search-path-specification
+           (variable "OBJC_INCLUDE_PATH")
+           (files '("include")))
+          (search-path-specification
+           (variable "LIBRARY_PATH")
+           (files '("lib" "lib64")))))
+
+   (home-page "https://clang.llvm.org")
+   (synopsis "C language family frontend for LLVM")
+   (description
+    "Clang is a compiler front end for the C, C++, Objective-C and
+Objective-C++ programming languages.  It uses LLVM as its back end.  The Clang
+project includes the Clang front end, the Clang static analyzer, and several
+code analysis tools.")
+   (properties properties)
+   (license (if (version>=? version "9.0")
+                license:asl2.0         ;with LLVM exceptions
+                license:ncsa))))
+
+(define-public clang-runtime-9.0.1
+  (package
+   (inherit
+    (clang-runtime-from-llvm
+     llvm-9.0.1
+     "0xwh79g3zggdabxgnd0bphry75asm1qz7mv3hcqihqwqr6aspgy2"
+     '("clang-runtime-9-libsanitizer-mode-field.patch")))
+   (name "clang-runtime-9.0.1")))
+
+(define-public clang-9.0.1
+  (package
+   (inherit
+    (clang-from-llvm
+     llvm-9.0.1
+     clang-runtime-9.0.1
+     "0ls2h3iv4finqyflyhry21qhc9cm9ga7g1zq21020p065qmm2y2p"
+     #:legacy-build-shared-libs? #t
+     #:patches '("clang-9.0-libc-search-path.patch")))
+   (name "clang-9.0.1")))
+
+(define-public libAfterImage-1.20
+  (package
+   (name "libAfterImage-1.20")
    (version "1.20")
    (source
     (origin
@@ -2422,17 +3093,31 @@ experiments and other diverse scientific communities.")
 	   "ftp://ftp.afterstep.org/stable/libAfterImage/"
 	   name "-" version ".tar.gz"))
      (sha256
-      (base32 "125y119fbr3g389nr7yls4i7x5zd5pz7h8qn12k8b21b4xk1h6y5"))))
+      (base32 "125y119fbr3g389nr7yls4i7x5zd5pz7h8qn12k8b21b4xk1h6y5"))
+     (modules '((guix build utils)))
+     (snippet
+      '(begin
+         (substitute*
+	  "Makefile.in"
+	  (("ar clq") "ar cq")
+	  )))))
    (build-system gnu-build-system)
    (inputs
     `(("coreutils" ,coreutils)
-      ("gcc-toolchain" ,gcc-toolchain)
       ("zlib" ,zlib)))
    (arguments 
     `(#:tests? #f)) ; no tests in Makefile
    (home-page "http://www.afterstep.org/afterimage/")
    (synopsis "LibAfterImage")
-   (description "LibAfterImage")
+   (description "libAfterImage is a generic image manipulation library. It
+was initially implemented to address AfterStep Window
+Manager's needs for image handling, but it evolved into
+extremely powerful and flexible software, suitable for
+virtually any project that has needs for loading,
+manipulating, displaying images, as well as writing images
+in files. Most of the popular image formats are supported
+using standard libraries, with XCF, XPM, PPM/PNM, BMP, ICO,
+TGA and GIF being supported internally.")
    (license license:lgpl2.1+)))
 
 ;; Ok
@@ -2513,7 +3198,7 @@ pseudorandom variates")
       
       ("dcap" ,dcap-2.47.12)
       ("davix" ,davix-0.6.4)
-      ("libAfterImage" ,libAfterImage)
+      ("libAfterImage" ,libAfterImage-1.20)
       ("vdt" ,vdt)
 
       ("unuran" ,Unuran-1.8.1)
@@ -2672,7 +3357,7 @@ integrated with other languages such as Python and R.")
       
       ("dcap" ,dcap-2.47.12)
       ("davix" ,davix-0.6.4)
-      ("libAfterImage" ,libAfterImage)
+      ("libAfterImage" ,libAfterImage-1.20)
       ("vdt" ,vdt)
 
       ;; Dependencies
@@ -2776,6 +3461,218 @@ integrated with other languages such as Python and R.")
            ;; (display (list "LD_LIBRARY_PATH" libpath)) (newline)
            (setenv "LD_LIBRARY_PATH" libpath)
            #t))))
+      
+      ))
+
+   ;; From llvm.scm
+   (native-search-paths
+    (list (search-path-specification
+	   (variable "CPATH")
+	   (files '("include")))
+	  (search-path-specification
+	   (variable "LIBRARY_PATH")
+	   (files '("lib" "lib64")))))
+   
+   (home-page "https://root.cern.ch/")
+   (synopsis "ROOT: Data Analysis Framework")
+   (description
+    "A modular scientific software toolkit.  It provides all the
+functionalities needed to deal with big data processing, statistical
+analysis, visualisation and storage.  It is mainly written in C++ but
+integrated with other languages such as Python and R.")
+   (license license:lgpl2.1+)))
+
+;; Note: In case of the folowing error:
+;; collect2: fatal error: ld terminated with signal 9 [Killed]
+;; You may not have enough RAM to compile ROOT (> 16G)
+(define-public ROOT-6.26.10
+  (package
+   (name "ROOT-6.26.10")
+   (version "6.26.10")
+   (source (origin
+	    (method url-fetch)
+	    (uri (string-append
+		  "https://root.cern/download/root_v"
+		  version ".source.tar.gz"))
+	    (sha256
+	     (base32
+	      "0pv2ppxc83x78c7vpcz09x3k98d1wx6mbszrajm1fh0hjz1vwmlf"))
+	    (file-name (string-append name "-" version ".tar.gz"))
+	    (modules '((guix build utils)))
+	    (snippet
+	     '(begin
+		(substitute*
+		 "core/clingutils/CMakeLists.txt"
+		 (("set\\(CLANG_RESOURCE_DIR_STEM \\$\\{LLVM_LIBRARY_DIR\\}/clang\\)")
+		  "set(CLANG_RESOURCE_DIR_STEM ${CLANG_LIBRARY_DIR}/clang)"))
+
+		;; Preprocessor::LookupFile changed its signature
+		;; (use-modules (ice-9 regex))
+		(substitute*
+		 "interpreter/cling/lib/Interpreter/AutoloadCallback.cpp"
+		 (("/\\*SkipCache\\*/ false,") "/*SkipCache*/ false);")
+		 (("/\\*OpenFile\\*/ false, /\\*CacheFail\\*/ true\\);") ""))
+
+		(substitute*
+		 "interpreter/cling/lib/Utils/Diagnostics.cpp"
+		 (("m_Diags.Reset(true)") "m_Diags.Reset()"))
+		
+		;; https://github.com/root-project/cling/issues/449
+		(substitute*
+		 "interpreter/cling/lib/Interpreter/DynamicLibraryManagerSymbol.cpp"
+		 (("if \\(Dyn.d_un.d_val & llvm::ELF::DF_1_PIE\\)")
+		  "if (Dyn.d_un.d_val & 0x08000000)"))
+		
+		))))
+   (build-system cmake-build-system)
+   (inputs
+    `(
+
+      ;; Package to build to avoid ROOT downloading them
+      
+      ("dcap" ,dcap-2.47.12)
+      ("davix" ,davix-0.8.3)
+      ("libAfterImage" ,libAfterImage-1.20)
+      ("vdt" ,vdt)
+
+      ;; Dependencies
+      
+      ("binutils" ,binutils)
+      ("cfitsio" ,cfitsio)
+      ("coreutils" ,coreutils)
+      ("fftw" ,fftw)
+      ("freetype" ,freetype)
+      ("gcc-lib" ,gcc "lib")
+      ("gcc-toolchain" ,gcc-toolchain)
+      ("git" ,git)
+      ("glibc" ,glibc)
+      ("glu" ,glu)
+      ("gsl" ,gsl)
+      ("less" ,less)
+      ("libc" ,glibc)
+      ("libc-debug" ,glibc "debug")
+      ("libc-static" ,glibc "static")
+      ("libcxx" ,libcxx)
+      ("libjpeg-turbo" ,libjpeg-turbo) 
+      ("liblzma" ,xz)
+      ("libpthread-stubs" ,libpthread-stubs)
+      ("libx11" ,libx11)
+      ("libxext" ,libxext)
+      ("libxft" ,libxft)
+      ("libxml2" ,libxml2)
+      ("libxpm" ,libxpm)
+      ("clang" ,clang-9.0.1)
+      ("llvm-9" ,llvm-9.0.1)
+      ("lz4" ,lz4)
+      ("mesa" ,mesa)
+      ("openblas" ,openblas)
+      ("openssl" ,openssl)
+      ("pcre" ,pcre)
+      ("perl" ,perl)
+      ("pkg-config" ,pkg-config)
+      ("python@3.9" ,python-3.9)
+      ("python@2.7" ,python-2.7)
+      ("python-numpy" ,python-numpy)
+      ("tbb" ,tbb)
+      ("xxhash" ,xxhash)
+      ("zlib" ,zlib)
+      ("zstd" ,zstd)
+      ;; ("libjpeg" ,libjpeg) ;; Deprecated
+      ))
+
+   (arguments 
+    `(#:configure-flags 
+      
+      (list
+
+       ;; To avoid error "fatal error: module file not found"
+       ;; "-DCMAKE_INSTALL_PREFIX=/opt/root/"  ;; error
+
+       (let ((out (assoc-ref %outputs "out")))
+	 (string-append "-DCMAKE_INSTALL_PREFIX=" out))
+
+       ;; From https://root.cern.ch/building-root
+       "-Dgnuinstall=ON"
+       
+       ;; To avoid downloading clad, llvm, davix
+       "-Dclad=OFF"
+       ;; "-Dbuiltin_clang=OFF" ;; Too many cling errors
+       "-Dbuiltin_llvm=OFF"
+       "-Dbuiltin_davix=OFF"
+       
+       "-DCMAKE_INSTALL_LIBDIR=lib"
+       (string-append "-DCLANG_LIBRARY_DIR="
+		      (assoc-ref %build-inputs "clang")
+		      "/lib")
+       "-Dastiff=ON"
+       "-Dbuiltin_afterimage=OFF"
+       "-Dbuiltin_ftgl=OFF"
+       "-Dbuiltin_glew=OFF"
+       "-Dbuiltin_gsl=OFF"
+       "-Dbuiltin_zlib=OFF"
+       "-Dcfitsio=ON"
+       "-Ddavix=ON"
+       "-Dhttp=ON"
+       "-Djemmaloc=ON"
+       "-Dmathmore=ON"
+       "-Dminuit2=ON"
+       "-Dopengl=ON"
+       "-Dpythia6=ON"
+       "-Dpythia6_nolink=ON"
+       "-Dpythia8=OFF"
+       "-Droofit=ON"
+       "-Drpath=ON"
+       "-Dshadowpw=OFF"
+       "-Dsoversion=ON"
+       "-Dtmva=OFF"
+       "-Dvdt=ON"
+       "-Dx11=ON"
+       
+       (string-append "-DOPENGL_INCLUDE_DIR="
+		      (assoc-ref %build-inputs "mesa")
+		      "/include")
+       (string-append "-DOPENGL_gl_LIBRARY="
+		      (assoc-ref %build-inputs "mesa")
+		      "/lib/libGL.so")
+       (string-append "-DOPENGL_glu_LIBRARY="
+		      (assoc-ref %build-inputs "glu")
+		      "/lib/libGLU.so")
+
+       ;; From llvm.scm
+       (string-append "-DC_INCLUDE_DIRS="
+		      (assoc-ref %build-inputs "libc")
+		      "/include"))
+
+      ;; To avoid "depends on .. which cannot be found in RUNPATH"
+      #:validate-runpath? #f
+
+      ;; #:tests? #f
+      
+      #:phases
+      (modify-phases
+       %standard-phases
+       (add-before
+	;; avec build LD_LIBRARY_PATH est vide pour G__Core.cxx
+	'configure 'fix-library-path
+	;; Sinon error while loading shared libraries: libLLVMTableGen.so.5
+	(lambda*
+	 (#:key inputs outputs #:allow-other-keys)
+         
+	 (define (add-libraries libpath inputs)
+	   (let ((inputs (alist-delete "source" inputs)))
+	     (apply string-append
+		    libpath
+		    (map (lambda (p)
+			   (string-append (cdr p) "/lib:"))
+			 inputs))))
+
+	 (let* ((libpath (getenv "LD_LIBRARY_PATH"))
+		(libpath (if libpath (string-append libpath ":") ""))
+		(libpath (add-libraries libpath inputs)))
+           
+	   ;; (display (list "LD_LIBRARY_PATH" libpath)) (newline)
+	   (setenv "LD_LIBRARY_PATH" libpath)
+	   #t))))
       
       ))
 
