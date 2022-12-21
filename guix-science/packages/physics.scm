@@ -88,38 +88,61 @@
   ;; TODO: Verify if still Ok after guix pull
   
   #:export (;; Dependencies
-	    llhttp-6.0.10
-	    llhttp-8.1.0
-	    c-ares-1.18.1
+	    llhttp-6.0.10   ;; Ok
+	    llhttp-8.1.0    ;; Ok
+	    c-ares-1.18.1   ;; Ok
 	    
 	    ;; libcern
 	    CLHEP-2.3.4         ;; Ok
 	    nodejs-16.13.1      ;; Ok
-	    OpenScientist-batch ;; TODO deprecated but still needed
-	    cubix-3.0           ;; TODO depends on ROOT
-	    dawn-3.91a          ;; TODO configure is an interactive script
-	    dirac-8.0.6         ;; TODO needs rucio-clients etc.
 	    TALYS-1.96          ;; Ok
 	    texworks-0.6.7      ;; Ok
 	    timing-gen-0.9.8    ;; Ok
-	    gammaware-AGATAD_P2_COM_001 ;; TODO: depends on ROOT
-	    GATE ;; TODO: depends on ROOT
-	    
+
 	    ;; Geant 4 ;; Ok
 	    G4NDL-4.6         
+	    G4NDL-4.7         
 	    G4EMLOW-7.9.1
+	    G4EMLOW-8.2
 	    G4PhotonEvaporation-5.5
+	    G4PhotonEvaporation-5.7
 	    G4RadioactiveDecay-5.4
+	    G4RadioactiveDecay-5.6
 	    G4PARTICLEXS-2.1
+	    G4PARTICLEXS-4.0
 	    G4PII-1.3
 	    G4RealSurface-2.1.1
+	    G4RealSurface-2.2
 	    G4SAIDDATA-2.0
 	    G4ABLA-3.1
 	    G4INCL-1.0
 	    G4ENSDFSTATE-2.2
-	    GEANT4-10.04
-	    GEANT4-11.1.0 ;; Ok        
-	    ROOT-6.26.10  ;; Ok
+	    G4ENSDFSTATE-2.3
+	    GEANT4-10.04     ;; Ok
+	    GEANT4-10.06.p01 ;; Ok        
+	    GEANT4-11.1.0    ;; Ok        
+	    ROOT-6.26.10     ;; Ok
+	    
+	    ;; Others:
+	    
+	    Unuran-1.8.1       ;; Ok
+	    clang-9.0.1        ;; Ok
+	    davix-0.8.3        ;; Ok
+	    dcap-2.47.12       ;; Ok
+	    libAfterImage-1.20 ;; Ok
+	    llvm-5             ;; Ok
+	    llvm-9.0.1         ;; Ok
+	    vdt-0.4.3          ;; Ok
+
+	    ;; -----
+	    
+	    cubix-3.0           ;; TODO depends on ROOT
+	    dawn-3.91a          ;; TODO configure is an interactive script
+	    dirac-8.0.6         ;; TODO needs rucio-clients etc.
+	    gammaware-AGATAD_P2_COM_001 ;; TODO: depends on ROOT
+	    GATE ;; TODO: depends on ROOT
+
+	    OpenScientist-batch ;; TODO deprecated but still needed
 	    
 	    ;; Already in Guix:
 	    ;; cairo
@@ -132,17 +155,6 @@
 	    ;; tcl
 	    ;; texlive
 	    
-	    ;; Others:
-	    
-	    Unuran-1.8.1       ;; Ok
-	    clang-9.0.1        ;; Ok
-	    davix-0.8.3        ;; Ok
-	    dcap-2.47.12       ;; Ok
-	    libAfterImage-1.20 ;; Ok
-	    llvm-5             ;; Ok
-	    llvm-9.0.1         ;; Ok
-	    vdt		       ;; Ok
-
 	    davix-0.6.4	  ;; Failed
 	    ROOT-5.28     ;; TODO
 	    ROOT-6.18.04  ;; Error
@@ -997,7 +1009,7 @@ devices.")
 
 (define-public GEANT4-10.06.p01
   (package
-   (name "GEANT4")
+   (name "GEANT4-10.06.p01")
    (version "10.06.p01")
    (source
     (origin
@@ -2427,7 +2439,7 @@ experiments and other diverse scientific communities.")
 
 (define-public dcap-2.47.12 ;; Ok
   (package
-   (name "dcap")
+   (name "dcap-2.47.12")
    (version "2.47.12")
    (source
     (origin
@@ -2499,7 +2511,7 @@ experiments and other diverse scientific communities.")
 
 (define-public davix-0.6.4
   (package
-   (name "davix")
+   (name "davix-0.6.4")
    (version "0.6.4")
    (source
     (origin
@@ -3121,9 +3133,9 @@ TGA and GIF being supported internally.")
    (license license:lgpl2.1+)))
 
 ;; Ok
-(define-public vdt
+(define-public vdt-0.4.3
   (package
-   (name "vdt")
+   (name "vdt-0.4.3")
    (version "0.4.3")
    (source
     (origin
@@ -3148,7 +3160,7 @@ TGA and GIF being supported internally.")
 ;; Ok
 (define-public Unuran-1.8.1
   (package
-   (name "Unuran")
+   (name "Unuran-1.8.1")
    (version "1.8.1")
    (source
     (origin
@@ -3199,7 +3211,7 @@ pseudorandom variates")
       ("dcap" ,dcap-2.47.12)
       ("davix" ,davix-0.6.4)
       ("libAfterImage" ,libAfterImage-1.20)
-      ("vdt" ,vdt)
+      ("vdt" ,vdt-0.4.3)
 
       ("unuran" ,Unuran-1.8.1)
       
@@ -3358,7 +3370,7 @@ integrated with other languages such as Python and R.")
       ("dcap" ,dcap-2.47.12)
       ("davix" ,davix-0.6.4)
       ("libAfterImage" ,libAfterImage-1.20)
-      ("vdt" ,vdt)
+      ("vdt" ,vdt-0.4.3)
 
       ;; Dependencies
       
@@ -3533,7 +3545,7 @@ integrated with other languages such as Python and R.")
       ("dcap" ,dcap-2.47.12)
       ("davix" ,davix-0.8.3)
       ("libAfterImage" ,libAfterImage-1.20)
-      ("vdt" ,vdt)
+      ("vdt" ,vdt-0.4.3)
 
       ;; Dependencies
       
