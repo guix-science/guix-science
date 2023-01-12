@@ -906,41 +906,6 @@
       "Deterministic and safely JSON.stringify to quickly serialize JavaScript objects")
     (license license:expat)))
 
-(define-public node-logform-2.4.2
-  (package
-    (name "node-logform")
-    (version "2.4.2")
-    (source
-      (origin
-        (method url-fetch)
-        (uri "https://registry.npmjs.org/logform/-/logform-2.4.2.tgz")
-        (sha256
-          (base32
-            "0zzsj8ymi61dqhqim3yp07abgiis89z4sdcz7c8hcgwr19pk93il"))))
-    (build-system node-build-system)
-    (arguments
-      `(#:tests?
-        #f
-        #:phases
-        (modify-phases
-          %standard-phases
-          (delete 'configure)
-          (delete 'build))))
-    (inputs
-      `(("node-triple-beam" ,node-triple-beam-1.3.0)
-        ("node-safe-stable-stringify"
-         ,node-safe-stable-stringify-2.3.1)
-        ("node-ms" ,node-ms-2.1.3)
-        ("node-fecha" ,node-fecha-4.2.3)
-        ("node-colors-colors" ,node-colors-colors-1.5.0)))
-    (home-page
-      "https://github.com/winstonjs/logform#readme")
-    (synopsis
-      "An mutable object-based log format designed for chaining & objectMode streams.")
-    (description
-      "An mutable object-based log format designed for chaining & objectMode streams.")
-    (license license:expat)))
-
 (define-public node-inherits-2.0.4
   (package
     (name "node-inherits")
@@ -1051,40 +1016,6 @@
       "The Node.js `util.deprecate()` function with browser support")
     (description
       "The Node.js `util.deprecate()` function with browser support")
-    (license license:expat)))
-
-(define-public node-readable-stream-3.6.0
-  (package
-    (name "node-readable-stream")
-    (version "3.6.0")
-    (source
-      (origin
-        (method url-fetch)
-        (uri "https://registry.npmjs.org/readable-stream/-/readable-stream-3.6.0.tgz")
-        (sha256
-          (base32
-            "1fy6kya4g3zwjdc0xfg7gdzg9ynqnqzv9ay301ay174vvp9202ak"))))
-    (build-system node-build-system)
-    (arguments
-      `(#:tests?
-        #f
-        #:phases
-        (modify-phases
-          %standard-phases
-          (delete 'configure)
-          (delete 'build))))
-    (inputs
-      `(("node-util-deprecate"
-         ,node-util-deprecate-1.0.2)
-        ("node-string-decoder"
-         ,node-string-decoder-1.3.0)
-        ("node-inherits" ,node-inherits-2.0.4)))
-    (home-page
-      "https://github.com/nodejs/readable-stream#readme")
-    (synopsis
-      "Streams3, a user-land copy of the stream library from Node.js")
-    (description
-      "Streams3, a user-land copy of the stream library from Node.js")
     (license license:expat)))
 
 (define-public node-triple-beam-1.3.0
