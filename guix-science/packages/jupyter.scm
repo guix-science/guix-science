@@ -46,40 +46,6 @@
   #:use-module (guix build-system python)
   #:use-module (srfi srfi-1))
 
-(define-public python-jupyterlab-server
-  (package
-    (name "python-jupyterlab-server")
-    (version "2.9.0")
-    (source
-     (origin
-       (method url-fetch)
-       (uri (pypi-uri "jupyterlab_server" version))
-       (sha256
-        (base32
-         "1adw3al6nn92555j3lvzhh5m093gqpfr5a06k34y5i3pk6svnl5q"))))
-    (build-system python-build-system)
-    (propagated-inputs
-     (list python-babel python-entrypoints python-jinja2 python-json5 python-jsonschema
-           python-packaging
-           python-requests
-           python-jupyter-server))
-    (native-inputs
-     (list python-pytest python-ipykernel))
-    (arguments
-     `(#:tests? #f
-       #:phases
-       (modify-phases %standard-phases
-         ;; python setup.py test does not invoke pytest?
-         (replace 'check
-           (lambda* (#:key tests? #:allow-other-keys)
-             (when tests?
-               (invoke "pytest" "-vv")))))))
-    (home-page "https://jupyterlab-server.readthedocs.io/")
-    (synopsis "JupyterLab Server")
-    (description "A set of server components for JupyterLab and JupyterLab like
-applications")
-    (license license:bsd-3)))
-
 (define-public python-nbclassic
   (package
     (name "python-nbclassic")
