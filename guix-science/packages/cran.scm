@@ -1,6 +1,6 @@
 ;;;
 ;;; Copyright © 2020, 2021 Lars-Dominik Braun <ldb@leibniz-psychology.org>
-;;; Copyright © 2022 Ricardo Wurmus <rekado@elephly.net>
+;;; Copyright © 2022, 2023 Ricardo Wurmus <rekado@elephly.net>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU General Public License as published by
@@ -28,6 +28,30 @@
   #:use-module (gnu packages statistics)
   #:use-module (gnu packages tex)
   #:use-module (gnu packages web))
+
+;; TODO: building these from source is difficult because of npm.
+;; swagger/inst/dist3/swagger-ui.js
+;; swagger/inst/dist3/swagger-ui-standalone-preset.js
+;; swagger/inst/dist3/swagger-ui-bundle.js
+(define-public r-swagger
+  (package
+    (name "r-swagger")
+    (version "3.33.1")
+    (source (origin
+              (method url-fetch)
+              (uri (cran-uri "swagger" version))
+              (sha256
+               (base32
+                "1ldgmy5vjzd11z5yl5a518wkw6y0l469b2zf0lp12hk19jq6k0sj"))))
+    (properties `((upstream-name . "swagger")))
+    (build-system r-build-system)
+    (home-page "https://github.com/rstudio/swagger")
+    (synopsis "Dynamically generate documentation from a Swagger compliant API")
+    (description
+     "This package provides a collection of HTML, JavaScript, and CSS assets
+that dynamically generate beautiful documentation from a
+@url{https://swagger.io/specification/,Swagger compliant API}.")
+    (license license:asl2.0)))
 
 ;; Not upstreamable: Bundles lots of JavaScript libraries, minified bootstrap,
 ;; font-awesome, …
