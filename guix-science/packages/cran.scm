@@ -231,17 +231,23 @@ documentation around your functions.")
 (define-public r-shinywidgets
   (package
     (name "r-shinywidgets")
-    (version "0.6.4")
+    (version "0.7.6")
     (source
      (origin
        (method url-fetch)
        (uri (cran-uri "shinyWidgets" version))
        (sha256
-        (base32 "1j7pii40zc60ny1d5027pjagi1rrcnb9kxn4q9jmd9xv84y5b8sj"))))
+        (base32 "0y44xlrgdk6y62k5r1mkrlc53w171l1s5la9irqgfclgha3x54jk"))))
     (properties `((upstream-name . "shinyWidgets")))
     (build-system r-build-system)
     (propagated-inputs
-     (list r-bslib r-htmltools r-jsonlite r-sass r-shiny))
+     (list r-anytime
+           r-bslib
+           r-htmltools
+           r-jsonlite
+           r-rlang
+           r-sass
+           r-shiny))
     (home-page "https://github.com/dreamRs/shinyWidgets")
     (synopsis "Custom inputs widgets for Shiny")
     (description
