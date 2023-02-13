@@ -130,29 +130,30 @@ take advantage of any aesthetic properties assigned to nodes and edges.")
 (define-public r-lavaanplot
   (package
     (name "r-lavaanplot")
-    (version "0.6.0")
+    (version "0.6.2")
     (source
-      (origin
-        (method url-fetch)
-        (uri (cran-uri "lavaanPlot" version))
-        (sha256
-          (base32
-            "0x5iwx8rki17b1cdayjn42zfscdx9bm4m999pzn92l28gf55kmb6"))))
+     (origin
+       (method url-fetch)
+       (uri (cran-uri "lavaanPlot" version))
+       (sha256
+        (base32
+         "03icyydr6sv4jkdfdjchsdrscr9lz9q74x5q17cx2iw3383j6lz5"))))
     (properties `((upstream-name . "lavaanPlot")))
     (build-system r-build-system)
     (propagated-inputs
-      `(("r-diagrammer" ,r-diagrammer)
-        ("r-lavaan" ,r-lavaan)
-        ("r-stringr" ,r-stringr)))
-    (native-inputs `(("r-knitr" ,r-knitr)))
+     (list r-diagrammer
+           r-lavaan
+           r-magrittr
+           r-stringr))
+    (native-inputs (list r-knitr))
     (home-page "https://github.com/alishinski/lavaanPlot")
     (synopsis "Path Diagrams for Lavaan Models via DiagrammeR")
     (description
-      "Plots path diagrams from models in lavaan using the plotting
-functionality from the DiagrammeR package.  DiagrammeR provides nice path
-diagrams via Graphviz, and these functions make it easy to generate these
-diagrams from a lavaan path model without having to write the DOT language
-graph specification.")
+     "This package plots path diagrams from models in lavaan using the
+plotting functionality from the DiagrammeR package.  DiagrammeR
+provides nice path diagrams via Graphviz, and these functions make it
+easy to generate these diagrams from a lavaan path model without
+having to write the DOT language graph specification.")
     (license license:gpl2+)))
 
 ;; Depends on r-diagrammer.
