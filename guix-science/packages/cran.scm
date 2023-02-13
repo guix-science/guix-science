@@ -69,11 +69,11 @@ that dynamically generate beautiful documentation from a
     (properties `((upstream-name . "visNetwork")))
     (build-system r-build-system)
     (propagated-inputs
-      `(("r-htmltools" ,r-htmltools)
-        ("r-htmlwidgets" ,r-htmlwidgets)
-        ("r-jsonlite" ,r-jsonlite)
-        ("r-magrittr" ,r-magrittr)))
-    (native-inputs `(("r-knitr" ,r-knitr)))
+     (list r-htmltools
+           r-htmlwidgets
+           r-jsonlite
+           r-magrittr))
+    (native-inputs (list r-knitr))
     (home-page "http://datastorm-open.github.io/visNetwork/")
     (synopsis "Network Visualization using vis.js Library")
     (description
