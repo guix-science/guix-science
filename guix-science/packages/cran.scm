@@ -145,7 +145,16 @@ that dynamically generate beautiful documentation from a
 library.  It allows an interactive visualization of networks.")
     (license license:expat)))
 
-;; Depends on r-visnetwork
+;; TODO: unbundle these minified JavaScript files
+;;
+;; d3 version 3.5.2
+;;   htmlwidgets/lib/d3/d3.min.js
+;; unknown:
+;;   htmlwidgets/lib/dagre-d3/dagre-d3.min.js
+;; unknown:
+;;   htmlwidgets/lib/mermaid/dist/mermaid.slim.min.js
+;; Viz.js 1.8.2 (Graphviz 2.40.1, Expat 2.2.5, Emscripten 1.37.33)
+;;   htmlwidgets/lib/viz/viz.js
 (define-public r-diagrammer
   (package
     (name "r-diagrammer")
