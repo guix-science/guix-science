@@ -308,27 +308,25 @@ the xlxs package.  This release corresponds to POI 3.10.1.")
     (version "0.8.11")
     (source
      (origin
-      (method url-fetch)
-      (uri (cran-uri "udpipe" version))
-      (sha256
-       (base32 "0crjcfrpb0m7f58w7ksz7kvglvmc45axy9kbbvqz9w6i4kg00aaj"))))
+       (method url-fetch)
+       (uri (cran-uri "udpipe" version))
+       (sha256
+        (base32 "0crjcfrpb0m7f58w7ksz7kvglvmc45axy9kbbvqz9w6i4kg00aaj"))))
     (properties `((upstream-name . "udpipe")))
     (build-system r-build-system)
-    ;(inputs `(("udpipe" ,udpipe)))
+    ;;(inputs `(("udpipe" ,udpipe)))
     (propagated-inputs
-      `(("r-data-table" ,r-data-table)
-        ("r-matrix" ,r-matrix)
-        ("r-rcpp" ,r-rcpp)))
-    (native-inputs `(("r-knitr" ,r-knitr)))
-    (home-page
-      "https://bnosac.github.io/udpipe/en/index.html")
-    (synopsis
-      "R bindings for UDPipe NLP toolkit")
+     (list r-data-table
+           r-matrix
+           r-rcpp))
+    (native-inputs (list r-knitr))
+    (home-page "https://bnosac.github.io/udpipe/en/index.html")
+    (synopsis "R bindings for UDPipe NLP toolkit")
     (description
-      "This natural language processing toolkit provides language-agnostic
-'tokenization', 'parts of speech tagging', 'lemmatization' and 'dependency
-parsing' of raw text.  Next to text parsing, the package also allows you to
-train annotation models based on data of 'treebanks' in 'CoNLL-U' format as
+     "This natural language processing toolkit provides language-agnostic
+tokenization, parts of speech tagging, lemmatization and dependency
+parsing of raw text.  Next to text parsing, the package also allows you to
+train annotation models based on data of treebanks in CoNLL-U format as
 provided at @url{https://universaldependencies.org/format.html}.  The techniques
 are explained in detail in the paper: 'Tokenizing, POS Tagging, Lemmatizing and
 Parsing UD 2.0 with UDPipe', available at @url{doi:10.18653/v1/K17-3009}.  The
