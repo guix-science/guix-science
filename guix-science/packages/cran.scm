@@ -309,13 +309,13 @@ xlxs package.  This release corresponds to POI 3.10.1.")
 (define-public r-udpipe
   (package
     (name "r-udpipe")
-    (version "0.8.5")
+    (version "0.8.11")
     (source
      (origin
       (method url-fetch)
       (uri (cran-uri "udpipe" version))
       (sha256
-       (base32 "021n28jncfiv7492dj1ik6ylkhb3s2hpgjpc0y2zv4cdnl362zcx"))))
+       (base32 "0crjcfrpb0m7f58w7ksz7kvglvmc45axy9kbbvqz9w6i4kg00aaj"))))
     (properties `((upstream-name . "udpipe")))
     (build-system r-build-system)
     ;(inputs `(("udpipe" ,udpipe)))
