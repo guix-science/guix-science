@@ -418,13 +418,13 @@ and examples.")
 (define-public r-reactable
   (package
     (name "r-reactable")
-    (version "0.2.3")
+    (version "0.4.3")
     (source
      (origin
        (method url-fetch)
        (uri (cran-uri "reactable" version))
        (sha256
-        (base32 "17wl75cblm0rgq3chl96vj7wmbcmszss1zjppfccz1hcimfmlrpx"))))
+        (base32 "1v7yqccs7ka0a7dnyi5hag4kmk1jinp6mbyxqld2zwnvkp3lpzcp"))))
     (properties `((upstream-name . "reactable")))
     (build-system r-build-system)
     (propagated-inputs
