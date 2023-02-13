@@ -190,6 +190,42 @@ variables, standardized coefficients, query-based prediction and indirect
 effects.")
     (license license:gpl3)))
 
+;; This depends on r-swagger which contains a lot of minified JS.
+(define-public r-plumber
+  (package
+    (name "r-plumber")
+    (version "1.2.1")
+    (source (origin
+              (method url-fetch)
+              (uri (cran-uri "plumber" version))
+              (sha256
+               (base32
+                "1k0y7ylc8bld16imn86g0i0dmxmr3kmh9ax4ys0yrxqzrvji7z3g"))))
+    (properties `((upstream-name . "plumber")))
+    (build-system r-build-system)
+    (propagated-inputs
+     (list r-crayon
+           r-ellipsis
+           r-httpuv
+           r-jsonlite
+           r-lifecycle
+           r-magrittr
+           r-mime
+           r-promises
+           r-r6
+           r-rlang
+           r-sodium
+           r-stringi
+           r-swagger
+           r-webutils))
+    (home-page "https://www.rplumber.io")
+    (synopsis "API generator for R")
+    (description
+     "This package gives the ability to automatically generate and
+serve an HTTP API from R functions using the annotations in the R
+documentation around your functions.")
+    (license license:expat)))
+
 ;; This contains a lot of minified JavaScript with no obvious source
 ;; files.
 (define-public r-shinywidgets
