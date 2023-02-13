@@ -85,41 +85,40 @@ library.  It allows an interactive visualization of networks.")
 (define-public r-diagrammer
   (package
     (name "r-diagrammer")
-    (version "1.0.6.1")
+    (version "1.0.9")
     (source
-      (origin
-        (method url-fetch)
-        (uri (cran-uri "DiagrammeR" version))
-        (sha256
-          (base32
-            "0gb7ccdrh7jlyqafdk8zs465ygczxxd25s05whn914in1994qkmy"))))
+     (origin
+       (method url-fetch)
+       (uri (cran-uri "DiagrammeR" version))
+       (sha256
+        (base32
+         "1gqaqk7jdh37zzadv0aymr9yb8lpqgj3l8n1n3cds38i4zz2d934"))))
     (properties `((upstream-name . "DiagrammeR")))
     (build-system r-build-system)
     (propagated-inputs
-      `(("r-downloader" ,r-downloader)
-        ("r-dplyr" ,r-dplyr)
-        ("r-glue" ,r-glue)
-        ("r-htmltools" ,r-htmltools)
-        ("r-htmlwidgets" ,r-htmlwidgets)
-        ("r-igraph" ,r-igraph)
-        ("r-influencer" ,r-influencer)
-        ("r-magrittr" ,r-magrittr)
-        ("r-purrr" ,r-purrr)
-        ("r-rcolorbrewer" ,r-rcolorbrewer)
-        ("r-readr" ,r-readr)
-        ("r-rlang" ,r-rlang)
-        ("r-rstudioapi" ,r-rstudioapi)
-        ("r-scales" ,r-scales)
-        ("r-stringr" ,r-stringr)
-        ("r-tibble" ,r-tibble)
-        ("r-tidyr" ,r-tidyr)
-        ("r-viridis" ,r-viridis)
-        ("r-visnetwork" ,r-visnetwork)))
-    (native-inputs `(("r-knitr" ,r-knitr)))
+     (list r-downloader
+           r-dplyr
+           r-glue
+           r-htmltools
+           r-htmlwidgets
+           r-igraph
+           r-influencer
+           r-magrittr
+           r-purrr
+           r-rcolorbrewer
+           r-readr
+           r-rlang
+           r-rstudioapi
+           r-scales
+           r-stringr
+           r-tibble
+           r-tidyr
+           r-viridis
+           r-visnetwork))
     (home-page "https://github.com/rich-iannone/DiagrammeR")
     (synopsis "Graph/Network Visualization")
     (description
-      "Build graph/network structures using functions for stepwise addition
+     "Build graph/network structures using functions for stepwise addition
 and deletion of nodes and edges.  Work with data available in tables for bulk
 addition of nodes, edges, and associated metadata.  Use graph selections and
 traversals to apply changes to specific nodes or edges.  A wide selection of
