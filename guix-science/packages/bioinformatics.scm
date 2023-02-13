@@ -16,7 +16,6 @@
 
 (define-module (guix-science packages bioinformatics)
   #:use-module ((guix licenses) #:prefix license:)
-  #:use-module ((guix build utils) #:select (alist-replace))
   #:use-module (guix gexp)
   #:use-module (gnu packages)
   #:use-module (gnu packages algebra)
