@@ -58,14 +58,14 @@ that dynamically generate beautiful documentation from a
 (define-public r-visnetwork
   (package
     (name "r-visnetwork")
-    (version "2.0.9")
+    (version "2.1.2")
     (source
       (origin
         (method url-fetch)
         (uri (cran-uri "visNetwork" version))
         (sha256
           (base32
-            "0854r9znpjd9iy6j5bgrn20vj13dhp606gs3b6iy0rhym71ks2sy"))))
+            "116w3l65lgv18xzav5zz1pbgwpwck66n9cjpja9axrl9zi19vja7"))))
     (properties `((upstream-name . "visNetwork")))
     (build-system r-build-system)
     (propagated-inputs
