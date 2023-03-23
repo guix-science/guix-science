@@ -41,6 +41,7 @@
   #:use-module  (gnu packages geo)
   #:use-module  (gnu packages gl)
   #:use-module  (gnu packages glib)
+  #:use-module  (gnu packages hunspell)
   #:use-module  (gnu packages icu4c) 
   #:use-module  (gnu packages image) ;; libjpeg
   #:use-module  (gnu packages less)
@@ -129,9 +130,9 @@
 	    GEANT4-11.1.0    ;; Ok
 
 	    ;; ROOT
-	    ROOT-6.26.10     ;; Ok
+	    ROOT-6.26.10     ;; Ok (thisroot.sh is even not needed)
 	    
-	    ;; Others:
+	    ;; Others: 
 	    
 	    Unuran-1.8.1       ;; Ok
 	    clang-9.0.1        ;; Ok
@@ -3765,7 +3766,7 @@ integrated with other languages such as Python and R.")
 ;; Note: In case of the folowing error:
 ;; collect2: fatal error: ld terminated with signal 9 [Killed]
 ;; You may not have enough RAM to compile ROOT (> 16G)
-(define-public ROOT-6.26.10
+(define-public ROOT-6.26.10 ;; Ok
   (package
    (name "ROOT-6.26.10")
    (version "6.26.10")
@@ -3805,6 +3806,15 @@ integrated with other languages such as Python and R.")
 		
 		))))
    (build-system cmake-build-system)
+   (propagated-inputs
+    `(
+      ;; https://issues.guix.gnu.org/41038
+      ;; ("binutils" ,binutils)
+      ;; ("libc" ,glibc)
+      ;; ("libc-debug" ,glibc "debug")
+      ;; ("libc-static" ,glibc "static")
+
+      ))
    (inputs
     `(
 
@@ -3812,26 +3822,12 @@ integrated with other languages such as Python and R.")
       
       ("dcap" ,dcap-2.47.12)
       ("davix" ,davix-0.8.3)
-      ("libAfterImage" ,libAfterImage-1.20)
       ("vdt" ,vdt-0.4.3)
 
       ;; Dependencies
       
-      ("binutils" ,binutils)
-      ("cfitsio" ,cfitsio)
-      ("coreutils" ,coreutils)
-      ("fftw" ,fftw)
-      ("freetype" ,freetype)
       ("gcc-lib" ,gcc "lib")
-      ("gcc-toolchain" ,gcc-toolchain)
-      ("git" ,git)
-      ("glibc" ,glibc)
-      ("glu" ,glu)
-      ("gsl" ,gsl)
-      ("less" ,less)
-      ("libc" ,glibc)
-      ("libc-debug" ,glibc "debug")
-      ("libc-static" ,glibc "static")
+      ("libAfterImage" ,libAfterImage-1.20)
       ("libcxx" ,libcxx)
       ("libjpeg-turbo" ,libjpeg-turbo) 
       ("liblzma" ,xz)
@@ -3841,13 +3837,24 @@ integrated with other languages such as Python and R.")
       ("libxft" ,libxft)
       ("libxml2" ,libxml2)
       ("libxpm" ,libxpm)
+      ("pcre" ,pcre)
+      ("zlib" ,zlib)
+      
+      ("cfitsio" ,cfitsio)
+      ("coreutils" ,coreutils)
+      ("fftw" ,fftw)
+      ("freetype" ,freetype)
+      ("gcc-toolchain" ,gcc-toolchain)
+      ("git" ,git)
+      ("glu" ,glu)
+      ("gsl" ,gsl)
+      ("less" ,less)
       ("clang" ,clang-9.0.1)
       ("llvm-9" ,llvm-9.0.1)
       ("lz4" ,lz4)
       ("mesa" ,mesa)
       ("openblas" ,openblas)
       ("openssl" ,openssl)
-      ("pcre" ,pcre)
       ("perl" ,perl)
       ("pkg-config" ,pkg-config)
       ("python@3.9" ,python-3.9)
@@ -3855,7 +3862,6 @@ integrated with other languages such as Python and R.")
       ("python-numpy" ,python-numpy)
       ("tbb" ,tbb)
       ("xxhash" ,xxhash)
-      ("zlib" ,zlib)
       ("zstd" ,zstd)
       ;; ("libjpeg" ,libjpeg) ;; Deprecated
       ))
@@ -3873,6 +3879,8 @@ integrated with other languages such as Python and R.")
 
        ;; From https://root.cern.ch/building-root
        "-Dgnuinstall=ON"
+       "-Drpath=ON"
+       "-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
        
        ;; To avoid downloading clad, llvm, davix
        "-Dclad=OFF"
@@ -3884,6 +3892,12 @@ integrated with other languages such as Python and R.")
        (string-append "-DCLANG_LIBRARY_DIR="
 		      (assoc-ref %build-inputs "clang")
 		      "/lib")
+       (string-append "-DCMAKE_C_FLAGS="
+		      (let ((inputs (alist-delete "source" %build-inputs)))
+			(apply string-append
+			       (map (lambda (p)
+				      (string-append "-L" (cdr p) "/lib "))
+				    inputs))))
        "-Dastiff=ON"
        "-Dbuiltin_afterimage=OFF"
        "-Dbuiltin_ftgl=OFF"
@@ -3921,8 +3935,14 @@ integrated with other languages such as Python and R.")
        ;; From llvm.scm
        (string-append "-DC_INCLUDE_DIRS="
 		      (assoc-ref %build-inputs "libc")
-		      "/include"))
-
+		      "/include")
+       (string-append "-DCMAKE_LIBRARY_PATH="
+		      (let ((inputs (alist-delete "source" %build-inputs)))
+			(apply string-append
+			       (map (lambda (p)
+				      (string-append (cdr p) "/lib:"))
+				    inputs)))))
+		     
       ;; To avoid "depends on .. which cannot be found in RUNPATH"
       #:validate-runpath? #f
 
@@ -3939,20 +3959,23 @@ integrated with other languages such as Python and R.")
 	 (#:key inputs outputs #:allow-other-keys)
          
 	 (define (add-libraries libpath inputs)
-	   (let ((inputs (alist-delete "source" inputs)))
+	    (let ((inputs (alist-delete "source" inputs)))
 	     (apply string-append
 		    libpath
 		    (map (lambda (p)
 			   (string-append (cdr p) "/lib:"))
 			 inputs))))
 
+	 ;; Set LD_LIBRARY_PATH to find shared libraries
+	 ;; during compilation
 	 (let* ((libpath (getenv "LD_LIBRARY_PATH"))
-		(libpath (if libpath (string-append libpath ":") ""))
-		(libpath (add-libraries libpath inputs)))
+		 (libpath (if libpath (string-append libpath ":") ""))
+		 (libpath (add-libraries libpath inputs)))
            
-	   ;; (display (list "LD_LIBRARY_PATH" libpath)) (newline)
-	   (setenv "LD_LIBRARY_PATH" libpath)
-	   #t))))
+	    (display (list "LD_LIBRARY_PATH" libpath)) (newline)
+	    (setenv "LD_LIBRARY_PATH" libpath))
+
+	 #t )))
       
       ))
 
