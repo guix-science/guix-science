@@ -135,8 +135,10 @@
 	    GEANT4-11.1.0    ;; Ok
 
 	    ;; ROOT
-	    ROOT-6.18.04
-	    ROOT-6.26.10     ;; Ok (thisroot.sh is even not needed)
+	    ROOT-6.18.04     ;; TODO Ko
+	    ROOT-6.20.02     ;; TODO Ko: LLVM version different from ROOT supported, please try 5.0.x
+	    ROOT-6.26.10     ;; Ok (thisroot.sh is not even needed)
+	    ROOT-6.28.00     ;; TODO Ko: Could not open file for write in copy operation /gnu/store/579xrf7vz85ynjlk62njaczgnayam1ar-llvm-13.0.1/lib/cmake/cling/ClingConfig.cmake.tmp
 	    
 	    ;; Others: 
 	    
@@ -3456,11 +3458,9 @@ generator) is a collection of algorithms for generating non-uniform
 pseudorandom variates")
    (license license:gpl2)))
 
-;; Erreur de compilation :
-;; error while loading shared libraries: libLLVMCoroutines.so.5
 (define-public ROOT-6.18.04
   (package
-   (name "ROOT")
+   (name "ROOT-6.18.04")
    (version "6.18.04")
    (source (origin
 	    (method url-fetch)
@@ -3476,59 +3476,67 @@ pseudorandom variates")
    ;; 
 
    (build-system cmake-build-system)
+   (propagated-inputs
+    `(
+      ;; https://issues.guix.gnu.org/41038
+      ;; ("binutils" ,binutils)
+      ;; ("libc" ,glibc)
+      ;; ("libc-debug" ,glibc "debug")
+      ;; ("libc-static" ,glibc "static")
+
+      ))
    (inputs
     `(
 
       ;; Package to build to avoid ROOT downloading them
       
       ("dcap" ,dcap-2.47.12)
-      ("davix" ,davix-0.6.4)
-      ("libAfterImage" ,libAfterImage-1.20)
+      ("davix" ,davix-0.8.3)
       ("vdt" ,vdt-0.4.3)
 
-      ("unuran" ,Unuran-1.8.1)
-      
       ;; Dependencies
       
-      ("binutils" ,binutils)
-      ("cfitsio" ,cfitsio)
-      ("coreutils" ,coreutils)
       ("gcc-lib" ,gcc "lib")
-      ("gcc-toolchain" ,gcc-toolchain)
-      ("git" ,git)
-      ("glibc" ,glibc)
-      ("liblzma" ,xz)
-      ("less" ,less)
-      ("libc" ,glibc)
-      ("libc-debug" ,glibc "debug")
-      ("libc-static" ,glibc "static")
-      ("libpthread-stubs" ,libpthread-stubs)
+      ("libAfterImage" ,libAfterImage-1.20)
       ("libcxx" ,libcxx)
+      ("libjpeg-turbo" ,libjpeg-turbo) 
+      ("liblzma" ,xz)
+      ("libpthread-stubs" ,libpthread-stubs)
       ("libx11" ,libx11)
       ("libxext" ,libxext)
       ("libxft" ,libxft)
       ("libxml2" ,libxml2)
       ("libxpm" ,libxpm)
-      ("llvm-5" ,llvm-5)
-      ("lz4" ,lz4)
-      ("openblas" ,openblas)
-      ("openssl" ,openssl)
       ("pcre" ,pcre)
+      ("zlib" ,zlib)
+      
+      ("cfitsio" ,cfitsio)
+      ("coreutils" ,coreutils)
+      ("fftw" ,fftw)
+      ("freetype" ,freetype)
+      ("gcc-toolchain" ,gcc-toolchain)
+      ("git" ,git)
+      ("glu" ,glu)
+      ("gsl" ,gsl)
+      ("less" ,less)
+      ("clang" ,clang-9.0.1)
+      ("llvm-9" ,llvm-9.0.1)
+      ("lz4" ,lz4)
+      ("mesa" ,mesa)
+      ("openblas" ,openblas)
+      ("openssl" ,openssl-1.1)
+      ;; ("openssl" ,openssl)
       ("perl" ,perl)
       ("pkg-config" ,pkg-config)
-      ("python" ,python-2.7)
+      ("python@3.9" ,python-3.9)
+      ("python@2.7" ,python-2.7)
       ("python-numpy" ,python-numpy)
       ("tbb" ,tbb)
       ("xxhash" ,xxhash)
-      ("zlib" ,zlib)
       ("zstd" ,zstd)
       ;; ("libjpeg" ,libjpeg) ;; Deprecated
-      ("libjpeg-turbo" ,libjpeg-turbo) 
-      ("gsl" ,gsl)
-      ("glu" ,glu)
-      ("mesa" ,mesa)
-      ("fftw" ,fftw)))
-
+      ))
+   
    (arguments 
     `(#:configure-flags 
       
@@ -3619,10 +3627,9 @@ analysis, visualisation and storage.  It is mainly written in C++ but
 integrated with other languages such as Python and R.")
    (license license:lgpl2.1+)))
 
-;; Error
 (define-public ROOT-6.20.02
   (package
-   (name "ROOT")
+   (name "ROOT-6.20.02")
    (version "6.20.02")
    (source (origin
 	    (method url-fetch)
@@ -3685,7 +3692,6 @@ integrated with other languages such as Python and R.")
       ("lz4" ,lz4)
       ("mesa" ,mesa)
       ("openblas" ,openblas)
-      ("openssl" ,openssl)
       ("perl" ,perl)
       ("pkg-config" ,pkg-config)
       ("python@3.9" ,python-3.9)
@@ -4062,7 +4068,97 @@ analysis, visualisation and storage.  It is mainly written in C++ but
 integrated with other languages such as Python and R.")
    (license license:lgpl2.1+)))
 
+(define-public ROOT-6.28.00
+  (package
+   (inherit ROOT-6.26.10)
+   (name "ROOT-6.28.00")
+   (version "6.28.00")
+   (source (origin
+	    (method url-fetch)
+	    (uri (string-append
+		  "https://root.cern/download/root_v"
+		  version ".source.tar.gz"))
+	    (sha256
+	     (base32
+	      "1140blxxcgh1b7jyfn53c6cv04mbm574fbj9p4f42589dp0cb8dg"))
+	    (file-name (string-append name "-" version ".tar.gz"))
+	    (modules '((guix build utils)))
+	    (snippet
+	     '(begin
+		(substitute*
+		 "core/clingutils/CMakeLists.txt"
+		 (("set\\(CLANG_RESOURCE_DIR_STEM \\$\\{LLVM_LIBRARY_DIR\\}/clang\\)")
+		  "set(CLANG_RESOURCE_DIR_STEM ${CLANG_LIBRARY_DIR}/clang)"))
 
+		;; Preprocessor::LookupFile changed its signature
+		;; (use-modules (ice-9 regex))
+		(substitute*
+		 "interpreter/cling/lib/Interpreter/AutoloadCallback.cpp"
+		 (("/\\*SkipCache\\*/ false,") "/*SkipCache*/ false);")
+		 (("/\\*OpenFile\\*/ false, /\\*CacheFail\\*/ true\\);") ""))
 
+		(substitute*
+		 "interpreter/cling/lib/Utils/Diagnostics.cpp"
+		 (("m_Diags.Reset(true)") "m_Diags.Reset()"))
+		
+		;; https://github.com/root-project/cling/issues/449
+		(substitute*
+		 "interpreter/cling/lib/Interpreter/DynamicLibraryManagerSymbol.cpp"
+		 (("if \\(Dyn.d_un.d_val & llvm::ELF::DF_1_PIE\\)")
+		  "if (Dyn.d_un.d_val & 0x08000000)"))
+		
+		))))
+
+      (inputs
+    `(
+
+      ;; Package to build to avoid ROOT downloading them
+      
+      ("dcap" ,dcap-2.47.12)
+      ("davix" ,davix-0.8.3)
+      ("vdt" ,vdt-0.4.3)
+
+      ;; Dependencies
+      
+      ("gcc-lib" ,gcc "lib")
+      ("libAfterImage" ,libAfterImage-1.20)
+      ("libcxx" ,libcxx)
+      ("libjpeg-turbo" ,libjpeg-turbo) 
+      ("liblzma" ,xz)
+      ("libpthread-stubs" ,libpthread-stubs)
+      ("libx11" ,libx11)
+      ("libxext" ,libxext)
+      ("libxft" ,libxft)
+      ("libxml2" ,libxml2)
+      ("libxpm" ,libxpm)
+      ("pcre" ,pcre)
+      ("zlib" ,zlib)
+      
+      ("cfitsio" ,cfitsio)
+      ("coreutils" ,coreutils)
+      ("fftw" ,fftw)
+      ("freetype" ,freetype)
+      ("gcc-toolchain" ,gcc-toolchain)
+      ("git" ,git)
+      ("glu" ,glu)
+      ("gsl" ,gsl)
+      ("less" ,less)
+      ("clang" ,clang-9.0.1)
+      ("llvm-13" ,llvm-13) ;; LLVM version different from ROOT supported, please try 13.0.x
+      ("lz4" ,lz4)
+      ("mesa" ,mesa)
+      ("openblas" ,openblas)
+      ("openssl" ,openssl)
+      ("perl" ,perl)
+      ("pkg-config" ,pkg-config)
+      ("python@3.9" ,python-3.9)
+      ("python@2.7" ,python-2.7)
+      ("python-numpy" ,python-numpy)
+      ("tbb" ,tbb)
+      ("xxhash" ,xxhash)
+      ("zstd" ,zstd)
+      ;; ("libjpeg" ,libjpeg) ;; Deprecated
+      ))
+   ))
 
   
