@@ -40,6 +40,7 @@
             rstudio-server-configuration-www-address
             rstudio-server-configuration-www-port
             rstudio-server-configuration-extra-options
+            rstudio-server-configuration-environment
 
             rstudio-server-service-type))
 
@@ -66,7 +67,9 @@
   (www-port    rstudio-server-configuration-www-port
                (default "8899"))
   (extra-options rstudio-server-configuration-extra-options
-                 (default (list))))
+                 (default (list)))
+  (environment  rstudio-server-configuration-environment
+                (default (list))))
 
 (define (rstudio-server-accounts config)
   (let ((username (rstudio-server-configuration-server-user config)))
@@ -97,7 +100,8 @@
         server-user default-user pam
         auth-none?
         www-address www-port
-        extra-options)
+        extra-options
+        environment)
      (list (shepherd-service
             (provision '(rstudio-server))
             (documentation "Run RStudio Server.")
@@ -115,12 +119,13 @@
                         "--server-daemonize=0"
                         #$@extra-options)
                       #:environment-variables
-                      (list "LC_ALL=en_US.utf8"
-                            (string-append "GUIX_LOCPATH=" #$glibc-utf8-locales
-                                           "/lib/locale")
-                            #$@(if default-user
-                                   (list #~(string-append "USER=" #$default-user))
-                                   #~()))))
+                      (append (list #$@environment)
+                          (list "LC_ALL=en_US.utf8"
+                                (string-append "GUIX_LOCPATH=" #$glibc-utf8-locales
+                                               "/lib/locale")
+                                #$@(if default-user
+                                       (list #~(string-append "USER=" #$default-user))
+                                       #~())))))
             (stop #~(make-kill-destructor)))))))
 
 (define rstudio-server-service-type

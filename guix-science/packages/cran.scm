@@ -1,6 +1,6 @@
 ;;;
 ;;; Copyright © 2020, 2021 Lars-Dominik Braun <ldb@leibniz-psychology.org>
-;;; Copyright © 2022 Ricardo Wurmus <rekado@elephly.net>
+;;; Copyright © 2022, 2023 Ricardo Wurmus <rekado@elephly.net>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU General Public License as published by
@@ -29,73 +29,77 @@
   #:use-module (gnu packages tex)
   #:use-module (gnu packages web))
 
-;; Not upstreamable: Bundles lots of JavaScript libraries, minified bootstrap,
-;; font-awesome, …
-(define-public r-visnetwork
+;; TODO: building these from source is difficult because of npm.
+;; swagger/inst/dist3/swagger-ui.js
+;; swagger/inst/dist3/swagger-ui-standalone-preset.js
+;; swagger/inst/dist3/swagger-ui-bundle.js
+(define-public r-swagger
   (package
-    (name "r-visnetwork")
-    (version "2.0.9")
-    (source
-      (origin
-        (method url-fetch)
-        (uri (cran-uri "visNetwork" version))
-        (sha256
-          (base32
-            "0854r9znpjd9iy6j5bgrn20vj13dhp606gs3b6iy0rhym71ks2sy"))))
-    (properties `((upstream-name . "visNetwork")))
+    (name "r-swagger")
+    (version "3.33.1")
+    (source (origin
+              (method url-fetch)
+              (uri (cran-uri "swagger" version))
+              (sha256
+               (base32
+                "1ldgmy5vjzd11z5yl5a518wkw6y0l469b2zf0lp12hk19jq6k0sj"))))
+    (properties `((upstream-name . "swagger")))
     (build-system r-build-system)
-    (propagated-inputs
-      `(("r-htmltools" ,r-htmltools)
-        ("r-htmlwidgets" ,r-htmlwidgets)
-        ("r-jsonlite" ,r-jsonlite)
-        ("r-magrittr" ,r-magrittr)))
-    (native-inputs `(("r-knitr" ,r-knitr)))
-    (home-page "http://datastorm-open.github.io/visNetwork/")
-    (synopsis "Network Visualization using vis.js Library")
+    (home-page "https://github.com/rstudio/swagger")
+    (synopsis "Dynamically generate documentation from a Swagger compliant API")
     (description
-      "This package provides an R interface to the vis.js JavaScript charting
-library.  It allows an interactive visualization of networks.")
-    (license license:expat)))
+     "This package provides a collection of HTML, JavaScript, and CSS assets
+that dynamically generate beautiful documentation from a
+@url{https://swagger.io/specification/,Swagger compliant API}.")
+    (license license:asl2.0)))
 
-;; Depends on r-visnetwork
+;; TODO: unbundle these minified JavaScript files
+;;
+;; d3 version 3.5.2
+;;   htmlwidgets/lib/d3/d3.min.js
+;; unknown:
+;;   htmlwidgets/lib/dagre-d3/dagre-d3.min.js
+;; unknown:
+;;   htmlwidgets/lib/mermaid/dist/mermaid.slim.min.js
+;; Viz.js 1.8.2 (Graphviz 2.40.1, Expat 2.2.5, Emscripten 1.37.33)
+;;   htmlwidgets/lib/viz/viz.js
 (define-public r-diagrammer
   (package
     (name "r-diagrammer")
-    (version "1.0.6.1")
+    (version "1.0.9")
     (source
-      (origin
-        (method url-fetch)
-        (uri (cran-uri "DiagrammeR" version))
-        (sha256
-          (base32
-            "0gb7ccdrh7jlyqafdk8zs465ygczxxd25s05whn914in1994qkmy"))))
+     (origin
+       (method url-fetch)
+       (uri (cran-uri "DiagrammeR" version))
+       (sha256
+        (base32
+         "1gqaqk7jdh37zzadv0aymr9yb8lpqgj3l8n1n3cds38i4zz2d934"))))
     (properties `((upstream-name . "DiagrammeR")))
     (build-system r-build-system)
     (propagated-inputs
-      `(("r-downloader" ,r-downloader)
-        ("r-dplyr" ,r-dplyr)
-        ("r-glue" ,r-glue)
-        ("r-htmltools" ,r-htmltools)
-        ("r-htmlwidgets" ,r-htmlwidgets)
-        ("r-igraph" ,r-igraph)
-        ("r-influencer" ,r-influencer)
-        ("r-magrittr" ,r-magrittr)
-        ("r-purrr" ,r-purrr)
-        ("r-rcolorbrewer" ,r-rcolorbrewer)
-        ("r-readr" ,r-readr)
-        ("r-rlang" ,r-rlang)
-        ("r-rstudioapi" ,r-rstudioapi)
-        ("r-scales" ,r-scales)
-        ("r-stringr" ,r-stringr)
-        ("r-tibble" ,r-tibble)
-        ("r-tidyr" ,r-tidyr)
-        ("r-viridis" ,r-viridis)
-        ("r-visnetwork" ,r-visnetwork)))
-    (native-inputs `(("r-knitr" ,r-knitr)))
+     (list r-downloader
+           r-dplyr
+           r-glue
+           r-htmltools
+           r-htmlwidgets
+           r-igraph
+           r-influencer
+           r-magrittr
+           r-purrr
+           r-rcolorbrewer
+           r-readr
+           r-rlang
+           r-rstudioapi
+           r-scales
+           r-stringr
+           r-tibble
+           r-tidyr
+           r-viridis
+           r-visnetwork))
     (home-page "https://github.com/rich-iannone/DiagrammeR")
     (synopsis "Graph/Network Visualization")
     (description
-      "Build graph/network structures using functions for stepwise addition
+     "Build graph/network structures using functions for stepwise addition
 and deletion of nodes and edges.  Work with data available in tables for bulk
 addition of nodes, edges, and associated metadata.  Use graph selections and
 traversals to apply changes to specific nodes or edges.  A wide selection of
@@ -107,29 +111,30 @@ take advantage of any aesthetic properties assigned to nodes and edges.")
 (define-public r-lavaanplot
   (package
     (name "r-lavaanplot")
-    (version "0.6.0")
+    (version "0.6.2")
     (source
-      (origin
-        (method url-fetch)
-        (uri (cran-uri "lavaanPlot" version))
-        (sha256
-          (base32
-            "0x5iwx8rki17b1cdayjn42zfscdx9bm4m999pzn92l28gf55kmb6"))))
+     (origin
+       (method url-fetch)
+       (uri (cran-uri "lavaanPlot" version))
+       (sha256
+        (base32
+         "03icyydr6sv4jkdfdjchsdrscr9lz9q74x5q17cx2iw3383j6lz5"))))
     (properties `((upstream-name . "lavaanPlot")))
     (build-system r-build-system)
     (propagated-inputs
-      `(("r-diagrammer" ,r-diagrammer)
-        ("r-lavaan" ,r-lavaan)
-        ("r-stringr" ,r-stringr)))
-    (native-inputs `(("r-knitr" ,r-knitr)))
+     (list r-diagrammer
+           r-lavaan
+           r-magrittr
+           r-stringr))
+    (native-inputs (list r-knitr))
     (home-page "https://github.com/alishinski/lavaanPlot")
     (synopsis "Path Diagrams for Lavaan Models via DiagrammeR")
     (description
-      "Plots path diagrams from models in lavaan using the plotting
-functionality from the DiagrammeR package.  DiagrammeR provides nice path
-diagrams via Graphviz, and these functions make it easy to generate these
-diagrams from a lavaan path model without having to write the DOT language
-graph specification.")
+     "This package plots path diagrams from models in lavaan using the
+plotting functionality from the DiagrammeR package.  DiagrammeR
+provides nice path diagrams via Graphviz, and these functions make it
+easy to generate these diagrams from a lavaan path model without
+having to write the DOT language graph specification.")
     (license license:gpl2+)))
 
 ;; Depends on r-diagrammer.
@@ -138,50 +143,91 @@ graph specification.")
     (name "r-piecewisesem")
     (version "2.1.2")
     (source
-      (origin
-        (method url-fetch)
-        (uri (cran-uri "piecewiseSEM" version))
-        (sha256
-          (base32
-            "1qxwc1drx26p4cgymrfjmg5i7ypl7gddv40virkpmc0qaag9pq36"))))
+     (origin
+       (method url-fetch)
+       (uri (cran-uri "piecewiseSEM" version))
+       (sha256
+        (base32
+         "1qxwc1drx26p4cgymrfjmg5i7ypl7gddv40virkpmc0qaag9pq36"))))
     (properties `((upstream-name . "piecewiseSEM")))
     (build-system r-build-system)
     (propagated-inputs
-      `(("r-car" ,r-car)
-        ("r-diagrammer" ,r-diagrammer)
-        ("r-emmeans" ,r-emmeans)
-        ("r-igraph" ,r-igraph)
-        ("r-lme4" ,r-lme4)
-        ("r-mass" ,r-mass)
-        ("r-multcomp" ,r-multcomp)
-        ("r-nlme" ,r-nlme)))
-    (native-inputs `(("r-knitr" ,r-knitr)))
+     (list r-car
+           r-diagrammer
+           r-emmeans
+           r-igraph
+           r-lme4
+           r-mass
+           r-multcomp
+           r-nlme))
+    (native-inputs (list r-knitr))
     (home-page "http://jslefche.github.io/piecewiseSEM/")
-    (synopsis
-      "Piecewise Structural Equation Modeling")
+    (synopsis "Piecewise structural equation modeling")
     (description
-      "Implements piecewise structural equation modeling from a single list of
-structural equations, with new methods for non-linear, latent, and composite
-variables, standardized coefficients, query-based prediction and indirect
-effects.")
+     "This package implements piecewise structural equation modeling
+from a single list of structural equations, with new methods for
+non-linear, latent, and composite variables, standardized
+coefficients, query-based prediction and indirect effects.")
     (license license:gpl3)))
+
+;; This depends on r-swagger which contains a lot of minified JS.
+(define-public r-plumber
+  (package
+    (name "r-plumber")
+    (version "1.2.1")
+    (source (origin
+              (method url-fetch)
+              (uri (cran-uri "plumber" version))
+              (sha256
+               (base32
+                "1k0y7ylc8bld16imn86g0i0dmxmr3kmh9ax4ys0yrxqzrvji7z3g"))))
+    (properties `((upstream-name . "plumber")))
+    (build-system r-build-system)
+    (propagated-inputs
+     (list r-crayon
+           r-ellipsis
+           r-httpuv
+           r-jsonlite
+           r-lifecycle
+           r-magrittr
+           r-mime
+           r-promises
+           r-r6
+           r-rlang
+           r-sodium
+           r-stringi
+           r-swagger
+           r-webutils))
+    (home-page "https://www.rplumber.io")
+    (synopsis "API generator for R")
+    (description
+     "This package gives the ability to automatically generate and
+serve an HTTP API from R functions using the annotations in the R
+documentation around your functions.")
+    (license license:expat)))
 
 ;; This contains a lot of minified JavaScript with no obvious source
 ;; files.
 (define-public r-shinywidgets
   (package
     (name "r-shinywidgets")
-    (version "0.6.4")
+    (version "0.7.6")
     (source
      (origin
        (method url-fetch)
        (uri (cran-uri "shinyWidgets" version))
        (sha256
-        (base32 "1j7pii40zc60ny1d5027pjagi1rrcnb9kxn4q9jmd9xv84y5b8sj"))))
+        (base32 "0y44xlrgdk6y62k5r1mkrlc53w171l1s5la9irqgfclgha3x54jk"))))
     (properties `((upstream-name . "shinyWidgets")))
     (build-system r-build-system)
     (propagated-inputs
-     (list r-bslib r-htmltools r-jsonlite r-sass r-shiny))
+     (list r-anytime
+           r-bslib
+           r-htmltools
+           r-jsonlite
+           r-rlang
+           r-sass
+           r-shiny))
     (home-page "https://github.com/dreamRs/shinyWidgets")
     (synopsis "Custom inputs widgets for Shiny")
     (description
@@ -195,22 +241,20 @@ interface components for Shiny applications.")
     (name "r-xlsxjars")
     (version "0.6.1")
     (source
-      (origin
-        (method url-fetch)
-        (uri (cran-uri "xlsxjars" version))
-        (sha256
-          (base32
-            "1rka5smm7yqnhhlblpihhciydfap4i6kjaa4a7isdg7qjmzm3h9p"))))
+     (origin
+       (method url-fetch)
+       (uri (cran-uri "xlsxjars" version))
+       (sha256
+        (base32
+         "1rka5smm7yqnhhlblpihhciydfap4i6kjaa4a7isdg7qjmzm3h9p"))))
     (properties `((upstream-name . "xlsxjars")))
     (build-system r-build-system)
-    (propagated-inputs `(("r-rjava" ,r-rjava)))
-    (home-page
-      "https://cran.r-project.org/web/packages/xlsxjars")
-    (synopsis
-      "Package required POI jars for the xlsx package")
+    (propagated-inputs (list r-rjava))
+    (home-page "https://cran.r-project.org/web/packages/xlsxjars")
+    (synopsis "POI jars for the xlsx package")
     (description
-      "The xlsxjars package collects all the external jars required for the
-xlxs package.  This release corresponds to POI 3.10.1.")
+     "The xlsxjars package collects all the external jars required for
+the xlxs package.  This release corresponds to POI 3.10.1.")
     (license license:gpl3)))
 
 ;; Depends on r-xlsxjars
@@ -219,23 +263,22 @@ xlxs package.  This release corresponds to POI 3.10.1.")
     (name "r-xlsx")
     (version "0.6.5")
     (source
-      (origin
-        (method url-fetch)
-        (uri (cran-uri "xlsx" version))
-        (sha256
-          (base32
-            "01r1ngdm51w18bdan8h94r91m731knkf04zal4g67mx3fpa5x31p"))))
+     (origin
+       (method url-fetch)
+       (uri (cran-uri "xlsx" version))
+       (sha256
+        (base32
+         "01r1ngdm51w18bdan8h94r91m731knkf04zal4g67mx3fpa5x31p"))))
     (properties `((upstream-name . "xlsx")))
     (build-system r-build-system)
     (propagated-inputs
-      `(("r-rjava" ,r-rjava) ("r-xlsxjars" ,r-xlsxjars)))
-    (native-inputs `(("r-knitr" ,r-knitr)))
+     (list r-rjava r-xlsxjars))
+    (native-inputs (list r-knitr))
     (home-page "https://github.com/colearendt/xlsx")
-    (synopsis
-      "Read, Write, Format Excel 2007 and Excel 97/2000/XP/2003 Files")
+    (synopsis "Read, write, format Excel 2007 and Excel 97/2000/XP/2003 files")
     (description
-      "Provide R functions to read/write/format Excel 2007 and Excel
-97/2000/XP/2003 file formats.")
+     "This package provides R functions to read/write/format Excel
+2007 and Excel 97/2000/XP/2003 file formats.")
     (license license:gpl3)))
 
 ;; Bundles udpipe, which is very hard to build, because it bundles many
@@ -243,30 +286,28 @@ xlxs package.  This release corresponds to POI 3.10.1.")
 (define-public r-udpipe
   (package
     (name "r-udpipe")
-    (version "0.8.5")
+    (version "0.8.11")
     (source
      (origin
-      (method url-fetch)
-      (uri (cran-uri "udpipe" version))
-      (sha256
-       (base32 "021n28jncfiv7492dj1ik6ylkhb3s2hpgjpc0y2zv4cdnl362zcx"))))
+       (method url-fetch)
+       (uri (cran-uri "udpipe" version))
+       (sha256
+        (base32 "0crjcfrpb0m7f58w7ksz7kvglvmc45axy9kbbvqz9w6i4kg00aaj"))))
     (properties `((upstream-name . "udpipe")))
     (build-system r-build-system)
-    ;(inputs `(("udpipe" ,udpipe)))
+    ;;(inputs `(("udpipe" ,udpipe)))
     (propagated-inputs
-      `(("r-data-table" ,r-data-table)
-        ("r-matrix" ,r-matrix)
-        ("r-rcpp" ,r-rcpp)))
-    (native-inputs `(("r-knitr" ,r-knitr)))
-    (home-page
-      "https://bnosac.github.io/udpipe/en/index.html")
-    (synopsis
-      "R bindings for UDPipe NLP toolkit")
+     (list r-data-table
+           r-matrix
+           r-rcpp))
+    (native-inputs (list r-knitr))
+    (home-page "https://bnosac.github.io/udpipe/en/index.html")
+    (synopsis "R bindings for UDPipe NLP toolkit")
     (description
-      "This natural language processing toolkit provides language-agnostic
-'tokenization', 'parts of speech tagging', 'lemmatization' and 'dependency
-parsing' of raw text.  Next to text parsing, the package also allows you to
-train annotation models based on data of 'treebanks' in 'CoNLL-U' format as
+     "This natural language processing toolkit provides language-agnostic
+tokenization, parts of speech tagging, lemmatization and dependency
+parsing of raw text.  Next to text parsing, the package also allows you to
+train annotation models based on data of treebanks in CoNLL-U format as
 provided at @url{https://universaldependencies.org/format.html}.  The techniques
 are explained in detail in the paper: 'Tokenizing, POS Tagging, Lemmatizing and
 Parsing UD 2.0 with UDPipe', available at @url{doi:10.18653/v1/K17-3009}.  The
@@ -352,13 +393,13 @@ and examples.")
 (define-public r-reactable
   (package
     (name "r-reactable")
-    (version "0.2.3")
+    (version "0.4.3")
     (source
      (origin
        (method url-fetch)
        (uri (cran-uri "reactable" version))
        (sha256
-        (base32 "17wl75cblm0rgq3chl96vj7wmbcmszss1zjppfccz1hcimfmlrpx"))))
+        (base32 "1v7yqccs7ka0a7dnyi5hag4kmk1jinp6mbyxqld2zwnvkp3lpzcp"))))
     (properties `((upstream-name . "reactable")))
     (build-system r-build-system)
     (propagated-inputs
