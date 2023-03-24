@@ -130,6 +130,7 @@
 	    GEANT4-11.1.0    ;; Ok
 
 	    ;; ROOT
+	    ROOT-6.18.04
 	    ROOT-6.26.10     ;; Ok (thisroot.sh is even not needed)
 	    
 	    ;; Others: 
@@ -166,8 +167,6 @@
 	    
 	    davix-0.6.4	  ;; Failed
 	    ROOT-5.28     ;; TODO
-	    ROOT-6.18.04  ;; Error
-            ROOT-6.20.02  ;; Error
 
 	    ))
 
@@ -3630,58 +3629,68 @@ integrated with other languages such as Python and R.")
 	    (file-name (string-append name "-" version ".tar.gz"))
 	    (modules '((guix build utils)))
 	    ))
+   ;; 
+
    (build-system cmake-build-system)
+   (propagated-inputs
+    `(
+      ;; https://issues.guix.gnu.org/41038
+      ;; ("binutils" ,binutils)
+      ;; ("libc" ,glibc)
+      ;; ("libc-debug" ,glibc "debug")
+      ;; ("libc-static" ,glibc "static")
+
+      ))
    (inputs
     `(
 
       ;; Package to build to avoid ROOT downloading them
       
       ("dcap" ,dcap-2.47.12)
-      ("davix" ,davix-0.6.4)
-      ("libAfterImage" ,libAfterImage-1.20)
+      ("davix" ,davix-0.8.3)
       ("vdt" ,vdt-0.4.3)
 
       ;; Dependencies
       
-      ("binutils" ,binutils)
-      ("cfitsio" ,cfitsio)
-      ("coreutils" ,coreutils)
-      ("freetype" ,freetype)
       ("gcc-lib" ,gcc "lib")
-      ("gcc-toolchain" ,gcc-toolchain)
-      ("git" ,git)
-      ("glibc" ,glibc)
-      ("liblzma" ,xz)
-      ("less" ,less)
-      ("libc" ,glibc)
-      ("libc-debug" ,glibc "debug")
-      ("libc-static" ,glibc "static")
-      ("libpthread-stubs" ,libpthread-stubs)
+      ("libAfterImage" ,libAfterImage-1.20)
       ("libcxx" ,libcxx)
+      ("libjpeg-turbo" ,libjpeg-turbo) 
+      ("liblzma" ,xz)
+      ("libpthread-stubs" ,libpthread-stubs)
       ("libx11" ,libx11)
       ("libxext" ,libxext)
       ("libxft" ,libxft)
       ("libxml2" ,libxml2)
       ("libxpm" ,libxpm)
-      ("llvm-5" ,llvm-5)
+      ("pcre" ,pcre)
+      ("zlib" ,zlib)
+      
+      ("cfitsio" ,cfitsio)
+      ("coreutils" ,coreutils)
+      ("fftw" ,fftw)
+      ("freetype" ,freetype)
+      ("gcc-toolchain" ,gcc-toolchain)
+      ("git" ,git)
+      ("glu" ,glu)
+      ("gsl" ,gsl)
+      ("less" ,less)
+      ("clang" ,clang-9.0.1)
+      ("llvm-9" ,llvm-9.0.1)
       ("lz4" ,lz4)
+      ("mesa" ,mesa)
       ("openblas" ,openblas)
       ("openssl" ,openssl)
-      ("pcre" ,pcre)
       ("perl" ,perl)
       ("pkg-config" ,pkg-config)
-      ("python" ,python-2.7)
+      ("python@3.9" ,python-3.9)
+      ("python@2.7" ,python-2.7)
       ("python-numpy" ,python-numpy)
       ("tbb" ,tbb)
       ("xxhash" ,xxhash)
-      ("zlib" ,zlib)
       ("zstd" ,zstd)
       ;; ("libjpeg" ,libjpeg) ;; Deprecated
-      ("libjpeg-turbo" ,libjpeg-turbo) 
-      ("gsl" ,gsl)
-      ("glu" ,glu)
-      ("mesa" ,mesa)
-      ("fftw" ,fftw)))
+      ))
 
    (arguments 
     `(#:configure-flags 
@@ -3696,52 +3705,103 @@ integrated with other languages such as Python and R.")
 
        ;; From https://root.cern.ch/building-root
        "-Dgnuinstall=ON"
+       "-Drpath=ON"
+       "-DCMAKE_POSITION_INDEPENDENT_CODE=ON"
        
        ;; To avoid downloading clad, llvm, davix
        "-Dclad=OFF"
+       ;; "-Dbuiltin_clang=OFF" ;; Too many cling errors
        "-Dbuiltin_llvm=OFF"
        "-Dbuiltin_davix=OFF"
+       
+       "-DCMAKE_INSTALL_LIBDIR=lib"
+       (string-append "-DCLANG_LIBRARY_DIR="
+		      (assoc-ref %build-inputs "clang")
+		      "/lib")
+       (string-append "-DCMAKE_C_FLAGS="
+		      (let ((inputs (alist-delete "source" %build-inputs)))
+			(apply string-append
+			       (map (lambda (p)
+				      (string-append "-L" (cdr p) "/lib "))
+				    inputs))))
+       "-Dastiff=ON"
+       "-Dbuiltin_afterimage=OFF"
+       "-Dbuiltin_ftgl=OFF"
+       "-Dbuiltin_glew=OFF"
+       "-Dbuiltin_gsl=OFF"
+       "-Dbuiltin_zlib=OFF"
+       "-Dcfitsio=ON"
+       "-Ddavix=ON"
+       "-Dhttp=ON"
+       "-Djemmaloc=ON"
+       "-Dmathmore=ON"
+       "-Dminuit2=ON"
+       "-Dopengl=ON"
+       "-Dpythia6=ON"
+       "-Dpythia6_nolink=ON"
+       "-Dpythia8=OFF"
+       "-Droofit=ON"
+       "-Drpath=ON"
+       "-Dshadowpw=OFF"
+       "-Dsoversion=ON"
+       "-Dtmva=OFF"
+       "-Dvdt=ON"
+       "-Dx11=ON"
+       
+       (string-append "-DOPENGL_INCLUDE_DIR="
+		      (assoc-ref %build-inputs "mesa")
+		      "/include")
+       (string-append "-DOPENGL_gl_LIBRARY="
+		      (assoc-ref %build-inputs "mesa")
+		      "/lib/libGL.so")
+       (string-append "-DOPENGL_glu_LIBRARY="
+		      (assoc-ref %build-inputs "glu")
+		      "/lib/libGLU.so")
 
-       ;; "-Dbuiltin_clang=OFF" ;; error
-       
-       ;; Due to ROOT-specific patches you need a special
-       ;; version of clang.  You cannot use vanilla clang.
-       
        ;; From llvm.scm
        (string-append "-DC_INCLUDE_DIRS="
 		      (assoc-ref %build-inputs "libc")
-		      "/include"))
-
+		      "/include")
+       (string-append "-DCMAKE_LIBRARY_PATH="
+		      (let ((inputs (alist-delete "source" %build-inputs)))
+			(apply string-append
+			       (map (lambda (p)
+				      (string-append (cdr p) "/lib:"))
+				    inputs)))))
+		     
       ;; To avoid "depends on .. which cannot be found in RUNPATH"
       #:validate-runpath? #f
 
-      #:tests? #f
+      ;; #:tests? #f
       
       #:phases
       (modify-phases
        %standard-phases
        (add-before
-        ;; avec build LD_LIBRARY_PATH est vide pour G__Core.cxx
-        'configure 'fix-library-path
-        ;; Sinon error while loading shared libraries: libLLVMTableGen.so.5
-        (lambda*
-         (#:key inputs outputs #:allow-other-keys)
+	;; avec build LD_LIBRARY_PATH est vide pour G__Core.cxx
+	'configure 'fix-library-path
+	;; Sinon error while loading shared libraries: libLLVMTableGen.so.5
+	(lambda*
+	 (#:key inputs outputs #:allow-other-keys)
          
-         (define (add-libraries libpath inputs)
-           (let ((inputs (alist-delete "source" inputs)))
-             (apply string-append
-                    libpath
-                    (map (lambda (p)
-                           (string-append (cdr p) "/lib:"))
-                         inputs))))
+	 (define (add-libraries libpath inputs)
+	    (let ((inputs (alist-delete "source" inputs)))
+	     (apply string-append
+		    libpath
+		    (map (lambda (p)
+			   (string-append (cdr p) "/lib:"))
+			 inputs))))
 
-         (let* ((libpath (getenv "LD_LIBRARY_PATH"))
-                (libpath (if libpath (string-append libpath ":") ""))
-                (libpath (add-libraries libpath inputs)))
+	 ;; Set LD_LIBRARY_PATH to find shared libraries
+	 ;; during compilation
+	 (let* ((libpath (getenv "LD_LIBRARY_PATH"))
+		 (libpath (if libpath (string-append libpath ":") ""))
+		 (libpath (add-libraries libpath inputs)))
            
-           ;; (display (list "LD_LIBRARY_PATH" libpath)) (newline)
-           (setenv "LD_LIBRARY_PATH" libpath)
-           #t))))
+	    (display (list "LD_LIBRARY_PATH" libpath)) (newline)
+	    (setenv "LD_LIBRARY_PATH" libpath))
+
+	 #t )))
       
       ))
 
