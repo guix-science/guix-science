@@ -120,6 +120,11 @@
 	    G4ENSDFSTATE-2.2
 	    G4ENSDFSTATE-2.3
 	    G4TENDL-1.4
+
+	    ;; Concerning versions, we have to keep several
+	    ;; versions at the same time because users want
+	    ;; to be able to install a specific version of
+	    ;; each tool.
 	    
 	    ;; Geant 4
 	    GEANT4-9.6.p04   ;; Ok
