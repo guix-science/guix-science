@@ -1178,7 +1178,8 @@ devices.")
    (home-page "https://geant4.web.cern.ch/")
    (synopsis "Platform for the simulation of the passage of particles through matter using Monte Carlo methods")
    (description "Geant4 is a toolkit for the simulation of the passage of particles through matter.  Its areas of application include high energy, nuclear and accelerator physics, as well as studies in medical and space science.")
-   (license license:asl2.0)))
+   (license (non-copyleft "https://geant4.web.cern.ch/download/license"))
+   ))
 
 (define-public GEANT4-9.6.p04 ;; http://cern.ch/geant4-data/releases/geant4.9.6.p04.tar.gz
   (package
