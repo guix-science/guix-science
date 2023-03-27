@@ -103,7 +103,8 @@
 	    GEANT4-10.06.p01 ;; Ok
 	    GEANT4-10.07.p04 ;; Ok
 	    GEANT4-11.1.0    ;; Ok
-
+	    GEANT4-11.1.1    ;; Ok
+	    
 	    ;; Geant 4 data
 	    ;; G4NDL-4.6         
 	    ;; G4NDL-4.7         
@@ -720,6 +721,50 @@
      (sha256
       (base32
        "11drs02imp50gnvbf7ngv5d1gr69y3kgzga68zvp7hsjc43467h5"))))
+   
+   (native-inputs
+    `(("G4NDL" ,G4NDL-4.7)
+      ("G4EMLOW" ,G4EMLOW-8.2)
+      ("G4PhotonEvaporation" ,G4PhotonEvaporation-5.7)
+      ("G4RadioactiveDecay" ,G4RadioactiveDecay-5.6)
+      ("G4PARTICLEXS" ,G4PARTICLEXS-4.0)
+      ("G4PII" ,G4PII-1.3)
+      ("G4RealSurface" ,G4RealSurface-2.2)
+      ("G4SAIDDATA" ,G4SAIDDATA-2.0)
+      ("G4ABLA" ,G4ABLA-3.1)
+      ("G4INCL" ,G4INCL-1.0)
+      ("G4ENSDFSTATE" ,G4ENSDFSTATE-2.3)
+      ("G4TENDL" ,G4TENDL-1.4)
+      ))
+
+   (inputs
+    `(("coreutils" ,coreutils)
+      ("gcc-toolchain" ,gcc-toolchain)
+      ("xerces-c" ,xerces-c) ;; pour GDML
+      ("expat" ,expat)
+      ("CLHEP" ,CLHEP-2.4.6.2)
+      ("python2" ,python-2)
+      ("python3" ,python-3.9)
+      ("perl" ,perl)
+      ("tcsh" ,tcsh)
+      ))
+   
+   ))
+
+(define-public GEANT4-11.1.1
+  (package
+   (inherit GEANT4-10.06.p01)
+   (name "GEANT4-11.1.1")
+   (version "11.1.1")
+   (source
+    (origin
+     (method url-fetch)
+     (uri (string-append "http://cern.ch/geant4-data/releases/geant4-v"
+                         version
+                         ".tar.gz"))
+     (sha256
+      (base32
+       "0sg45nd47ajqhzncw5fahrrx8a9s54x1l31l6xa73xsx5bmj54fj"))))
    
    (native-inputs
     `(("G4NDL" ,G4NDL-4.7)
