@@ -49,6 +49,7 @@
   #:use-module (gnu packages statistics)
   #:use-module (gnu packages gawk)
   #:use-module (gnu packages rsync)
+  #:use-module (gnu packages serialization)
   #:use-module (gnu packages time)
   #:use-module (gnu packages tls)
   #:use-module (gnu packages vim)
@@ -312,6 +313,39 @@ minimization functions originally developed for the CodeAxe phylogenetic
 analysis package.")
    ;; MIT license.
    (license license:expat)))
+
+;; Seqan 3.0.3 removed a few deprecated features.
+(define-public seqan-3.0.2
+  (package
+    (name "seqan")
+    (version "3.0.2")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append "https://github.com/seqan/seqan3/releases/"
+                                  "download/" version "/seqan3-"
+                                  version "-Source.tar.xz"))
+              (sha256
+               (base32
+                "1s9fnvg26scm8g2z9bgx8cn6vgy185dpmyp089l4iz811k6skcds"))))
+    (build-system cmake-build-system)
+    (arguments
+     `(#:phases
+       (modify-phases %standard-phases
+         (replace 'check
+           (lambda* (#:key tests? #:allow-other-keys)
+             (when tests?
+               (invoke "ctest" "test" "--output-on-failure")))))))
+    (native-inputs
+     (list bzip2 cereal zlib))
+    (home-page "https://www.seqan.de")
+    (synopsis "Library for nucleotide sequence analysis")
+    (description
+     "SeqAn is a C++ library of efficient algorithms and data structures for
+the analysis of sequences with the focus on biological data.  It contains
+algorithms and data structures for string representation and their
+manipulation, online and indexed string search, efficient I/O of
+bioinformatics file formats, sequence alignment, and more.")
+    (license license:bsd-3)))
 
 (define-public strelka-2.9.2
   (package
