@@ -1,6 +1,7 @@
 ;;;
 ;;; Copyright © 2019, 2020 Lars-Dominik Braun <ldb@leibniz-psychology.org>
 ;;; Copyright © 2020 Roel Janssen <roel@gnu.org>
+;;; Copyright © 2023 Ricardo Wurmus <rekado@elephly.net>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU General Public License as published by
@@ -35,6 +36,7 @@
   #:use-module (gnu packages)
   #:use-module (gnu packages base)
   #:use-module (gnu packages boost)
+  #:use-module (gnu packages check)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages cran)
   #:use-module (gnu packages databases)
@@ -127,6 +129,8 @@ for assistive technology like screen readers.")
          ;; change the default paths for mathjax and pandoc and a hardcoded call to `which`
          (add-after 'unpack 'patch-paths
            (lambda* (#:key inputs #:allow-other-keys)
+             (install-file (search-input-file inputs "/include/catch2/catch.hpp")
+                           "src/cpp/tests/cpp/tests/vendor/")
              (substitute* "src/cpp/session/session-options.json"
                (("resources/mathjax-27") (assoc-ref inputs "mathjax")))
              (substitute* "src/cpp/session/include/session/SessionConstants.hpp"
@@ -201,6 +205,7 @@ for assistive technology like screen readers.")
              #t)))))
     (native-inputs
      `(("unzip" ,unzip)
+       ("catch2" ,catch2)
        ;; gwt-components are built using ant
        ("ant" ,ant)
        ("jdk" ,openjdk11 "jdk")
