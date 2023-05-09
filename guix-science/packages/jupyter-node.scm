@@ -20,7 +20,7 @@
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix utils)
-  #:use-module (guix build-system node)
+  #:use-module (guix-science build-system node)
   #:use-module (srfi srfi-1))
 
 (define-public node-commander-7.2.0
