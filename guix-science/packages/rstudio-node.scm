@@ -24,7 +24,7 @@
   #:use-module (guix packages)
   #:use-module (guix git-download)
   #:use-module (guix download)
-  #:use-module (guix build-system node))
+  #:use-module (guix-science build-system node))
 
 (define-public node-acorn-5.7.4
   (package
