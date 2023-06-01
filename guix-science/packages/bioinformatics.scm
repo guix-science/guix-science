@@ -31,10 +31,12 @@
   #:use-module (gnu packages cran)
   #:use-module (gnu packages curl)
   #:use-module (gnu packages databases)
+  #:use-module (gnu packages django)
   #:use-module (gnu packages documentation)
   #:use-module (gnu packages gcc)
   #:use-module (gnu packages graphviz)
   #:use-module (gnu packages java)
+  #:use-module (gnu packages machine-learning)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages pcre)
   #:use-module (gnu packages parallel)
@@ -59,6 +61,7 @@
   #:use-module (guix build-system cmake)
   #:use-module (guix build-system gnu)
   #:use-module (guix build-system perl)
+  #:use-module (guix build-system pyproject)
   #:use-module (guix build-system python)
   #:use-module (guix build-system r)
   #:use-module (guix build-system trivial)
@@ -635,6 +638,75 @@ spanning reads to a reference annotation set.")
 libraries to sequence quality data to the generation of internal oligos,
 primer3 does it.")
     (license license:gpl2)))
+
+;; The submodules contain JavaScript that we don't build from source.
+(define-public python-anvio
+  (package
+    (name "python-anvio")
+    (version "7.1")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/merenlab/anvio")
+                    (commit (string-append "v" version))
+                    (recursive? #t)))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "0c41gni87ian6p9vdzp0f8j1w7w5n3r7xabbgwkw83v26wybqvrw"))))
+    (build-system pyproject-build-system)
+    (arguments
+     (list
+      #:phases
+      '(modify-phases %standard-phases
+         (add-after 'unpack 'relax-requirements
+           (lambda _
+             (substitute* "requirements.txt"
+               ;; This is questionable.  Pandas 0.25 is really quite old.  Using
+               ;; version 1.4.x is a gamble.
+               (("pandas==.*") "pandas\n")
+               ;; We use the same major version; should be fine.
+               (("snakemake==5.*") "snakemake\n")))))
+      #:test-flags
+      ;; These fail because the test files are not in the expected directory.
+      '(list "-k" "not test_fasta_splitting \
+and not test_more_parts_than_sequences \
+and not test_single_fasta_gives_one_split")))
+    (propagated-inputs
+     (list python-bottle
+           python-colored
+           python-django
+           python-ete3
+           python-illumina-utils
+           python-matplotlib
+           python-mistune
+           python-multiprocess
+           python-numba
+           python-numpy
+           python-pandas
+           python-paste
+           python-plotext
+           python-psutil
+           python-pyani
+           python-pysam
+           python-requests
+           python-scikit-learn
+           python-scipy
+           python-six
+           python-statsmodels
+           python-tabulate
+           snakemake))
+    (native-inputs (list python-pytest))
+    (home-page "https://anvio.org")
+    (synopsis "Analysis and visualization platform for 'omics data")
+    (description
+     "Anvi’o is a comprehensive platform that brings together many aspects of
+today’s computational strategies of data-enabled microbiology, including
+genomics, metagenomics, metatranscriptomics, pangenomics, metapangenomics,
+phylogenomics, and microbial population genetics in an integrated and
+easy-to-use fashion through extensive interactive visualization
+capabilities.")
+    (license license:gpl3+)))
 
 (define-public gnomad-sv-sites-2.1
   (package
