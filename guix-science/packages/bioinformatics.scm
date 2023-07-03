@@ -378,6 +378,62 @@ signaling paths.  This allows to predict ligand-receptor interactions
 that might drive gene expression changes in cells of interest.")
       (license license:gpl3))))
 
+;; This is here because r-nichenetr is also here.
+(define-public r-scriabin
+  (let ((commit "313d15e9150413e6bcad0947215da3a09c0257f5")
+        (revision "1"))
+    (package
+      (name "r-scriabin")
+      (version (git-version "0.0.0.9000" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/BlishLab/scriabin")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "0k8khwcr3a281pa33h6l3wdk5igyqc4xknydiazk7qyf5w25g9zg"))))
+      (properties `((upstream-name . "scriabin")))
+      (build-system r-build-system)
+      (propagated-inputs (list r-ade4
+                               r-cellid
+                               r-circlize
+                               r-clipr
+                               r-complexheatmap
+                               r-complexheatmap
+                               r-cowplot
+                               r-dplyr
+                               r-factoextra
+                               r-fsa
+                               r-genefilter
+                               r-ggalluvial
+                               r-ggfittext
+                               r-ggplot2
+                               r-ggsci
+                               r-limma
+                               r-magrittr
+                               r-matrix
+                               r-matrixstats
+                               r-networkd3
+                               r-nichenetr
+                               r-pbapply
+                               r-qlcmatrix
+                               r-scales
+                               r-scater
+                               r-seurat
+                               r-tibble
+                               r-tidyft
+                               r-wgcna))
+      (native-inputs (list r-knitr))
+	  (home-page "https://github.com/BlishLab/scriabin")
+      (synopsis "Single-cell resolved interaction analysis through binning")
+      (description
+       "Scriabin aims to provide a comprehensive view of cell-cell
+communication (CCC).  It achieves this without requiring subsampling
+or aggregation.")
+      (license license:expat))))
+
 ;; Seqan 3.0.3 removed a few deprecated features.
 (define-public seqan-3.0.2
   (package
