@@ -66,14 +66,13 @@ that dynamically generate beautiful documentation from a
 (define-public r-diagrammer
   (package
     (name "r-diagrammer")
-    (version "1.0.9")
-    (source
-     (origin
-       (method url-fetch)
-       (uri (cran-uri "DiagrammeR" version))
-       (sha256
-        (base32
-         "1gqaqk7jdh37zzadv0aymr9yb8lpqgj3l8n1n3cds38i4zz2d934"))))
+    (version "1.0.10")
+    (source (origin
+              (method url-fetch)
+              (uri (cran-uri "DiagrammeR" version))
+              (sha256
+               (base32
+                "147q7zgwhd7vc0l134sqkkf6n6s6bznxvcmsrdx2f5df12bsixkj"))))
     (properties `((upstream-name . "DiagrammeR")))
     (build-system r-build-system)
     (propagated-inputs
@@ -83,7 +82,6 @@ that dynamically generate beautiful documentation from a
            r-htmltools
            r-htmlwidgets
            r-igraph
-           r-influencer
            r-magrittr
            r-purrr
            r-rcolorbrewer
@@ -96,6 +94,7 @@ that dynamically generate beautiful documentation from a
            r-tidyr
            r-viridis
            r-visnetwork))
+    (native-inputs (list esbuild))
     (home-page "https://github.com/rich-iannone/DiagrammeR")
     (synopsis "Graph/Network Visualization")
     (description
