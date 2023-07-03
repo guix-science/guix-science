@@ -68,6 +68,7 @@
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix packages)
+  #:use-module (guix-science packages cran)
   #:use-module (guix-science packages grid-engine))
 
 (define-public spades
@@ -316,6 +317,66 @@ minimization functions originally developed for the CodeAxe phylogenetic
 analysis package.")
    ;; MIT license.
    (license license:expat)))
+
+;; Depends on r-diagrammer, which is not in Guix proper yet due to
+;; minified JavaScript.
+(define-public r-nichenetr
+  (let ((commit "cc3bcedfd6271df2e8ca85c8b771f7faa914cd3d")
+        (revision "1"))
+    (package
+      (name "r-nichenetr")
+      (version (git-version "1.1.1" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/saeyslab/nichenetr")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "0jxkrk7cpwx0lbbgjrd885jxahdgk9ysfqp2drq22g486k6p2s9y"))))
+      (properties `((upstream-name . "nichenetr")))
+      (build-system r-build-system)
+      (propagated-inputs
+       (list r-caret
+             r-catools
+             r-circlize
+             r-complexheatmap
+             r-cowplot
+             r-data-table
+             r-diagrammer       ;<--- this is why this package is here
+             r-dicekriging
+             r-dplyr
+             r-e1071
+             r-emoa
+             r-fdrtool
+             r-ggplot2
+             r-ggpubr
+             r-hmisc
+             r-igraph
+             r-limma
+             r-magrittr
+             r-matrix
+             r-mlrmbo
+             r-parallelmap
+             r-purrr
+             r-randomforest
+             r-readr
+             r-rocr
+             r-seurat
+             r-tibble
+             r-tidyr))
+      (native-inputs (list r-knitr))
+	  (home-page "https://github.com/saeyslab/nichenetr")
+      (synopsis "R implementation of the NicheNet method")
+      (description
+       "The goal of NicheNet is to study intercellular communication
+from a computational perspective.  NicheNet uses human or mouse gene
+expression data of interacting cells as input and combines this with a
+prior model that integrates existing knowledge on ligand-to-target
+signaling paths.  This allows to predict ligand-receptor interactions
+that might drive gene expression changes in cells of interest.")
+      (license license:gpl3))))
 
 ;; Seqan 3.0.3 removed a few deprecated features.
 (define-public seqan-3.0.2
