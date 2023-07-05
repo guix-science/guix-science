@@ -79,7 +79,7 @@ for assistive technology like screen readers.")
     (license license:asl2.0)))
 
 ;; Keep this in sync with the rstudio-server package
-(define %rstudio-version "2022.12.0+353")
+(define %rstudio-version "2023.06.0+421")
 (define %rstudio-origin
   (origin
     (method git-fetch)
@@ -89,7 +89,7 @@ for assistive technology like screen readers.")
     (file-name (git-file-name "rstudio" %rstudio-version))
     (sha256
      (base32
-      "1wcxprvsnvxp7dcs1wifb37n9g0y585ny7pj8ynxp28689485mf5"))
+      "1i4vicq1fdk5ddij0zlwpakm75wwn4bikijv5brmi7j7xblvdd6k"))
     (modules '((guix build utils)))
     (snippet
      '(for-each delete-file-recursively
@@ -103,7 +103,19 @@ for assistive technology like screen readers.")
   (package
     (name "js-panmirror")
     (version %rstudio-version)
-    (source %rstudio-origin)
+    (source
+      (origin
+        (method git-fetch)
+        (uri (git-reference
+              (url "https://github.com/quarto-dev/quarto.git")
+              ;; This is the latest commit of the branch mentioned in RStudio’s
+              ;; dependencies/common/install-panmirror.
+              (commit "01345470a8f80becb1e128be24f59d2c34fb3a85")))
+        (file-name (git-file-name "rstudio" %rstudio-version))
+        (sha256
+         (base32
+          "1ngg95lh4n6yri3p4v2qps3vglnwcp054a54336rps16yi7814rb"))
+        (patches (search-patches "rstudio-no-pinyin.patch"))))
     (build-system node-build-system)
     (arguments
      (list
@@ -111,49 +123,44 @@ for assistive technology like screen readers.")
       #:phases
       #~(modify-phases %standard-phases
           (add-after 'unpack 'chdir
-            (lambda _ (chdir "src/gwt/panmirror/src/editor/")))
-          (add-after 'chdir 'patch-paths
-            (lambda* (#:key inputs #:allow-other-keys)
-              (substitute* "fuse.js"
-                ;; Disable sourceMaps, because fuse-box backtraces if enabled.
-                (("sourceMaps:.*") "")
-                ;; XXX: do not uglify because fuse-box does not have uglify-es
-                (("uglify: \\{ es6: true \\},") "uglify: false,")
-                ;; This path is only used to copy prosemirror
-                (("/opt/rstudio-tools/panmirror/node_modules")
-                 (string-append (search-input-directory inputs "/lib/node_modules/prosemirror-dev-tools") "/../"))
-                ;; Replace with current NODE_PATH, since there seems to be no
-                ;; other way to make fuse-box respect that path.
-                ;; (setenv "PROJECT_NODE_MODULES" (getenv "NODE_PATH"))
-                ;; does not work, since that path does not support :-delimited strings
-                (("\"\\./node_modules\"")
-                 (string-append "\"" (string-join (string-split (getenv "NODE_PATH") #\:) "\", \"") "\"")))))
+            (lambda _
+              (chdir "apps/panmirror")
+              (setenv "NODE_PATH" (string-append (getenv "NODE_PATH") ":../../packages"))))
           (delete 'configure)
           (replace 'build
             (lambda _
-              ;; Otherwise fuse-box will try to write to /gnu/store/…/.fusebox.
-              (setenv "FUSEBOX_TEMP_FOLDER" "/tmp/")
-              (invoke "node" "fuse" "ide-dev")))
+              (invoke "esbuild"
+                      "--bundle"
+                      ;"--minify"
+                      "--outfile=dist/panmirror.js"
+                      "--loader:.png=dataurl"
+                      "--loader:.gif=dataurl"
+                      ;; RStudio expects Panmirror to be available in window.Panmirror,
+                      ;; esbuild’s global-name binds to <name>.default though, so we need the
+                      ;; footer option to get the object into the right shape.
+                      "--global-name=_internalPanmirror"
+                      "--footer:js=window.Panmirror=_internalPanmirror.default"
+                      "--define:process.env.NODE_ENV=\"production\""
+                      "--define:process.env.DEBUG=\"\""
+                      "--define:process.env.TERM=\"\""
+                      "--define:process.platform=\"\""
+                      "--format=iife"
+                      "src/index.ts")))
           (replace 'install
-            (lambda _
-              (with-directory-excursion "../../../www/js"
-                (let ((out (string-append #$output "/share/javascript/panmirror")))
-                  (mkdir-p out)
-                  (install-file "panmirror/prosemirror-dev-tools.min.js" out)
-                  (invoke "esbuild" "panmirror/panmirror.js"
-                          "--minify"
-                          (string-append "--outfile=" out "/panmirror.js"))))))
+            (lambda* (#:key outputs #:allow-other-keys)
+              (let ((out (assoc-ref outputs "out")))
+                (install-file "dist/panmirror.js" (string-append out "/share/javascript/panmirror"))
+                (install-file "dist/panmirror.css" (string-append out "/share/javascript/panmirror")))))
           (delete 'avoid-node-gyp-rebuild))))
     (native-inputs
      (list esbuild
-           node-fuse-box-3.7.1
-           ;; Copied to output
-           node-prosemirror-dev-tools-2.1.1))
+           node-fuse-box-3.7.1))
     (inputs
      (list node-biblatex-csl-converter-2.1.0
            node-clipboard-2.0.11
            node-diff-match-patch-1.0.5
            node-fuse-js-6.6.2
+           node-jayson-4.1.0
            node-js-yaml-4.1.0
            node-lodash-debounce-4.0.8
            node-lodash-orderby-4.6.0
@@ -163,7 +170,7 @@ for assistive technology like screen readers.")
            ;;node-pinyin-2.11.2
            node-prosemirror-changeset-2.2.1
            node-prosemirror-commands-1.5.2
-           node-prosemirror-dev-tools-2.1.1
+           node-prosemirror-dev-tools-3.1.0
            node-prosemirror-dropcursor-1.8.1
            node-prosemirror-gapcursor-1.3.2
            node-prosemirror-history-1.3.2
@@ -175,16 +182,21 @@ for assistive technology like screen readers.")
            node-prosemirror-tables-1.3.2
            node-prosemirror-transform-1.7.3
            node-prosemirror-utils-0.9.6
-           node-prosemirror-view-1.31.4
-           node-react-17.0.2
-           node-react-dom-17.0.2
+           node-prosemirror-view-1.31.5
+           node-react-18.2.0
+           node-react-dom-18.2.0
+           node-react-textarea-autosize-8.5.0
            node-react-window-1.8.9
            node-sentence-splitter-3.2.3
            node-thenby-1.3.4
            node-tlite-0.1.9
            node-transliteration-2.3.5
-           node-typescript-3.8.3
-           node-zenscroll-4.0.2))
+           node-typescript-4.9.5
+           node-use-debounce-9.0.4
+           node-vscode-languageserver-types-3.17.3
+           node-zenscroll-4.0.2
+           ;; For core
+           node-markdown-it-13.0.1))
     (home-page "https://rstudio.com/products/rstudio/#rstudio-server")
     (synopsis "Integrated development environment (IDE) for R")
     (description "RStudio is an integrated development environment (IDE) for the R
@@ -229,6 +241,10 @@ web browser.")
          ;; change the default paths for mathjax and pandoc and a hardcoded call to `which`
          (add-after 'unpack 'patch-paths
            (lambda* (#:key inputs #:allow-other-keys)
+             ;; Don't build panmirror.  We already got it.
+             (substitute* "src/gwt/build.xml"
+               (("target name=\"panmirror\"" m)
+                (string-append m " if=\"false\"")))
              (install-file (search-input-file inputs "/include/catch2/catch.hpp")
                            "src/cpp/tests/cpp/tests/vendor/")
              (substitute* "src/cpp/session/session-options.json"
@@ -275,17 +291,12 @@ web browser.")
              ;; Generate *.gen.hpp files deleted by source snippet.
              (with-directory-excursion "src/cpp"
                (invoke "./generate-options.R"))))
-         (add-after 'unpack 'prepare-panmirror
-           (lambda* (#:key inputs #:allow-other-keys)
-             (copy-recursively (string-append (assoc-ref inputs "js-panmirror")
-                                              "/share/javascript/panmirror")
-                               "src/gwt/www/js/")
-             (for-each make-file-writable
-                       (find-files "src/gwt/www/js/panmirror"))
-             ;; Don't build panmirror.  We already got it.
-             (substitute* "src/gwt/build.xml"
-               (("target name=\"panmirror\"" m)
-                (string-append m " if=\"false\""))))))))
+         (add-after 'install 'install-panmirror
+           (lambda* (#:key inputs outputs #:allow-other-keys)
+             (let ((panmirror (string-append (assoc-ref inputs "js-panmirror")
+                                              "/share/javascript/panmirror"))
+                   (out (assoc-ref outputs "out")))
+             (copy-recursively panmirror (string-append out "/www/js/panmirror"))))))))
     (native-inputs
      `(("unzip" ,unzip)
        ("catch2" ,catch2)
