@@ -119,19 +119,71 @@ for assistive technology like screen readers.")
     (build-system node-build-system)
     (arguments
      (list
-      #:node node
+      #:node node-lts
+      #:imported-modules `(,@%node-build-system-modules
+                           (guix build union))
+      #:modules '((guix build node-build-system)
+                  (guix build union)
+                  (guix build utils)
+                  (ice-9 ftw))
+      #:tests? #false
       #:phases
       #~(modify-phases %standard-phases
           (add-after 'unpack 'chdir
             (lambda _
               (chdir "apps/panmirror")
-              (setenv "NODE_PATH" (string-append (getenv "NODE_PATH") ":../../packages"))))
+
+              ;; There is a lot of duplication among the dependencies.
+              ;; esbuild will inline each duplicate and so there will
+              ;; be multiple instances of e.g. prosemirror-model
+              ;; resulting in all sorts of runtime problems since
+              ;; identical definitions don't share state.  The ugly
+              ;; solution is to copy all node_modules from NODE_PATH
+              ;; and manually hoist nested dependencies.
+              (let ((local (string-append (getcwd) "/node_modules")))
+                ;; Build an editable copy of all node_modules
+                ;; directories.
+                (union-build local
+                             (string-split (getenv "NODE_PATH") #\:)
+                             #:symlink copy-file
+                             #:create-all-directories? #t)
+
+                ;; The contents of every nested node_modules directory
+                ;; should be moved up to the top.
+                (with-directory-excursion local
+                  (for-each make-file-writable (find-files "." ".*"))
+                  (let ((package-names
+                         (scandir "."
+                                  (lambda (file)
+                                    (not (member file (list "." "..")))))))
+                    (for-each
+                     (lambda (package-name)
+                       (let ((name (string-append package-name "/node_modules")))
+                         (when (file-exists? name)
+                           (let ((dependencies
+                                  (scandir name
+                                           (lambda (file)
+                                             (and (not (member file (list "." "..")))
+                                                  (eq? 'directory
+                                                       (stat:type
+                                                        (stat (string-append name "/" file)))))))))
+                             ;; Move the directory to the top level.
+                             (for-each
+                              (lambda (dir)
+                                (let ((source (string-append name "/" dir))
+                                      (target (string-append local "/" dir)))
+                                  (copy-recursively source target)
+                                  (delete-file-recursively source)))
+                              dependencies)))))
+                     package-names)))
+                (setenv "NODE_PATH"
+                        (string-append local ":../../packages")))))
           (delete 'configure)
           (replace 'build
             (lambda _
               (invoke "esbuild"
                       "--bundle"
-                      ;"--minify"
+                      "--minify"
                       "--outfile=dist/panmirror.js"
                       "--loader:.png=dataurl"
                       "--loader:.gif=dataurl"
@@ -144,17 +196,19 @@ for assistive technology like screen readers.")
                       "--define:process.env.DEBUG=\"\""
                       "--define:process.env.TERM=\"\""
                       "--define:process.platform=\"\""
+                      "--platform=browser"
+                      "--main-fields=browser,module,main"
+                      "--conditions=browser,module"
                       "--format=iife"
                       "src/index.ts")))
           (replace 'install
-            (lambda* (#:key outputs #:allow-other-keys)
-              (let ((out (assoc-ref outputs "out")))
-                (install-file "dist/panmirror.js" (string-append out "/share/javascript/panmirror"))
-                (install-file "dist/panmirror.css" (string-append out "/share/javascript/panmirror")))))
+            (lambda _
+              (let ((target (string-append #$output "/share/javascript/panmirror")))
+                (install-file "dist/panmirror.js" target)
+                (install-file "dist/panmirror.css" target))))
           (delete 'avoid-node-gyp-rebuild))))
     (native-inputs
-     (list esbuild
-           node-fuse-box-3.7.1))
+     (list esbuild))
     (inputs
      (list node-biblatex-csl-converter-2.1.0
            node-clipboard-2.0.11
