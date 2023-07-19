@@ -488,7 +488,7 @@ dependency-free.")
             texlive-xcolor
             texlive-tools
             texlive-latex-multirow
-            texlive-latex-threeparttable
+            texlive-threeparttable
             texlive-etoolbox
             texlive-apa6
             texlive-latex-geometry
