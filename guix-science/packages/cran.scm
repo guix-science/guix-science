@@ -29,6 +29,36 @@
   #:use-module (gnu packages tex)
   #:use-module (gnu packages web))
 
+;; This contains minified JavaScript
+(define-public r-bs4dash
+  (package
+    (name "r-bs4dash")
+    (version "2.3.0")
+    (source (origin
+              (method url-fetch)
+              (uri (cran-uri "bs4Dash" version))
+              (sha256
+               (base32
+                "09dzcpqzlkak9ilx79h2hpad20ck6857middbkn7j3mhrbqq0m51"))))
+    (properties `((upstream-name . "bs4Dash")))
+    (build-system r-build-system)
+    (propagated-inputs (list r-bslib
+                             r-fresh
+                             r-htmltools
+                             r-httpuv
+                             r-httr
+                             r-jsonlite
+                             r-lifecycle
+                             r-shiny
+                             r-waiter))
+    (native-inputs (list r-knitr))
+    (home-page "https://rinterface.github.io/bs4Dash/index.html")
+    (synopsis "Bootstrap 4 version of shinydashboard")
+    (description
+     "Make Bootstrap 4 Shiny dashboards.  Use the full power of
+AdminLTE3, a dashboard template built on top of Bootstrap 4.")
+    (license license:gpl2+)))
+
 ;; TODO: building these from source is difficult because of npm.
 ;; swagger/inst/dist3/swagger-ui.js
 ;; swagger/inst/dist3/swagger-ui-standalone-preset.js
