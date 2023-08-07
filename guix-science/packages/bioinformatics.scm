@@ -91,11 +91,11 @@
    (supported-systems '("x86_64-linux"))
    (arguments
     `(#:tests? #f                       ; There is no test target.
-               #:phases
-               (modify-phases %standard-phases
-                              (add-before 'configure 'move-to-source-dir
-                                          (lambda _
-                                            (chdir "assembler/src"))))))
+      #:phases
+        (modify-phases %standard-phases
+          (add-before 'configure 'move-to-source-dir
+          (lambda _
+          (chdir "assembler/src"))))))
    ;; TODO:  While this build works fine, SPAdes bundles samtools, bwa, and
    ;; boost.  These packages are also available in GNU Guix, so we should
    ;; unbundle them.
