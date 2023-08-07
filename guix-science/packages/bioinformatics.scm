@@ -74,25 +74,28 @@
 (define-public spades
   (package
    (name "spades")
-   (version "3.15.2")
-   (source (origin
-            (method url-fetch)
-            (uri (string-append
-                  "http://cab.spbu.ru/files/release"
-                  version "/SPAdes-" version ".tar.gz"))
-            (sha256
-             (base32 "03cxz4m1n4rc81lqb4p1pz2ammms7f31wvi4daywfkc13aal6fz9"))))
+   (version "3.15.5")
+   (source
+    (origin
+     (method git-fetch)
+     (uri (git-reference
+           (url "https://github.com/ablab/spades")
+           (commit (string-append "v" version))))
+     (file-name (git-file-name name version))
+     (sha256
+      (base32
+       "0f905nlp8dp295ypa0vlxyb9h0r04x56ykvv630cjl04kd5nx052"))))
    (build-system cmake-build-system)
    ;; Reported under section 2 "Installation", "SPAdes requires a 64-bit
    ;; system": http://cab.spbu.ru/files/release3.10.1/manual.html
    (supported-systems '("x86_64-linux"))
    (arguments
-    `(#:tests? #f ; There is no test target.
-      #:phases
-      (modify-phases %standard-phases
-        (add-before 'configure 'move-to-source-dir
-          (lambda _
-            (chdir "src"))))))
+    `(#:tests? #f                       ; There is no test target.
+               #:phases
+               (modify-phases %standard-phases
+                              (add-before 'configure 'move-to-source-dir
+                                          (lambda _
+                                            (chdir "assembler/src"))))))
    ;; TODO:  While this build works fine, SPAdes bundles samtools, bwa, and
    ;; boost.  These packages are also available in GNU Guix, so we should
    ;; unbundle them.
@@ -100,8 +103,8 @@
     `(("bzip2" ,bzip2)
       ("zlib" ,zlib)
       ("perl" ,perl)
-      ("python-2" ,python-2)))
-   (home-page "http://cab.spbu.ru/software/spades")
+      ("python" ,python)))
+   (home-page "https://github.com/ablab/spades")
    (synopsis "Genome assembly toolkit")
    (description "SPAdes is an assembly toolkit containing various assembly
 pipelines.")
