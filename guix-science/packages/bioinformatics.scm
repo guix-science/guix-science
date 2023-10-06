@@ -68,6 +68,7 @@
   #:use-module (guix download)
   #:use-module (guix git-download)
   #:use-module (guix packages)
+  #:use-module (guix utils)
   #:use-module (guix-science packages cran)
   #:use-module (guix-science packages grid-engine))
 
@@ -2252,58 +2253,58 @@ file the lists the enriched domains and their posterior probabilities.")
 genome annotation.")
     (license license:gpl3)))
 
-(define-public cgp-cavemanwrapper-1.15.2
+(define-public cgp-cavemanwrapper
   (package
    (name "cgp-cavemanwrapper")
-   (version "1.15.2")
+   (version "1.16.0")
    (source (origin
-            (method url-fetch)
-            (uri (string-append
-                  "https://github.com/cancerit/cgpCaVEManWrapper/archive/"
-                  version ".tar.gz"))
-            (file-name (string-append name "-" version ".tar.gz"))
+            (method git-fetch)
+            (uri (git-reference
+                  (url "https://github.com/cancerit/cgpCaVEManWrapper")
+                  (commit version)))
+            (file-name (git-file-name name version))
             (patches (list (search-patch "cgp-cavemanwrapper-fix-script.patch")))
             (sha256
              (base32
-              "017b03j1sm64v6barbxx69420d3s1gx5nlcqg7rzn6mczj47g264"))))
+              "1yx6rxw14yymls3xdwyya0zm2jsqrqxzry14lcll2xr5rnwssxzq"))))
    (build-system gnu-build-system)
    (arguments
-    `(#:tests? #f
-      #:phases
-      (modify-phases %standard-phases
-       (delete 'configure)
-       (delete 'install)
-       ;; The Perl in Guix does not support threads.
-       ;; The forks module is a drop-in replacement for it, so it
-       ;; is easier to use that instead of recompiling Perl.
-       (add-after 'unpack 'enable-threads
-        (lambda _
-          (substitute* "bin/caveman_merge_results.pl"
-           (("use strict;") "use forks;\nuse strict;"))))
-       (replace 'build
-        (lambda* (#:key inputs outputs #:allow-other-keys)
-          (let ((bin-dir (string-append (assoc-ref outputs "out") "/bin"))
-                (lib-dir (string-append (assoc-ref outputs "out")
-                                        "/lib/perl5/site_perl/5.28.0")))
-            (mkdir-p bin-dir)
-            (mkdir-p lib-dir)
-            (install-file "bin/caveman_merge_results.pl" bin-dir)
-            (copy-recursively "lib/Sanger" lib-dir)
-            #t))))))
+    (list
+     #:tests? #f
+     #:phases
+     #~(modify-phases %standard-phases
+         (delete 'configure)
+         (delete 'install)
+         ;; The Perl in Guix does not support threads.
+         ;; The forks module is a drop-in replacement for it, so it
+         ;; is easier to use that instead of recompiling Perl.
+         (add-after 'unpack 'enable-threads
+           (lambda _
+             (substitute* "bin/caveman_merge_results.pl"
+               (("use strict;") "use forks;\nuse strict;"))))
+         (replace 'build
+           (lambda _
+             (let ((bin-dir (string-append #$output "/bin"))
+                   (lib-dir (string-append #$output
+                                           "/lib/perl5/site_perl/"
+                                           #$(package-version perl))))
+               (mkdir-p bin-dir)
+               (mkdir-p lib-dir)
+               (install-file "bin/caveman_merge_results.pl" bin-dir)
+               (copy-recursively "lib/Sanger" lib-dir)))))))
    (propagated-inputs
-    `(("perl-file-path" ,perl-file-path)
-      ("perl-file-which", perl-file-which)
-      ("perl-const-fast", perl-const-fast)
-      ("perl-capture-tiny", perl-capture-tiny)
-      ("perl-ipc-system-simple", perl-ipc-system-simple)
-      ("perl-try-tiny", perl-try-tiny)
-      ("perl-carp", perl-carp)
-      ("perl-forks", perl-forks)
-      ("pcap-core" ,pcap-core)
-      ("perl" ,perl)))
+    (list perl-file-path
+          perl-file-which
+          perl-const-fast
+          perl-capture-tiny
+          perl-ipc-system-simple
+          perl-try-tiny
+          perl-carp
+          perl-forks
+          pcap-core
+          perl))
    (home-page "https://github.com/cancerit/cgpCaVEManWrapper")
    (synopsis "Reference implementation of CGP workflow for CaVEMan")
    (description "This package provides the reference implementation of CGP
 workflow for CaVEMan SNV analysis.")
    (license license:agpl3+)))
-
