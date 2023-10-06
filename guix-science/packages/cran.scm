@@ -170,14 +170,14 @@ having to write the DOT language graph specification.")
 (define-public r-piecewisesem
   (package
     (name "r-piecewisesem")
-    (version "2.1.2")
+    (version "2.3.0")
     (source
      (origin
        (method url-fetch)
        (uri (cran-uri "piecewiseSEM" version))
        (sha256
         (base32
-         "1qxwc1drx26p4cgymrfjmg5i7ypl7gddv40virkpmc0qaag9pq36"))))
+         "0f1ya6p85iai52cdm510zm6qvkpsfkn48948q8lz9v6ykz59v5h2"))))
     (properties `((upstream-name . "piecewiseSEM")))
     (build-system r-build-system)
     (propagated-inputs
@@ -188,7 +188,9 @@ having to write the DOT language graph specification.")
            r-lme4
            r-mass
            r-multcomp
-           r-nlme))
+           r-mumin
+           r-nlme
+           r-performance))
     (native-inputs (list r-knitr))
     (home-page "http://jslefche.github.io/piecewiseSEM/")
     (synopsis "Piecewise structural equation modeling")
