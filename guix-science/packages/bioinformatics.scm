@@ -2176,7 +2176,7 @@ file the lists the enriched domains and their posterior probabilities.")
 (define-public perl-prokka
   (package
     (name "perl-prokka")
-    (version "1.14.0")
+    (version "1.14.6")
     (source
      (origin
        (method git-fetch)
@@ -2186,7 +2186,7 @@ file the lists the enriched domains and their posterior probabilities.")
        (file-name (git-file-name name version))
        (sha256
         (base32
-         "03dp48d7gb1n7dp3c75mv8qis1vlzmvn6x0y5649w6hzsqn6z7yi"))))
+         "0fzf6lp1m8c59ix93fc43bfybyw7qrx1wknjp7ynq9gppvqxsrnx"))))
     (build-system gnu-build-system)
     (arguments
      (list
