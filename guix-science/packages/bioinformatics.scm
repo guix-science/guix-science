@@ -247,15 +247,16 @@ systematic processing of large numbers of files.")
 (define-public freec
   (package
     (name "freec")
-    (version "11.6")
-    (source
-     (origin
-       (method url-fetch)
-       (uri (string-append "https://github.com/BoevaLab/FREEC/archive/v"
-                           version ".tar.gz"))
-       (file-name (string-append "freec-" version ".tar.gz"))
-       (sha256
-        (base32 "0d0prnix9cpdk5df9fpmf1224kxjgvl809s1rwhffdhjl234ymin"))))
+    (version "11.6b")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/BoevaLab/FREEC")
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "10ipf49b5ybsphi00hx626v1w5abc1nkizkivy9ckwsabswxvhfq"))))
     (build-system gnu-build-system)
     (arguments
      `(#:tests? #f
