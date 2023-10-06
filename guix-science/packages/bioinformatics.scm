@@ -259,26 +259,26 @@ systematic processing of large numbers of files.")
                 "10ipf49b5ybsphi00hx626v1w5abc1nkizkivy9ckwsabswxvhfq"))))
     (build-system gnu-build-system)
     (arguments
-     `(#:tests? #f
-       #:phases
-       (modify-phases %standard-phases
-         (delete 'configure)
-         (add-before 'build 'move-to-src-dir
-           (lambda _
-             (chdir "src")))
-         (replace 'install
-           (lambda* (#:key outputs #:allow-other-keys)
-             (let* ((out (assoc-ref outputs "out"))
-                    (bin (string-append out "/bin"))
-                    (share (string-append out "/share/freec")))
-               (mkdir-p bin)
-               (mkdir-p share)
-               (copy-recursively "../scripts" share)
-               (install-file "freec" bin)))))))
+     (list
+      #:tests? #f
+      #:phases
+      #~(modify-phases %standard-phases
+          (delete 'configure)
+          (add-before 'build 'move-to-src-dir
+            (lambda _
+              (chdir "src")))
+          (replace 'install
+            (lambda* (#:key outputs #:allow-other-keys)
+              (let ((bin (string-append #$output "/bin"))
+                    (share (string-append #$output "/share/freec")))
+                (mkdir-p bin)
+                (mkdir-p share)
+                (copy-recursively "../scripts" share)
+                (install-file "freec" bin)))))))
     (inputs
-     `(("perl" ,perl)))
+     (list perl))
     (propagated-inputs
-     `(("r-rtracklayer" ,r-rtracklayer)))
+     (list r-rtracklayer))
     (home-page "http://bioinfo-out.curie.fr/projects/freec/")
     (synopsis "Tool for detection of copy-number changes and allelic imbalances
 (including LOH) using deep-sequencing data")
