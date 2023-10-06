@@ -1634,7 +1634,7 @@ generated using CaVEMan.")
 (define-public perl-devel-cover
   (package
     (name "perl-devel-cover")
-    (version "1.29")
+    (version "1.40")
     (source
      (origin
        (method url-fetch)
@@ -1643,28 +1643,33 @@ generated using CaVEMan.")
              version ".tar.gz"))
        (sha256
         (base32
-         "0afkabxbbbwbnfh6b957cwxx1vcz00r4q49jbhcip3w6ib4pv60n"))))
+         "1a0iwypjp3ddbjbsnh3g43zhjz06hhxzhlpka4wgyyygzcqz9qi6"))))
     (build-system perl-build-system)
     (arguments
      `(#:tests? #f))
     (native-inputs
-     `(("perl-test-differences" ,perl-test-differences)))
-    (inputs
-     `(("perl-browser-open" ,perl-browser-open)
-       ("perl-capture-tiny" ,perl-capture-tiny)
-       ("perl-class-xsaccessor" ,perl-class-xsaccessor)
-       ("perl-moo" ,perl-moo)
-       ("perl-namespace-clean" ,perl-namespace-clean)
-       ("perl-parallel-iterator" ,perl-parallel-iterator)
-       ("perltidy" ,perltidy)
-       ("perl-pod-coverage" ,perl-pod-coverage)
-       ("perl-ppi-html" ,perl-ppi-html)
-       ("perl-template-toolkit" ,perl-template-toolkit)
-       ("perl-test-differences" ,perl-test-differences)))
+     (list perl-test-differences))
+    ;; These are recommended inputs
+    (propagated-inputs
+     (list perl-browser-open
+           perl-capture-tiny
+           perl-class-xsaccessor
+           perl-moo
+           perl-namespace-clean
+           perl-parallel-iterator
+           perl-pod-coverage
+           perl-ppi-html
+           perl-template-toolkit
+           perl-test-differences
+           perltidy))
     (home-page
      "http://search.cpan.org/dist/Devel-Cover")
     (synopsis "Code coverage metrics for Perl")
-    (description "")
+    (description "This module provides code coverage metrics for Perl.
+Code coverage metrics describe how thoroughly tests exercise code.  By
+using @code{Devel::Cover} you can discover areas of code not exercised
+by your tests and determine which tests to create to increase
+coverage.")
     (license (package-license perl))))
 
 (define-public perl-parallel-iterator
