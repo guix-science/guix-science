@@ -1700,7 +1700,7 @@ coverage.")
 (define-public perl-ppi
   (package
     (name "perl-ppi")
-    (version "1.236")
+    (version "1.277")
     (source
      (origin
        (method url-fetch)
@@ -1710,22 +1710,27 @@ coverage.")
              ".tar.gz"))
        (sha256
         (base32
-         "1v4a622h19d2d6m070jcxn47siqma9g9ly4fcrnrlz8bkhs4nry6"))))
+         "1y0a5qxw8zpch007b1lsh4gmaz2hs8cm0pcna5h20vl7ns1rziw7"))))
     (build-system perl-build-system)
     (arguments
-     `(#:tests? #f))
+     (list
+      #:phases
+      '(modify-phases %standard-phases
+         (add-after 'unpack 'fix-tests
+           (lambda _
+             ;; Both these tests fail because they expect the original
+             ;; shebang.
+             (for-each delete-file (list "t/03_document.t"
+                                         "t/11_util.t")))))))
     (native-inputs
-     `(("perl-class-inspector" ,perl-class-inspector)
-       ("perl-file-remove" ,perl-file-remove)
-       ("perl-test-nowarnings" ,perl-test-nowarnings)
-       ("perl-test-object" ,perl-test-object)
-       ("perl-test-subcalls" ,perl-test-subcalls)))
+     (list perl-class-inspector perl-test-nowarnings perl-test-object
+           perl-test-subcalls))
     (inputs
-     `(("perl-clone" ,perl-clone)
-       ("perl-io-string" ,perl-io-string)
-       ("perl-list-moreutils" ,perl-list-moreutils)
-       ("perl-params-util" ,perl-params-util)
-       ("perl-task-weaken" ,perl-task-weaken)))
+     (list perl-clone
+           perl-io-string
+           perl-list-moreutils
+           perl-params-util
+           perl-task-weaken))
     (home-page "http://search.cpan.org/dist/PPI")
     (synopsis "Parse, Analyze and Manipulate Perl (without perl)")
     (description "")
