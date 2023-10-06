@@ -472,13 +472,13 @@ citations).")
 (define-public r-tinylabels
   (package
     (name "r-tinylabels")
-    (version "0.2.3")
+    (version "0.2.4")
     (source
       (origin
         (method url-fetch)
         (uri (cran-uri "tinylabels" version))
         (sha256
-          (base32 "0knqcdnlrydbfklizvx9mp304sjz6wp54nbx1zhy2g2730nwa61k"))))
+          (base32 "01pvnirma3wzfqnnz8zvyqajjyysjm3sd6813bgdhz199lcg7hhz"))))
     (properties `((upstream-name . "tinylabels")))
     (build-system r-build-system)
     (native-inputs (list r-knitr))
