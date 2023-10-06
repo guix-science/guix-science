@@ -1435,43 +1435,49 @@ duplication between some other projects.")
 (define-public caveman
   (package
    (name "caveman")
-   (version "1.9.4")
+   (version "1.15.3")
    (source (origin
-            (method url-fetch)
-            (uri (string-append "https://github.com/cancerit/CaVEMan/archive/"
-                                version ".tar.gz"))
+            (method git-fetch)
+            (uri (git-reference
+                  (url "https://github.com/cancerit/CaVEMan")
+                  (commit version)))
+            (file-name (git-file-name name version))
             (sha256
-             (base32 "19h631avgknidbchk6997ckgd60072nlbg9hv2zxn6vvq3fpsyb8"))))
+             (base32
+              "0qrkdlz7g475xj4iwmbzp8dk9b09kmrgkyzf8pmzblnj7bwapgfx"))))
    (build-system gnu-build-system)
    (arguments
-    `(#:make-flags (list (string-append
-                          "HTSLOC=" (assoc-ref %build-inputs "htslib")))
+    (list
+     #:make-flags
+     #~(list (string-append
+              "HTSLOC=" #$(this-package-input "htslib")))
       #:tests? #f ; Tests require a network connection.
       #:phases
-      (modify-phases %standard-phases
-        (delete 'configure)
-        (add-before 'build 'patch-out-tests
-          (lambda _
-            (substitute* "Makefile"
-             (("copyscript test") "copyscript"))))
-        (replace 'install
-          (lambda* (#:key outputs #:allow-other-keys)
-            (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
-              (install-file "bin/caveman" bin)
-              (install-file "bin/generateCavemanUMNormVCF" bin)
-              (install-file "bin/mergeCavemanResults" bin)))))))
+      #~(modify-phases %standard-phases
+          (delete 'configure)
+          (add-before 'build 'patch-out-tests
+            (lambda _
+              (substitute* "Makefile"
+                (("CC\\?=gcc") (string-append "CC=" #$(cc-for-target)))
+                (("copyscript test") "copyscript"))))
+          (replace 'install
+            (lambda _
+              (let ((bin (string-append #$output "/bin")))
+                (install-file "bin/caveman" bin)
+                (install-file "bin/generateCavemanUMNormVCF" bin)
+                (install-file "bin/mergeCavemanResults" bin)))))))
    (inputs
-    `(("htslib" ,htslib)
-      ("zlib" ,zlib)
-      ("perl" ,perl)))
+    (list curl htslib linasm perl zlib))
    (home-page "http://cancerit.github.io/CaVEMan/")
    (synopsis "Implementation of an SNV expectation maximisation algorithm for
 calling single base substitutions in paired data")
-   (description "A C implementation of the CaVEMan program.  Uses an expectation
-maximisation approach to calling single base substitutions in paired data.  It
-is designed for use with a compute cluster.  Most steps in the program make use
-of an index parameter.  The split step is designed to divide the genome into
-chunks of adjustable size to optimise for runtime/memory usage requirements.")
+   (description "This package provides an implementation of the
+CaVEMan program.  It uses an expectation maximisation approach to
+calling single base substitutions in paired data.  It is designed for
+use with a compute cluster.  Most steps in the program make use of an
+index parameter.  The split step is designed to divide the genome into
+chunks of adjustable size to optimise for runtime/memory usage
+requirements.")
    (license license:agpl3+)))
 
 (define-public perl-forks
