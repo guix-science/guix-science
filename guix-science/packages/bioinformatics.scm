@@ -2004,21 +2004,20 @@ annotations.")
 (define-public iq-tree
   (package
     (name "iq-tree")
-    (version "1.6.12")
+    (version "2.0.6")
     (source (origin
               (method url-fetch)
               (uri (string-append
                     "https://github.com/Cibiv/IQ-TREE/archive/v"
                     version ".tar.gz"))
               (sha256
-               (base32 "11528sxv9hkmg20r2fy9zyq0rylbrhcjnh6cr61dwmx1wwnhj54n"))))
+               (base32 "119s3zw2y8432gryj5rg1vgdgmvf00hb1gzgqn2qgrjmfrnahp2k"))))
     (build-system cmake-build-system)
     (arguments
      `(#:configure-flags '("-DIQTREE_FLAGS=omp")
        #:tests? #f))
     (inputs
-     `(("eigen" ,eigen)
-       ("zlib" ,zlib)))
+     (list boost eigen zlib))
     (home-page "http://www.iqtree.org/")
     (synopsis "Efficient software for phylogenomic inference")
     (description
