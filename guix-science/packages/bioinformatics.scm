@@ -1940,7 +1940,7 @@ of long-read (PacBio/Oxford Nanopore) metagenomic datasets.")
 (define-public igv
   (package
     (name "igv")
-    (version "2.8.10")
+    (version "2.16.2")
     (source
      (origin
        (method url-fetch)
@@ -1948,9 +1948,11 @@ of long-read (PacBio/Oxford Nanopore) metagenomic datasets.")
        ;; The source code is available at https://github.com/igvteam/igv/
        (uri (string-append
              "http://data.broadinstitute.org/igv/projects/downloads/"
-             "2.8/IGV_Linux_" version "_WithJava.zip"))
+             (version-major+minor version)
+             "/IGV_Linux_" version "_WithJava.zip"))
        (sha256
-        (base32 "017q32lnbfz5gsvak1dfa0anzg1g0h34mkjxcggyq8ncr0vq4s7v"))
+        (base32
+         "1rr7cmalxrhwprj7kwfq2bjwjs5ng3j0fpwrpl7189wab58r6yhb"))
        (modules '((guix build utils)))
        (snippet
         '(delete-file-recursively "jdk-11"))))
@@ -1960,33 +1962,36 @@ of long-read (PacBio/Oxford Nanopore) metagenomic datasets.")
     (native-inputs
      (list unzip))
     (arguments
-     `(#:tests? #f  ; No tests available.
-       #:phases
-       (modify-phases %standard-phases
-         (delete 'configure) ; Nothing to configure.
-         (delete 'build) ; This is a binary package only.
-         (replace 'install
-           (lambda* (#:key inputs outputs #:allow-other-keys)
-             (let* ((out (assoc-ref outputs "out"))
-                    (bin (string-append out "/bin"))
-                    (lib (string-append out "/lib"))
-                    (share (string-append out "/share/igv")))
-               (mkdir-p share)
-               (mkdir-p lib)
-               (mkdir-p bin)
-               (copy-recursively "lib" lib)
-               (substitute* "igv.sh"
-                 (("prefix=")
-                  (string-append "prefix=" lib " # "))
-                 (("\\$\\{prefix\\}/igv.args")
-                  (string-append share "/igv.args"))
-                 (("--module-path=\"\\$\\{prefix\\}/lib\"")
-                  (string-append "--module-path=" lib))
-                 (("exec java")
-                  (string-append "exec " (assoc-ref inputs "openjdk11")
-                                 "/bin/java")))
-               (install-file "igv.args" share)
-               (install-file "igv.sh" bin)))))))
+     (list
+      #:tests? #f                       ; No tests available.
+      #:phases
+      #~(modify-phases %standard-phases
+          (delete 'configure)         ; Nothing to configure.
+          (delete 'build)             ; This is a binary package only.
+          (replace 'install
+            (lambda _
+              (let ((bin (string-append #$output "/bin"))
+                    (lib (string-append #$output "/lib"))
+                    (share (string-append #$output "/share/igv")))
+                (mkdir-p share)
+                (mkdir-p lib)
+                (mkdir-p bin)
+                (copy-recursively "lib" lib)
+                (substitute* "igv.sh"
+                  (("prefix=")
+                   (string-append "prefix=" lib " # "))
+                  (("\\$\\{prefix\\}/igv.args")
+                   (string-append share "/igv.args"))
+                  (("--module-path=\"\\$\\{prefix\\}/lib\"")
+                   (string-append "--module-path=" lib))
+                  ;; Always use Guix JDK; don't test for deleted
+                  ;; jdk-11 directory.
+                  (("\"\\$\\{prefix\\}/jdk-11\"")
+                   "\"${prefix}\"")
+                  (("JAVA_HOME=.*")
+                   (string-append "JAVA_HOME=" #$(this-package-input "openjdk") "\n")))
+                (install-file "igv.args" share)
+                (install-file "igv.sh" bin)))))))
    (home-page "https://www.broadinstitute.org/software/igv/")
    (synopsis "Integrative Genomics Viewer")
    (description "The Integrative Genomics Viewer (IGV) is a high-performance
