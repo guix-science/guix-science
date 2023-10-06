@@ -490,13 +490,13 @@ dependency-free.")
 (define-public r-papaja
   (package
     (name "r-papaja")
-    (version "0.1.1")
+    (version "0.1.2")
     (source
       (origin
         (method url-fetch)
         (uri (cran-uri "papaja" version))
         (sha256
-          (base32 "1pvknpvfns1r5bwadm58n4xjrlwgqfyhz9diy72zabbksxddqa26"))))
+          (base32 "08ydk9fws5x37q120cdjdx1dsib0y2g9bp826vxzxcaymlwx3dl7"))))
     (properties `((upstream-name . "papaja")))
     (build-system r-build-system)
     (propagated-inputs
@@ -510,34 +510,34 @@ dependency-free.")
             r-yaml
             r-zip
             texlive-amsmath
-            texlive-latex-graphics
-            texlive-hyperref
-            texlive-latex-titlesec
-            texlive-caption
-            texlive-latex-framed
-            texlive-xcolor
-            texlive-tools
-            texlive-latex-multirow
-            texlive-threeparttable
-            texlive-etoolbox
             texlive-apa6
-            texlive-latex-geometry
             texlive-booktabs
-            texlive-latex-fancyhdr
-            texlive-endfloat
-            texlive-was ; upgreek.sty
-            texlive-threeparttablex
-            texlive-latex-environ
-            texlive-latex-trimspaces
-            texlive-xpatch
-            texlive-lineno
+            texlive-caption
             texlive-csquotes
+            texlive-endfloat
+            texlive-environ
+            texlive-etoolbox
+            texlive-fancyhdr
+            texlive-framed
+            texlive-geometry
+            texlive-graphics
             texlive-grfext
+            texlive-hyperref
+            texlive-lineno
+            texlive-multirow
+            texlive-threeparttable
+            texlive-threeparttablex
+            texlive-titlesec
+            texlive-tools
+            texlive-trimspaces
+            texlive-was ; upgreek.sty
+            texlive-xcolor
+            texlive-xpatch
             (texlive-updmap.cfg (list
                                  texlive-amsfonts
                                  texlive-times
                                  texlive-lm))))
-    (native-inputs (list r-knitr))
+    (native-inputs (list r-knitr r-r-rsp))
     (home-page "https://github.com/crsh/papaja")
     (synopsis
       "Prepare American Psychological Association Journal Articles with R Markdown")
