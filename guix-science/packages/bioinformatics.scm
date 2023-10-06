@@ -1612,16 +1612,16 @@ generated using CaVEMan.")
 (define-public perl-term-ui
   (package
     (name "perl-term-ui")
-    (version "0.46")
+    (version "0.50")
     (source
      (origin
        (method url-fetch)
        (uri (string-append
-             "https://cpan.metacpan.org/authors/id/B/BI/BINGOS/Term-UI-"
+             "mirror://cpan/authors/id/B/BI/BINGOS/Term-UI-"
              version ".tar.gz"))
        (sha256
         (base32
-         "19p92za5cx1v7g57pg993amprcvm1az3pp7y9g5b1aplsy06r54i"))))
+         "0g8n4jjqriw11c00dn8jbfj3cnj841dwcgqkf39qi2qm9inxvgv0"))))
     (build-system perl-build-system)
     (arguments `(#:tests? #f))
     (propagated-inputs
