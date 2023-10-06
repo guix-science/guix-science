@@ -159,12 +159,15 @@ programs for performing some common and uncommon tasks with FASTQ files.")
    (name "fast5")
    (version "0.6.5")
    (source (origin
-            (method url-fetch)
-            (uri (string-append "https://github.com/mateidavid/fast5/archive/v"
-                                version ".tar.gz"))
+            (method git-fetch)
+            (uri (git-reference
+                  (url "https://github.com/mateidavid/fast5")
+                  (commit (string-append "v" version))))
+            (file-name (git-file-name name version))
             (sha256
-             (base32 "06pfg2ldra5g6d14xrxprn35y994w44g0zik2d7npddd0wncxcgq"))))
-   (build-system python-build-system)
+             (base32
+              "1dsq3x1662ck1bcmcmqhblnhmypfppgysblgj2xr4lr6fl4si4pk"))))
+   (build-system pyproject-build-system)
    (arguments
     `(#:tests? #f ; There are no tests.
       #:phases
