@@ -2062,7 +2062,7 @@ annotations.")
 (define-public cat
   (package
    (name "cat")
-   (version "5.0.3")
+   (version "5.2.3")
    (source (origin
             (method url-fetch)
             (uri (string-append
@@ -2070,7 +2070,7 @@ annotations.")
                   version".tar.gz"))
             (sha256
              (base32
-              "1gbq4vj0i7srylvb56ipmzcnh8zk34kfmyx76fbxh2cljp0p4k7x"))))
+              "16wjl8ng6dfz60phvdrj1bq1mp8nm42x61mh0idgrlzbq0lfpa0r"))))
    (build-system gnu-build-system)
    (arguments
     `(#:tests? #f
