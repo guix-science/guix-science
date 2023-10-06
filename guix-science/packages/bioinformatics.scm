@@ -169,21 +169,23 @@ programs for performing some common and uncommon tasks with FASTQ files.")
               "1dsq3x1662ck1bcmcmqhblnhmypfppgysblgj2xr4lr6fl4si4pk"))))
    (build-system pyproject-build-system)
    (arguments
-    `(#:tests? #f ; There are no tests.
-      #:phases
-      (modify-phases %standard-phases
-        (add-after 'unpack 'use-system-hdf5
-          (lambda* (#:key inputs outputs #:allow-other-keys)
-            (setenv "HDF5_INCLUDE_DIR" (string-append (assoc-ref inputs "hdf5") "/include"))
-            (setenv "HDF5_LIB_DIR" (string-append (assoc-ref inputs "hdf5") "/lib"))))
-        (add-after 'unpack 'chdir
-          (lambda _
-            (chdir "python"))))))
+    (list
+     #:tests? #f ;There are no tests.
+     #:phases
+     #~(modify-phases %standard-phases
+         (add-after 'unpack 'use-system-hdf5
+           (lambda* (#:key inputs outputs #:allow-other-keys)
+             (setenv "HDF5_INCLUDE_DIR"
+                     (string-append #$(this-package-input "hdf5") "/include"))
+             (setenv "HDF5_LIB_DIR"
+                     (string-append #$(this-package-input "hdf5") "/lib"))))
+         (add-after 'unpack 'chdir
+           (lambda _
+             (chdir "python"))))))
    (inputs
-    `(("python-cython" ,python-cython)
-      ("hdf5" ,hdf5)))
+    (list hdf5 python-cython))
    (propagated-inputs
-    `(("python-dateutil" ,python-dateutil)))
+    (list python-dateutil))
    (home-page "https://github.com/mateidavid/fast5")
    (synopsis "Library for accessing Oxford Nanopore sequencing data")
    (description "This package provides a lightweight C++ library for accessing
