@@ -1,0 +1,58 @@
+Adapted from https://salsa.debian.org/bazel-team/bazel-bootstrap/-/raw/2e1af7d3d0ec789a71c16f5ecd07232efc0f262a/debian/patches/WORKSPACE.patch
+
+Description: Debian-specific fixes in WORKSPACE file
+ Bazel needs to download some dependencies just to properly parse the
+ WORKSPACE file. We comment some load statements so that it won’t download
+ the things we don’t need for building Bazel binary. Also, remove @io_bazel
+ reference that was causing ccache failures.
+Author: Yun Peng <pcloudy@google.com>
+Origin: upstream, https://github.com/meteorcloudy/bazel/commit/1c38681aec9dee4eeeeac6196154c01e67878d65
+Forwarded: not-needed
+Last-Update: 2020-07-22
+
+--- a/WORKSPACE
++++ b/WORKSPACE
+@@ -1188,22 +1170,6 @@
+ 
+ stardoc_repositories()
+ 
+-load("@io_bazel_rules_sass//:package.bzl", "rules_sass_dependencies")
+-
+-rules_sass_dependencies()
+-
+-load("@build_bazel_rules_nodejs//:repositories.bzl", "build_bazel_rules_nodejs_dependencies")
+-
+-build_bazel_rules_nodejs_dependencies()
+-
+-load("@build_bazel_rules_nodejs//:index.bzl", "node_repositories")
+-
+-node_repositories()
+-
+-load("@io_bazel_rules_sass//:defs.bzl", "sass_repositories")
+-
+-sass_repositories()
+-
+ register_execution_platforms("//:default_host_platform")  # buildozer: disable=positional-args
+ 
+ # Tools for building deb, rpm and tar files.
+@@ -1241,20 +1211,6 @@
+     ],
+ )
+ 
+-# Projects using gRPC as an external dependency must call both grpc_deps() and
+-# grpc_extra_deps().
+-load("@com_github_grpc_grpc//bazel:grpc_deps.bzl", "grpc_deps")
+-
+-grpc_deps()
+-
+-load("@com_github_grpc_grpc//bazel:grpc_extra_deps.bzl", "grpc_extra_deps")
+-
+-grpc_extra_deps()
+-
+ load("//tools/distributions/debian:deps.bzl", "debian_deps")
+ 
+ debian_deps()
+-
+-load("@bazel_skylib//:workspace.bzl", "bazel_skylib_workspace")
+-
+-bazel_skylib_workspace()
