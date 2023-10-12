@@ -92,6 +92,7 @@
     (build-system gnu-build-system)
     (arguments
      (list
+      #:strip-binaries? #false         ;this corrupts the binary
       #:tests? #false                  ;there are none
       #:phases
       #~(modify-phases %standard-phases
