@@ -195,6 +195,30 @@
                 (("#!/bin/sh")
                  (string-append "#!" (which "sh"))))
 
+              ;; Do not force the use of /bin/bash for users of bazel.
+              ;; Users cannot override this, so we do that here.
+              (substitute* '("src/main/java/com/google/devtools/build/lib/analysis/BashCommandConstructor.java"
+                             "tools/build_rules/java_rules_skylark.bzl"
+                             "tools/build_rules/test_rules.bzl"
+                             "tools/android/android_sdk_repository_template.bzl")
+                (("#!/bin/bash")
+                 (string-append "#!" (which "bash"))))
+              (substitute* '("src/main/java/com/google/devtools/build/lib/analysis/CommandHelper.java"
+                             "src/main/java/com/google/devtools/build/lib/analysis/ShellConfiguration.java"
+                             "src/main/java/com/google/devtools/build/lib/bazel/rules/BazelRuleClassProvider.java"
+                             "src/main/java/com/google/devtools/build/lib/bazel/rules/sh/BazelShRuleClasses.java"
+                             "src/main/java/com/google/devtools/build/lib/util/CommandBuilder.java")
+                (("\"/bin/bash\"")
+                 (string-append "\"" (which "bash") "\"")))
+
+              ;; Same story for /usr/bin/env...
+              (substitute* '("src/main/java/com/google/devtools/build/lib/bazel/rules/python/BazelPythonSemantics.java"
+                             "src/main/java/com/google/devtools/build/lib/starlarkbuildapi/python/PyRuntimeInfoApi.java"
+                             "src/main/java/com/google/devtools/build/lib/bazel/rules/java/java_stub_template.txt"
+                             "src/test/java/com/google/devtools/build/lib/standalone/StandaloneSpawnStrategyTest.java"
+                             "src/test/java/com/google/devtools/build/lib/bazel/rules/python/BazelPyBinaryConfiguredTargetTest.java")
+                (("/usr/bin/env") (which "env")))
+
               ;; XXX: We need to have /bin/bash and /usr/bin/env.  We
               ;; can't easily override this, so we run everything
               ;; inside of proot.
