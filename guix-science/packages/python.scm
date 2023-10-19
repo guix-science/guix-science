@@ -1284,3 +1284,34 @@ arbitrarily to any order.")
                (car (find-files (assoc-ref inputs "python-jaxlib") "\\.whl$"))
                "dist"))))))
     (native-inputs (list python-jaxlib/wheel))))
+
+;; Keep in sync with jaxlib above
+(define-public python-jax
+  (package
+    (name "python-jax")
+    (version "0.4.18")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "jax" version))
+       (sha256
+        (base32 "0cl1j8y7664i0rn7ckixk7372wkjm88azya5izlh620hj0wg6v3p"))))
+    (build-system pyproject-build-system)
+    (arguments
+     (list #:tests? #false))   ;unclear how to run them
+    (propagated-inputs
+     (list python-importlib-metadata python-jaxlib
+           python-ml-dtypes
+           python-numpy python-opt-einsum python-scipy))
+    (home-page "https://github.com/google/jax")
+    (synopsis "Differentiate, compile, and transform Numpy code")
+    (description "JAX is Autograd and XLA, brought together for
+high-performance numerical computing, including large-scale machine
+learning research.  With its updated version of Autograd, JAX can
+automatically differentiate native Python and NumPy functions. It can
+differentiate through loops, branches, recursion, and closures, and it
+can take derivatives of derivatives of derivatives. It supports
+reverse-mode differentiation (a.k.a. backpropagation) via grad as well
+as forward-mode differentiation, and the two can be composed
+arbitrarily to any order.")
+    (license license:asl2.0)))
