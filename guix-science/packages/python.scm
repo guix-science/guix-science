@@ -1,5 +1,6 @@
 ;;;
 ;;; Copyright © 2016, 2017, 2018, 2019, 2020, 2021 Roel Janssen <roel@gnu.org>
+;;; Copyright © 2023 Ricardo Wurmus <rekado@elephly.net>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU General Public License as published by
@@ -17,23 +18,25 @@
 (define-module (guix-science packages python)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages bioinformatics)
+  #:use-module (gnu packages check)
+  #:use-module (gnu packages compression)
+  #:use-module (gnu packages graph)
+  #:use-module (gnu packages pdf)
   #:use-module (gnu packages python)
-  #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages python-build)
+  #:use-module (gnu packages python-check)
+  #:use-module (gnu packages python-crypto)
   #:use-module (gnu packages python-science)
   #:use-module (gnu packages python-web)
-  #:use-module (gnu packages python-crypto)
-  #:use-module (gnu packages python-check)
-  #:use-module (gnu packages graph)
-  #:use-module (gnu packages compression)
+  #:use-module (gnu packages python-xyz)
   #:use-module (gnu packages statistics)
-  #:use-module (gnu packages pdf)
-  #:use-module (gnu packages check)
   #:use-module (gnu packages)
   #:use-module (guix build-system python)
+  #:use-module (guix build-system pyproject)
   #:use-module (guix download)
   #:use-module (guix git-download)
-  #:use-module (guix packages))
+  #:use-module (guix packages)
+  #:use-module (guix gexp))
 
 (define-public python-pytest-rerunfailures
   (package
@@ -757,3 +760,74 @@ using the Markdown format.")
    (description "This package provides tools for Makefile execution powered
 by pure Python.")
    (license license:mpl2.0)))
+
+(define-public eigen-for-python-ml-dtypes
+  (let ((commit "7bf2968fed5f246c0589e1111004cb420fcd7c71")
+        (revision "1"))
+    (package
+      (inherit eigen)
+      (name "eigen-for-python-ml-dtypes")
+      (version (git-version "3.4.90" revision commit))
+      (source (origin
+                (inherit (package-source eigen))
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://gitlab.com/libeigen/eigen.git")
+                      (commit commit)))
+                (sha256
+                 (base32
+                  "0yq69h7pasbzq5r83d974xi031r0z2y2x0my1rz5crky54i1j0r7"))
+                (patches '())
+                (file-name (git-file-name name version)))))))
+
+(define-public python-ml-dtypes
+  (package
+    (name "python-ml-dtypes")
+    (version "0.3.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "ml_dtypes" version))
+       (sha256
+        (base32 "04f61zkizfgmf2pqlsdgskj1r1gg6l5j1nj2p8v4yk2b36cqyxv0"))
+       (modules '((guix build utils)))
+       (snippet
+        ;; Do not use bundled eigen.
+        '(delete-file-recursively "third_party/eigen"))))
+    (build-system pyproject-build-system)
+    (arguments
+     (list
+      #:tests? #false                   ;there are none
+      #:phases
+      #~(modify-phases %standard-phases
+          (add-after 'unpack 'use-eigen-package
+            (lambda _
+              (substitute* "setup.py"
+                (("third_party/eigen")
+                 (string-append
+                  #$(this-package-input "eigen-for-python-ml-dtypes")
+                  "/include/eigen3"))))))))
+    (inputs (list eigen-for-python-ml-dtypes))
+    (propagated-inputs (list python-numpy))
+    (native-inputs (list pybind11 python-absl-py python-pylint
+                         python-pytest python-pytest-xdist))
+    (home-page "https://github.com/jax-ml/ml_dtypes")
+    (synopsis "NumPy dtype extensions used in machine learning")
+    (description "This package is a stand-alone implementation of several
+NumPy @code{dtype} extensions used in machine learning libraries, including:
+
+@itemize
+@item @code{bfloat16}: an alternative to the standard @code{float16} format
+@item @code{float8_*}: several experimental 8-bit floating point
+  representations including:
+  @itemize
+  @item @code{float8_e4m3b11fnuz}
+  @item @code{float8_e4m3fn}
+  @item @code{float8_e4m3fnuz}
+  @item @code{float8_e5m2}
+  @item @code{float8_e5m2fnuz}
+  @end itemize
+@item @code{int4} and @code{uint4}: low precision integer types.
+@end itemize
+")
+    (license license:asl2.0)))
