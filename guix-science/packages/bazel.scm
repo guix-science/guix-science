@@ -88,7 +88,17 @@
                 "0j190j7vjknlw1cgynb3r8vlv0j6i9lac6s5payf4fqrb2ngxmwc"))
               (patches
                (search-patches "patches/bazel-mock-repos.patch"
-                               "patches/bazel-workspace.patch"))))
+                               "patches/bazel-workspace.patch"))
+              ;; This is just a start.  There are so many more jars.
+              (snippet
+               '(for-each delete-file
+                          '("third_party/apache_commons_collections/commons-collections-3.2.2.jar"
+                            "third_party/apache_commons_compress/apache-commons-compress-1.19.jar"
+                            "third_party/apache_commons_io/commons-io-2.4.jar"
+                            "third_party/apache_commons_lang/commons-lang-2.6.jar"
+                            "third_party/hamcrest/hamcrest-core-1.3.jar"
+                            "third_party/jsr305/jsr-305.jar"
+                            "third_party/xz/xz-1.9.jar")))))
     (build-system gnu-build-system)
     (arguments
      (list
@@ -96,6 +106,43 @@
       #:tests? #false                  ;there are none
       #:phases
       #~(modify-phases %standard-phases
+          (add-after 'unpack 'prepare-jars
+            (lambda* (#:key inputs #:allow-other-keys)
+              (copy-file
+               (search-input-file
+                inputs
+                "/share/java/commons-collections-3.2.2.jar")
+               "third_party/apache_commons_collections/commons-collections-3.2.2.jar")
+              (copy-file
+               (search-input-file
+                inputs
+                "/lib/m2/org/apache/commons/commons-compress/1.21/commons-compress-1.21.jar")
+               "third_party/apache_commons_compress/apache-commons-compress-1.19.jar")
+              (copy-file
+               (search-input-file
+                inputs
+                "/lib/m2/commons-io/commons-io/2.5/commons-io-2.5.jar")
+               "third_party/apache_commons_io/commons-io-2.4.jar")
+              (copy-file
+               (search-input-file
+                inputs
+                "/share/java/commons-lang-2.6.jar")
+               "third_party/apache_commons_lang/commons-lang-2.6.jar")
+              (copy-file
+               (search-input-file
+                inputs
+                "/lib/m2/org/hamcrest/hamcrest-core/1.3/hamcrest-core-1.3.jar")
+               "third_party/hamcrest/hamcrest-core-1.3.jar")
+              (copy-file
+               (search-input-file
+                inputs
+                "/lib/m2/com/google/code/findbugs/jsr305/3.0.1/jsr305-3.0.1.jar")
+               "third_party/jsr305/jsr-305.jar")
+              (copy-file
+               (search-input-file
+                inputs
+                "/lib/m2/org/tukaani/xz/1.9/xz-1.9.jar")
+               "third_party/xz/xz-1.9.jar")))
           (delete 'configure)
           (replace 'build
             (lambda _
@@ -239,18 +286,26 @@
      (list `(,openjdk11 "jdk")
            grpc
            python
-           ;; We aren't yet using the jars provided by these packages.
-           java-asm
            java-commons-collections
            java-commons-compress
-           java-commons-lang3
-           java-commons-pool
-           java-fasterxml-jackson-core
-           java-guava
-           java-gson
+           java-commons-io
+           java-commons-lang
+
+           ;; src/main/java/com/google/devtools/build/lib/bazel/bzlmod/AttributeValuesAdapter.java:53:
+           ;; error: cannot find symbol
+           ;;  symbol:   method parseReader(JsonReader)
+           ;;  location: class JsonParser
+           ;;java-gson
+           java-hamcrest-core
            java-jsr305
-           java-junit
            java-xz
+
+           ;; We aren't yet using the jars provided by these packages.
+           ;;java-asm
+           ;;java-commons-pool ;needs version 2.8
+           ;;java-guava
+           ;;java-junit
+
            zlib))
     (native-inputs
      (list proot ;yikes!
