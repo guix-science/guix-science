@@ -1058,7 +1058,7 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
                                                              "PROTOBUF_INCLUDE_PATH="
                                                              #$protobuf "/include"))
                                       #:hash
-                                      "09jlj0vhzwcp7vh91n02iljzz6dgn0z4kjyapd84j0sqbx8zs4pa")))
+                                      "0p3sbkjcssl672j91czh7y755z556610xwf4jmdv4y9alrgj1ivq")))
 
               ;; Rewrite dangling links to current build directory
               (for-each (lambda (file)
