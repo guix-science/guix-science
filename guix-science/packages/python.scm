@@ -56,6 +56,7 @@
   #:use-module (guix modules)
   #:use-module (guix base32)
   #:use-module (guix search-paths)
+  #:use-module (guix utils)
   #:use-module (guix-science packages bazel)
   #:use-module (ice-9 match))
 
@@ -799,7 +800,10 @@ by pure Python.")
                  (base32
                   "0yq69h7pasbzq5r83d974xi031r0z2y2x0my1rz5crky54i1j0r7"))
                 (patches '())
-                (file-name (git-file-name name version)))))))
+                (file-name (git-file-name name version))))
+      (arguments
+       (substitute-keyword-arguments (package-arguments eigen)
+         ((#:tests? flag #f) #false))))))
 
 (define-public python-ml-dtypes
   (package
