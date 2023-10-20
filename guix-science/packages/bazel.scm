@@ -263,7 +263,8 @@
                              "src/main/java/com/google/devtools/build/lib/starlarkbuildapi/python/PyRuntimeInfoApi.java"
                              "src/main/java/com/google/devtools/build/lib/bazel/rules/java/java_stub_template.txt"
                              "src/test/java/com/google/devtools/build/lib/standalone/StandaloneSpawnStrategyTest.java"
-                             "src/test/java/com/google/devtools/build/lib/bazel/rules/python/BazelPyBinaryConfiguredTargetTest.java")
+                             "src/test/java/com/google/devtools/build/lib/bazel/rules/python/BazelPyBinaryConfiguredTargetTest.java"
+                             "tools/python/toolchain.bzl")
                 (("/usr/bin/env") (which "env")))
 
               ;; XXX: We need to have /bin/bash and /usr/bin/env.  We
