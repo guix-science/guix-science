@@ -861,7 +861,8 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
 (define* (bazel-vendored-inputs
           #:key name version source
           hash search-paths inputs
-          bazel-targets (bazel-arguments '()))
+          bazel-targets (bazel-arguments '())
+          extra-configuration)
   (let ((name* (string-append name "-vendored-inputs-" version ".tar.xz")))
     (computed-file
      name*
@@ -903,29 +904,7 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
                    (string-append #+nss-certs "/etc/ssl/certs/ca-bundle.crt"))
 
            (mkdir-p %bazel-out)
-           ;; TODO: this is specific to jax and should not be part of
-           ;; this procedure.
-           (setenv "TF_SYSTEM_LIBS"
-                   (string-join (list
-                                 ;;"absl_py"
-                                 ;;"boringssl"
-                                 ;;"com_github_grpc_grpc"
-                                 ;;"com_google_protobuf"
-                                 "curl"
-                                 "cython"
-                                 ;;"dill_archive"
-                                 "double_conversion"
-                                 "flatbuffers"
-                                 ;;"functools32_archive"
-                                 ;;"gast_archive"
-                                 "gif"
-                                 "hwloc"
-                                 "icu"
-                                 ;;"jsoncpp_git"
-                                 "libjpeg_turbo"
-                                 "lmdb"
-                                 "zlib")
-                                ","))
+           #$extra-configuration
            (apply invoke "bazel"
                   "--batch"
                   (string-append "--output_base=" %bazel-out)
@@ -1035,6 +1014,29 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
                                       (map search-path-specification->sexp
                                            (package-transitive-native-search-paths
                                             this-package))
+                                      #:extra-configuration
+                                      #~(begin
+                                          (setenv "TF_SYSTEM_LIBS"
+                                                  (string-join (list
+                                                                "absl_py"
+                                                                ;;"boringssl"
+                                                                "com_github_grpc_grpc"
+                                                                ;;"com_google_protobuf"
+                                                                "curl"
+                                                                "cython"
+                                                                ;;"dill_archive"
+                                                                "double_conversion"
+                                                                "flatbuffers"
+                                                                ;;"functools32_archive"
+                                                                ;;"gast_archive"
+                                                                "gif"
+                                                                "hwloc"
+                                                                "icu"
+                                                                ;;"jsoncpp_git"
+                                                                "libjpeg_turbo"
+                                                                "lmdb"
+                                                                "zlib")
+                                                               ",")))
                                       #:bazel-targets
                                       (list "//jaxlib/tools:build_wheel"
                                             "@mkl_dnn_v1//:mkl_dnn")
