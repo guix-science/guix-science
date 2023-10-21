@@ -24,6 +24,7 @@
   #:use-module (gnu packages check)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages curl)
+  #:use-module (gnu packages elf)
   #:use-module (gnu packages graph)
   #:use-module (gnu packages icu4c)
   #:use-module (gnu packages image)
@@ -32,6 +33,7 @@
   #:use-module (gnu packages maths)
   #:use-module (gnu packages mpi)
   #:use-module (gnu packages pdf)
+  #:use-module (gnu packages perl)
   #:use-module (gnu packages protobuf)
   #:use-module (gnu packages python)
   #:use-module (gnu packages python-build)
@@ -1321,4 +1323,333 @@ can take derivatives of derivatives of derivatives. It supports
 reverse-mode differentiation (a.k.a. backpropagation) via grad as well
 as forward-mode differentiation, and the two can be composed
 arbitrarily to any order.")
+    (license license:asl2.0)))
+
+(define-public tensorflow
+  (package
+    (name "tensorflow")
+    (version "2.13.1")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/tensorflow/tensorflow/")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "09mfskmpvpbq919wibnw3bnhi1y3hkx3qrzm72gdr0gsivn1yb3w"))))
+    (build-system gnu-build-system)
+    (arguments
+     (list
+      #:modules
+      '((guix build gnu-build-system)
+        (guix build utils)
+        (srfi srfi-1)
+        (ice-9 string-fun))
+      #:tests? #false                   ;there are none
+      #:phases
+      #~(modify-phases %standard-phases
+          (replace 'configure
+            (lambda* (#:key inputs #:allow-other-keys)
+              (define bazel-out
+                (string-append (getenv "NIX_BUILD_TOP") "/output"))
+              (mkdir-p bazel-out)
+              (with-directory-excursion bazel-out
+                (invoke "tar" "xf" #$(bazel-vendored-inputs
+                                      #:source (package-source this-package)
+                                      #:name "tensorflow"
+                                      #:version version
+                                      #:inputs
+                                      (append (standard-packages)
+                                              (package-inputs this-package)
+                                              (package-propagated-inputs this-package)
+                                              (package-native-inputs this-package))
+                                      #:search-paths
+                                      (map search-path-specification->sexp
+                                           (package-transitive-native-search-paths
+                                            this-package))
+                                      #:extra-configuration
+                                      ;; TODO: is the union build *really* necessary?
+                                      (with-imported-modules (source-module-closure '((guix build utils)
+                                                                                      (guix build union)
+                                                                                      (guix build gnu-build-system)))
+                                        #~(begin
+                                            (use-modules (guix build union))
+                                            (union-build (string-append (getenv "NIX_BUILD_TOP") "/site-library")
+                                                         (parse-path (getenv "GUIX_PYTHONPATH")))
+                                            (setenv "PYTHON_LIB_PATH" (string-append (getenv "NIX_BUILD_TOP") "/site-library"))
+                                            (setenv "PYTHON_BIN_PATH"
+                                                    (string-append
+                                                     #$(this-package-input "python-wrapper")
+                                                     "/bin/python"))
+                                            (setenv "TF_PYTHON_VERSION"
+                                                    #$(version-major+minor
+                                                       (package-version (this-package-input "python-wrapper"))))
+                                            (setenv "TF_SYSTEM_LIBS"
+                                                    (string-join (list
+                                                                  ;;"absl_py"
+                                                                  ;;"boringssl"
+                                                                  "com_github_grpc_grpc"
+                                                                  ;;"com_google_protobuf"
+                                                                  "curl"
+                                                                  "cython"
+                                                                  ;;"dill_archive"
+                                                                  "double_conversion"
+                                                                  "flatbuffers"
+                                                                  ;;"functools32_archive"
+                                                                  ;;"gast_archive"
+                                                                  "gif"
+                                                                  "hwloc"
+                                                                  "icu"
+                                                                  ;;"jsoncpp_git"
+                                                                  "libjpeg_turbo"
+                                                                  "zlib")
+                                                                 ","))))
+                                      #:bazel-targets
+                                      (list "//tensorflow/tools/pip_package:build_pip_package"
+                                            "//tensorflow/tools/lib_package:libtensorflow")
+                                      #:bazel-arguments
+                                      #~(list
+                                         "--extra_toolchains=@bazel_tools//tools/python:autodetecting_toolchain_nonstrict"
+                                         "--action_env=PYTHON_LIB_PATH"
+                                         "--host_action_env=PYTHON_LIB_PATH"
+                                         "--action_env=PYTHON_BIN_PATH"
+                                         "--host_action_env=PYTHON_BIN_PATH"
+                                         ;; "--action_env=GUIX_PYTHONPATH"
+                                         ;; "--action_env=PYTHONPATH"
+                                         ;; "--host_action_env=GUIX_PYTHONPATH"
+                                         ;; "--host_action_env=PYTHONPATH"
+                                         (string-append "--python_path="
+                                                        #$(this-package-input "python-wrapper")
+                                                        "/bin/python"))
+                                      #:hash
+                                      "0p392v8iwp6y8jxpib86bw46yjxb0lcan8jvbcb30f6938kfqc82")))
+
+              ;; Rewrite dangling links to current build directory
+              (for-each (lambda (file)
+                          (let ((new-target
+                                 (string-replace-substring
+                                  (readlink file)
+                                  "GUIX_BUILD_TOP" (getenv "NIX_BUILD_TOP"))))
+                            (delete-file file)
+                            (symlink new-target file)))
+                        (find-files bazel-out
+                                    (lambda (file-name stat)
+                                      (and (eq? (stat:type stat) 'symlink)
+                                           (string-contains (readlink file-name)
+                                                            "GUIX_BUILD_TOP")))
+                                    #:stat lstat))
+              (setenv "HOME" (getenv "NIX_BUILD_TOP"))
+
+              ;; Bazel aborts when a source file includes a header
+              ;; that isn't declared.  It prints something like this:
+              ;;
+              ;;    "this rule is missing dependency declarations for
+              ;;    the following files included by..."
+              ;;
+              ;; Since we pass through C_INCLUDE_PATH and
+              ;; CPLUS_INCLUDE_PATH there are many headers that are
+              ;; visible to the toolchain, but that Bazel refuses to
+              ;; allow.
+              ;;
+              ;; The biggest problem is that the kernel headers are
+              ;; never declared as dependencies anywhere, so we need
+              ;; to modify the toolchain declaration to allow headers
+              ;; from this location.
+              ;;
+              ;; There are other headers that cause trouble, though,
+              ;; such as those for zlib in the
+              ;; @com_google_protobuf//:protobuf target.  There must
+              ;; be some other mechanism to fix this (e.g. in the
+              ;; protobuf target itself), but I find it easier to just
+              ;; allow all locations that appear on these INCLUDE_PATH
+              ;; variables.
+              (substitute* (string-append bazel-out "/external/local_config_cc/BUILD")
+                (("cxx_builtin_include_directories = \\[" m)
+                 (string-append m
+                                (string-join
+                                 (map
+                                  (lambda (dir) (string-append "\"" dir "\""))
+                                  (append (parse-path (getenv "C_INCLUDE_PATH") '())
+                                          (parse-path (getenv "CPLUS_INCLUDE_PATH") '())))
+                                 "," 'suffix))))
+              ;; XXX: Our version of protobuf leads to "File already
+              ;; exists in database" when loading in Python.
+              (substitute* (string-append bazel-out "/external/tf_runtime/third_party/systemlibs/protobuf.BUILD")
+                (("-lprotobuf") "-l:libprotobuf.a")
+                (("-lprotoc") "-l:libprotoc.a"))))
+          (replace 'build
+            (lambda* (#:key parallel-build? #:allow-other-keys)
+              (define %build-directory (getenv "NIX_BUILD_TOP"))
+              (define %bazel-out
+                (string-append %build-directory "/output"))
+              (define %bazel-user-root
+                (string-append %build-directory "/tmp"))
+              (setenv "BAZEL_USE_CPP_ONLY_TOOLCHAIN" "1")
+              (setenv "USER" "homeless-shelter")
+              (setenv "TF_SYSTEM_LIBS"
+                      (string-join (list
+                                    ;;"absl_py"
+                                    ;;"boringssl"
+                                    "com_github_grpc_grpc"
+                                    ;;"com_google_protobuf"
+                                    "curl"
+                                    "cython"
+                                    ;;"dill_archive"
+                                    "double_conversion"
+                                    "flatbuffers"
+                                    ;;"functools32_archive"
+                                    ;;"gast_archive"
+                                    "gif"
+                                    "hwloc"
+                                    "icu"
+                                    ;;"jsoncpp_git"
+                                    "libjpeg_turbo"
+                                    "zlib")
+                                   ","))
+              (apply invoke "bazel"
+                     "--batch"
+                     (string-append "--output_base=" %bazel-out)
+                     (string-append "--output_user_root=" %bazel-user-root)
+                     "build"
+                     "--nofetch"
+                     "--distinct_host_configuration=false"
+                     "--curses=no"
+                     "--verbose_failures"
+                     "--subcommands"
+                     "--strategy=Genrule=local"
+                     "--toolchain_resolution_debug=\".*\""
+                     "--local_ram_resources=HOST_RAM*.5"
+                     "--local_cpu_resources=HOST_CPUS*.75"
+                     "--action_env=PATH"
+                     "--action_env=GUIX_PYTHONPATH"
+                     "--action_env=PYTHONPATH"
+                     "--action_env=LIBRARY_PATH"
+                     "--action_env=C_INCLUDE_PATH"
+                     "--action_env=CPLUS_INCLUDE_PATH"
+                     "--action_env=GUIX_LOCPATH"
+                     "--action_env=TF_SYSTEM_LIBS"
+                     "--host_action_env=TF_SYSTEM_LIBS"
+                     "--host_action_env=PATH"
+                     "--host_action_env=GUIX_PYTHONPATH"
+                     "--host_action_env=PYTHONPATH"
+                     "--host_action_env=LIBRARY_PATH"
+                     "--host_action_env=C_INCLUDE_PATH"
+                     "--host_action_env=CPLUS_INCLUDE_PATH"
+                     "--host_action_env=GUIX_LOCPATH"
+                     "-c" "opt"
+                     "--jobs"
+                     (if parallel-build?
+                         (number->string (parallel-job-count))
+                         "1")
+                     (list "//tensorflow/tools/pip_package:build_pip_package"
+                           "//tensorflow/tools/lib_package:libtensorflow"))))
+          (replace 'install
+            (lambda _
+              ;; Install library
+              (mkdir-p #$output)
+              (invoke "tar" "-xf"
+                      "bazel-bin/tensorflow/tools/lib_package/libtensorflow.tar.gz"
+                      "-C" #$output)
+
+              ;; Write pkgconfig file
+              (mkdir-p (string-append #$output "/lib/pkgconfig"))
+              (call-with-output-file (string-append #$output "/lib/pkgconfig/tensorflow.pc")
+                (lambda (port)
+                  (format port "\
+Name: TensorFlow
+Version: ~a
+Description: Library for computation using data flow graphs for scalable machine learning
+Requires:
+Libs: -L~a/lib -ltensorflow
+Cflags: -I~a/include/tensorflow
+" #$version #$output #$output)))
+
+              ;; Install python bindings
+              ;; Build the source code, then copy it to the "python" output.
+              ;;
+              ;; TODO: build_pip_package includes symlinks so we must
+              ;; dereference them.
+              (let ((here (string-append (getcwd) "/dist")))
+                (invoke "bazel-bin/tensorflow/tools/pip_package/build_pip_package"
+                        "--src" here)
+                (copy-recursively here #$output:python)))))))
+    (outputs '("out" "python"))
+    (inputs
+     (list curl
+           double-conversion
+           flatbuffers-next
+           giflib
+           grpc
+           hwloc
+           icu4c
+           jsoncpp
+           libjpeg-turbo
+           openssl
+           ;; XXX: With our own version of Protobuf we see a segfault
+           ;; when building the Python bindings.
+           pybind11
+           python-absl-py
+           python-cython
+           python-numpy
+           python-scipy
+           python-six
+           python-wrapper
+           ;; Wrong version of snappy?
+           ;; external/tsl/tsl/platform/default/port.cc:328:11: error:
+           ;; 'RawCompressFromIOVec' is not a member of 'snappy'; did
+           ;; you mean 'RawUncompressToIOVec'?
+           ;; snappy
+           zlib))
+    ;; TODO: these inputs probably should not be propagated.  They are
+    ;; only needed for building the Python sources.
+    (propagated-inputs
+     (list python-absl-py
+           python-cachetools
+           python-certifi
+           python-charset-normalizer
+           python-flatbuffers
+           python-grpcio
+           python-h5py
+           python-idna
+           python-jax
+           python-markdown
+           python-markupsafe
+           python-ml-dtypes
+           python-numpy
+           python-oauthlib
+           python-opt-einsum
+           python-packaging
+           python-portpicker
+           ;; This leads to a segfault when generating the Python bindings.
+           ;;python-protobuf
+           python-psutil
+           python-pyasn1
+           python-requests
+           python-requests-oauthlib
+           python-rsa
+           python-scipy
+           python-six
+           python-termcolor
+           python-urllib3
+           python-werkzeug))
+    ;; patchelf is needed by build_pip_package (in the install phase)
+    ;; to update references to libraries we had just built earlier for
+    ;; the Python bindings.  The build system features a remarkable
+    ;; amount of chewing gum and duck tape.
+    (native-inputs
+     (list patchelf
+           perl
+           python-lit python-pypa-build python-setuptools python-wheel
+           bazel-6
+           which
+           `(,openjdk11 "jdk")))           ;for bazel
+    (home-page "https://tensorflow.org")
+    (synopsis "Machine learning framework")
+    (description "TensorFlow is a flexible platform for building and
+training machine learning models.  It provides a library for high
+performance numerical computation and includes high level Python APIs,
+including both a sequential API for beginners that allows users to
+build models quickly by plugging together building blocks and a
+subclassing API with an imperative style for advanced research.")
     (license license:asl2.0)))
