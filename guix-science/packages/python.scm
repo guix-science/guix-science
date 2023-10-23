@@ -1423,7 +1423,7 @@ arbitrarily to any order.")
                                                         #$(this-package-input "python-wrapper")
                                                         "/bin/python"))
                                       #:hash
-                                      "0p392v8iwp6y8jxpib86bw46yjxb0lcan8jvbcb30f6938kfqc82")))
+                                      "0hz96m1v22zs78bwnih555kck67f7zliyjc3mv4vbrxyiyj9z0y1")))
 
               ;; Rewrite dangling links to current build directory
               (for-each (lambda (file)
