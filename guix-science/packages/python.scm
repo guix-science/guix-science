@@ -1032,7 +1032,7 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
                                                                 "gif"
                                                                 "hwloc"
                                                                 "icu"
-                                                                ;;"jsoncpp_git"
+                                                                "jsoncpp_git"
                                                                 "libjpeg_turbo"
                                                                 "lmdb"
                                                                 "zlib")
@@ -1058,7 +1058,7 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
                                                              "PROTOBUF_INCLUDE_PATH="
                                                              #$protobuf "/include"))
                                       #:hash
-                                      "0p3sbkjcssl672j91czh7y755z556610xwf4jmdv4y9alrgj1ivq")))
+                                      "11ifizi61kcfhmlqykp1d0h2085miw7l7pmpd3lb7d8pvlij7prk")))
 
               ;; Rewrite dangling links to current build directory
               (for-each (lambda (file)
