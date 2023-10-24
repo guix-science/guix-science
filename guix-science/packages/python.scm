@@ -18,9 +18,11 @@
 (define-module (guix-science packages python)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages algebra)
+  #:use-module (gnu packages assembly)
   #:use-module (gnu packages base)
   #:use-module (gnu packages bash)
   #:use-module (gnu packages bioinformatics)
+  #:use-module (gnu packages c)
   #:use-module (gnu packages check)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages curl)
@@ -1585,6 +1587,9 @@ Cflags: -I~a/include/tensorflow
            icu4c
            jsoncpp
            libjpeg-turbo
+           libpng
+           nasm
+           nsync
            openssl
            ;; XXX: With our own version of Protobuf we see a segfault
            ;; when building the Python bindings.
@@ -1609,6 +1614,8 @@ Cflags: -I~a/include/tensorflow
            python-certifi
            python-charset-normalizer
            python-flatbuffers
+           python-gast
+           python-google-pasta
            python-grpcio
            python-h5py
            python-idna
