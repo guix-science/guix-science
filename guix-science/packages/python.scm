@@ -26,7 +26,6 @@
   #:use-module (gnu packages check)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages curl)
-  #:use-module (gnu packages elf)
   #:use-module (gnu packages graph)
   #:use-module (gnu packages icu4c)
   #:use-module (gnu packages image)
@@ -1499,7 +1498,10 @@ arbitrarily to any order.")
               ;; exists in database" when loading in Python.
               (substitute* (string-append bazel-out "/external/tf_runtime/third_party/systemlibs/protobuf.BUILD")
                 (("-lprotobuf") "-l:libprotobuf.a")
-                (("-lprotoc") "-l:libprotoc.a"))))
+                (("-lprotoc") "-l:libprotoc.a"))
+              ;; Do not mess with RUNPATH
+              (substitute* "tensorflow/tools/pip_package/build_pip_package.sh"
+                (("patchelf ") "echo -- "))))
           (replace 'build
             (lambda* (#:key parallel-build? #:allow-other-keys)
               (define %build-directory (getenv "NIX_BUILD_TOP"))
@@ -1642,13 +1644,8 @@ Cflags: -I~a/include/tensorflow
            python-termcolor
            python-urllib3
            python-werkzeug))
-    ;; patchelf is needed by build_pip_package (in the install phase)
-    ;; to update references to libraries we had just built earlier for
-    ;; the Python bindings.  The build system features a remarkable
-    ;; amount of chewing gum and duck tape.
     (native-inputs
-     (list patchelf
-           perl
+     (list perl
            python-lit python-pypa-build python-setuptools python-wheel
            bazel-6
            which
