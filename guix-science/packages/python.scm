@@ -1327,6 +1327,44 @@ as forward-mode differentiation, and the two can be composed
 arbitrarily to any order.")
     (license license:asl2.0)))
 
+(define tensorflow-system-libs
+  (list
+   ;;"absl_py"
+   ;;"astor_archive"
+   ;;"astunparse_archive"
+   ;;"boringssl"
+   ;;"com_github_googlecloudplatform_google_cloud_cpp"
+   "com_github_grpc_grpc"
+   ;;"com_google_absl"
+   ;;"com_google_protobuf"
+   ;;"com_googlesource_code_re2"
+   "curl"
+   "cython"
+   ;;"dill_archive"
+   "double_conversion"
+   "flatbuffers"
+   ;;"functools32_archive"
+   "gast_archive"
+   "gif"
+   "hwloc"
+   "icu"
+   "jsoncpp_git"
+   "libjpeg_turbo"
+   "nasm"
+   "nsync"
+   "opt_einsum_archive"
+   ;;"org_sqlite"
+   "pasta"
+   "png"
+   ;;"pybind11" ;Our 2.8.1 does not support "const_name" attribute
+   "six_archive"
+   ;;"snappy"
+   ;;"tblib_archive"
+   "termcolor_archive"
+   "typing_extensions_archive"
+   "wrapt"
+   "zlib"))
+
 (define-public tensorflow
   (package
     (name "tensorflow")
@@ -1388,25 +1426,7 @@ arbitrarily to any order.")
                                                     #$(version-major+minor
                                                        (package-version (this-package-input "python-wrapper"))))
                                             (setenv "TF_SYSTEM_LIBS"
-                                                    (string-join (list
-                                                                  ;;"absl_py"
-                                                                  ;;"boringssl"
-                                                                  "com_github_grpc_grpc"
-                                                                  ;;"com_google_protobuf"
-                                                                  "curl"
-                                                                  "cython"
-                                                                  ;;"dill_archive"
-                                                                  "double_conversion"
-                                                                  "flatbuffers"
-                                                                  ;;"functools32_archive"
-                                                                  ;;"gast_archive"
-                                                                  "gif"
-                                                                  "hwloc"
-                                                                  "icu"
-                                                                  ;;"jsoncpp_git"
-                                                                  "libjpeg_turbo"
-                                                                  "zlib")
-                                                                 ","))))
+                                                    (string-join '#$tensorflow-system-libs ","))))
                                       #:bazel-targets
                                       (list "//tensorflow/tools/pip_package:build_pip_package"
                                             "//tensorflow/tools/lib_package:libtensorflow")
@@ -1425,7 +1445,7 @@ arbitrarily to any order.")
                                                         #$(this-package-input "python-wrapper")
                                                         "/bin/python"))
                                       #:hash
-                                      "0hz96m1v22zs78bwnih555kck67f7zliyjc3mv4vbrxyiyj9z0y1")))
+                                      "1fm0qjsbks8xz84bzv3ivyc8ba52vj5rz31n5w87glvsxijzq6jf")))
 
               ;; Rewrite dangling links to current build directory
               (for-each (lambda (file)
@@ -1490,25 +1510,7 @@ arbitrarily to any order.")
               (setenv "BAZEL_USE_CPP_ONLY_TOOLCHAIN" "1")
               (setenv "USER" "homeless-shelter")
               (setenv "TF_SYSTEM_LIBS"
-                      (string-join (list
-                                    ;;"absl_py"
-                                    ;;"boringssl"
-                                    "com_github_grpc_grpc"
-                                    ;;"com_google_protobuf"
-                                    "curl"
-                                    "cython"
-                                    ;;"dill_archive"
-                                    "double_conversion"
-                                    "flatbuffers"
-                                    ;;"functools32_archive"
-                                    ;;"gast_archive"
-                                    "gif"
-                                    "hwloc"
-                                    "icu"
-                                    ;;"jsoncpp_git"
-                                    "libjpeg_turbo"
-                                    "zlib")
-                                   ","))
+                      (string-join '#$tensorflow-system-libs ","))
               (apply invoke "bazel"
                      "--batch"
                      (string-append "--output_base=" %bazel-out)
