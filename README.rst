@@ -1,21 +1,11 @@
 Guix science packages
 =====================
 
-.. image:: https://github.com/guix-science/guix-science/workflows/build/badge.svg
-   :target: https://github.com/guix-science/guix-science/actions
+.. image:: https://guix.bordeaux.inria.fr/jobset/guix-science/badge.svg?type=0
+   :target: https://guix.bordeaux.inria.fr/jobset/guix-science
 
 This GNU Guix_ channel provides recent versions of scientific software, which
-cannot be included upstream. Currently the following software is packaged:
-
-- JASP_ (``jasp``)
-- Jupyter Notebook (``python-notebook``)
-- JupyterLab_ (``python-jupyterlab``)
-- `RStudio Desktop`_ (``rstudio``)
-- RStudio Server (``rstudio-server``)
-
-.. _JASP: https://jasp-stats.org/
-.. _JupyterLab: https://jupyterlab.readthedocs.io/
-.. _RStudio Desktop: https://rstudio.com/products/rstudio/
+cannot be included upstream.
 
 See `Specifying Additional Channels`_ in the Guix manual for instructions how
 to add it to your installation or simply add the following snippet to your
@@ -36,18 +26,17 @@ to add it to your installation or simply add the following snippet to your
 .. _Specifying Additional Channels: https://guix.gnu.org/manual/en/guix.html#Specifying-Additional-Channels
 
 Binary substitutes for ``x86_64-linux`` are available from
-https://substitutes.guix.psychnotebook.org/, see `Getting Substitutes from
-Other Servers`_ in the official manual. The signing key can be imported using:
+https://guix.bordeaux.inria.fr, see `Getting Substitutes from Other
+Servers`_ in the official manual. The signing key can be imported
+using:
 
 .. code:: console
 
 	$ guix archive --authorize <<EOF
-	(public-key
-	 (ecc
-	  (curve Ed25519)
-	  (q #D4E1CAFAB105581122B326E89804E3546EF905C0D9B39F161BBD8ABB4B11D14A#)
-	  )
-	 )
+    (public-key
+     (ecc
+      (curve Ed25519)
+      (q #89FBA276A976A8DE2A69774771A92C8C879E0F24614AAAAE23119608707B3F06#)))
 	EOF
 
 .. _Getting Substitutes from Other Servers: https://guix.gnu.org/manual/en/guix.html#Getting-Substitutes-from-Other-Servers
