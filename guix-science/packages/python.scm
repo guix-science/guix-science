@@ -1378,6 +1378,28 @@ arbitrarily to any order.")
         #~(modify-phases #$phases
             (delete 'move-static-libraries)))))))
 
+;; This one is self-contained to avoid problems when using a
+;; mismatched version of the protobuf library.
+(define-public python-protobuf-for-tensorflow-2
+  (package
+    (name "python-protobuf-for-tensorflow-2")
+    ;; This matches the C++ version 3.21.9.  I don't make the rules.
+    (version "4.21.9")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "protobuf" version))
+       (sha256
+        (base32
+         "16asi3sdq3mqir2irlkixyshlmbjb08gmzl4rbwpfakdv69i9wk1"))))
+    (build-system python-build-system)
+    (home-page "https://github.com/google/protobuf")
+    (synopsis "Protocol buffers is a data interchange format")
+    (description
+     "Protocol buffers are a language-neutral, platform-neutral extensible
+mechanism for serializing structured data.")
+    (license license:bsd-3)))
+
 (define-public tensorflow
   (package
     (name "tensorflow")
