@@ -1642,8 +1642,10 @@ Cflags: -I~a/include/tensorflow
            python-scipy
            python-six
            python-termcolor
+           python-typing-extensions
            python-urllib3
-           python-werkzeug))
+           python-werkzeug
+           python-wrapt))
     (native-inputs
      (list perl
            python-lit python-pypa-build python-setuptools python-wheel
