@@ -1631,8 +1631,7 @@ Cflags: -I~a/include/tensorflow
            nasm
            nsync
            openssl
-           ;; XXX: With our own version of Protobuf we see a segfault
-           ;; when building the Python bindings.
+           static-protobuf
            pybind11
            python-absl-py
            python-cython
@@ -1668,8 +1667,7 @@ Cflags: -I~a/include/tensorflow
            python-opt-einsum
            python-packaging
            python-portpicker
-           ;; This leads to a segfault when generating the Python bindings.
-           ;;python-protobuf
+           python-protobuf-for-tensorflow-2
            python-psutil
            python-pyasn1
            python-requests
