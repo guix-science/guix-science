@@ -1364,6 +1364,20 @@ arbitrarily to any order.")
    "wrapt"
    "zlib"))
 
+(define-public static-protobuf
+  (package
+    (inherit protobuf)
+    (name "protobuf-static")
+    (outputs (list "out"))
+    (arguments
+     (substitute-keyword-arguments (package-arguments protobuf)
+       ((#:configure-flags _ #f)
+        #~(list "-DBUILD_SHARED_LIBS=OFF"
+                "-Dprotobuf_USE_EXTERNAL_GTEST=ON"))
+       ((#:phases phases)
+        #~(modify-phases #$phases
+            (delete 'move-static-libraries)))))))
+
 (define-public tensorflow
   (package
     (name "tensorflow")
