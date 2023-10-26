@@ -1051,19 +1051,10 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
                                       #~(list "-c" "opt"
                                               "--config=avx_posix"
                                               "--config=mkl_open_source_only"
-                                              ;; XXX: No success with
-                                              ;; our own protobuf.
-                                              ;; Perhaps it would work
-                                              ;; if we used the static
-                                              ;; library, but the
-                                              ;; latest protobuf
-                                              ;; package we have has
-                                              ;; an empty "static"
-                                              ;; output.
-                                              #;
                                               (string-append "--define="
                                                              "PROTOBUF_INCLUDE_PATH="
-                                                             #$protobuf "/include"))
+                                                             #$static-protobuf
+                                                             "/include"))
                                       #:hash
                                       "0jzk6d5s27s2rbzrrg8cmghkfyl99wgx3rfakhj0nshx1kra3c49")))
 
@@ -1238,9 +1229,11 @@ build --local_cpu_resources=HOST_CPUS*.75
     (propagated-inputs
      (list python-absl-py
            python-importlib-metadata
+           python-gast
            python-ml-dtypes
            python-numpy
            python-opt-einsum
+           python-protobuf-for-tensorflow-2
            python-scipy))
     (native-inputs
      (list python-pypa-build python-setuptools python-wheel
