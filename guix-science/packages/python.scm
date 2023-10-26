@@ -1754,3 +1754,137 @@ subclassing API with an imperative style for advanced research.")
      (list eigen-for-python-ml-dtypes
            patchelf
            `(,tensorflow "python")))))
+
+(define-public python-tensorflow-probability
+  (package
+    (name "python-tensorflow-probability")
+    (version "0.22.1")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/tensorflow/probability")
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "04qva7cwplh0vj9k15nl7lr1m0jfa49j2cl6z2iaz8rnsm2kfz3k"))))
+    (build-system pyproject-build-system)
+    (arguments
+     (list
+      #:modules
+      '((guix build pyproject-build-system)
+        (guix build utils)
+        (srfi srfi-1)
+        (ice-9 string-fun))
+      #:tests? #false                   ;there are none
+      #:phases
+      #~(modify-phases %standard-phases
+          (add-after 'unpack 'prepare-bazel-inputs
+            (lambda* (#:key inputs #:allow-other-keys)
+              (define bazel-out
+                (string-append (getenv "NIX_BUILD_TOP") "/output"))
+              (mkdir-p bazel-out)
+              (with-directory-excursion bazel-out
+                (invoke "tar" "xf" #$(bazel-vendored-inputs
+                                      #:source (package-source this-package)
+                                      #:name "tensorflow-probability"
+                                      #:version version
+                                      #:inputs
+                                      (append (standard-packages)
+                                              (package-inputs this-package)
+                                              (package-propagated-inputs this-package)
+                                              (package-native-inputs this-package))
+                                      #:search-paths
+                                      (map search-path-specification->sexp
+                                           (package-transitive-native-search-paths
+                                            this-package))
+                                      #:bazel-targets
+                                      (list "//tensorflow_probability")
+                                      #:bazel-arguments
+                                      '(list)
+                                      #:hash
+                                      "104m99n0ah9nxa296m3ryrfyqm40ay8ck4nsggfdmci935jigvwa")))
+
+              ;; Rewrite dangling links to current build directory
+              (for-each (lambda (file)
+                          (let ((new-target
+                                 (string-replace-substring
+                                  (readlink file)
+                                  "GUIX_BUILD_TOP" (getenv "NIX_BUILD_TOP"))))
+                            (delete-file file)
+                            (symlink new-target file)))
+                        (find-files bazel-out
+                                    (lambda (file-name stat)
+                                      (and (eq? (stat:type stat) 'symlink)
+                                           (string-contains (readlink file-name)
+                                                            "GUIX_BUILD_TOP")))
+                                    #:stat lstat))
+              (setenv "HOME" (getenv "NIX_BUILD_TOP"))))
+          (replace 'build
+            (lambda _
+              (define %build-directory (getenv "NIX_BUILD_TOP"))
+              (define %bazel-out
+                (string-append %build-directory "/output"))
+              (define %bazel-user-root
+                (string-append %build-directory "/tmp"))
+              (setenv "BAZEL_USE_CPP_ONLY_TOOLCHAIN" "1")
+              (setenv "USER" "homeless-shelter")
+              (apply invoke "bazel"
+                     "--batch"
+                     (string-append "--output_base=" %bazel-out)
+                     (string-append "--output_user_root=" %bazel-user-root)
+                     "build"
+                     "--nofetch"
+                     "--distinct_host_configuration=false"
+                     "--curses=no"
+                     "--verbose_failures"
+                     "--subcommands"
+                     "--strategy=Genrule=local"
+                     "--toolchain_resolution_debug=\".*\""
+                     "--local_ram_resources=HOST_RAM*.5"
+                     "--local_cpu_resources=HOST_CPUS*.75"
+                     "--action_env=PATH"
+                     "--action_env=GUIX_PYTHONPATH"
+                     "--action_env=PYTHONPATH"
+                     "--action_env=GUIX_LOCPATH"
+                     "--host_action_env=PATH"
+                     "--host_action_env=GUIX_PYTHONPATH"
+                     "--host_action_env=PYTHONPATH"
+                     "--host_action_env=GUIX_LOCPATH"
+                     (list "//tensorflow_probability/python"
+                           "//tensorflow_probability/python/internal/backend/jax:rewrite"
+                           "//tensorflow_probability/substrates"
+                           "//tensorflow_probability/substrates:jax"
+                           "//tensorflow_probability/substrates:numpy"
+                           ":pip_pkg"))
+              (substitute* "bazel-bin/pip_pkg"
+                (("\\$\\(date --utc \\+%Y%m%d\\)") "redacted"))
+              (invoke "bazel-bin/pip_pkg" "dist" "--release"))))))
+    (propagated-inputs
+     (list python-absl-py
+           python-cloudpickle
+           python-decorator
+           python-dm-tree
+           python-jax
+           python-jaxlib
+           python-gast
+           python-numpy
+           python-six
+           python-typing-extensions
+           python-tensorflow
+           ;;python-tensorflow-datasets ;TODO
+           ))
+    (native-inputs
+     (list bazel-6
+           `(,openjdk11 "jdk") ;for bazel
+           which))
+    (home-page "https://github.com/pyro-ppl/numpyro")
+    (synopsis "Probabilistic reasoning and statistical analysis in TensorFlow")
+    (description "TensorFlow Probability is a library for
+probabilistic reasoning and statistical analysis in TensorFlow.  As
+part of the TensorFlow ecosystem, TensorFlow Probability provides
+integration of probabilistic methods with deep networks,
+gradient-based inference via automatic differentiation, and
+scalability to large datasets and models via hardware
+acceleration (e.g., GPUs) and distributed computation.")
+    (license license:asl2.0)))
