@@ -976,6 +976,27 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
        #:hash
        ,(nix-base32-string->bytevector hash)))))
 
+(define jaxlib-system-libs
+  (list
+   "absl_py"
+   ;;"boringssl"
+   "com_github_grpc_grpc"
+   ;;"com_google_protobuf"
+   "curl"
+   "cython"
+   ;;"dill_archive"
+   "double_conversion"
+   "flatbuffers"
+   ;;"functools32_archive"
+   "gast_archive"
+   "gif"
+   "hwloc"
+   "icu"
+   "jsoncpp_git"
+   "libjpeg_turbo"
+   "lmdb"
+   "zlib"))
+
 (define python-jaxlib/wheel
   (package
     (name "python-jaxlib")
@@ -1022,26 +1043,7 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
                                       #:extra-configuration
                                       #~(begin
                                           (setenv "TF_SYSTEM_LIBS"
-                                                  (string-join (list
-                                                                "absl_py"
-                                                                ;;"boringssl"
-                                                                "com_github_grpc_grpc"
-                                                                ;;"com_google_protobuf"
-                                                                "curl"
-                                                                "cython"
-                                                                ;;"dill_archive"
-                                                                "double_conversion"
-                                                                "flatbuffers"
-                                                                ;;"functools32_archive"
-                                                                ;;"gast_archive"
-                                                                "gif"
-                                                                "hwloc"
-                                                                "icu"
-                                                                "jsoncpp_git"
-                                                                "libjpeg_turbo"
-                                                                "lmdb"
-                                                                "zlib")
-                                                               ",")))
+                                                  (string-join '#$jaxlib-system-libs ",")))
                                       #:bazel-targets
                                       (list "//jaxlib/tools:build_wheel"
                                             "@mkl_dnn_v1//:mkl_dnn")
@@ -1156,27 +1158,7 @@ build --local_cpu_resources=HOST_CPUS*.75
                            port)))
               (setenv "USER" "homeless-shelter")
               (setenv "TF_SYSTEM_LIBS"
-                      (string-join
-                       (list
-                        "absl_py"
-                        ;;"boringssl"
-                        "com_github_grpc_grpc"
-                        ;;"com_google_protobuf" ;see below
-                        "curl"
-                        "cython"
-                        ;;"dill_archive"
-                        "double_conversion"
-                        "flatbuffers"
-                        ;;"functools32_archive"
-                        ;;"gast_archive"
-                        "gif"
-                        "hwloc"
-                        "icu"
-                        "jsoncpp_git"
-                        "libjpeg_turbo"
-                        "lmdb"
-                        "zlib")
-                       ","))
+                      (string-join '#$jaxlib-system-libs ","))
               (apply invoke "bazel"
                      "--batch"
                      (string-append "--output_base=" %bazel-out)
