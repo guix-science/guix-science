@@ -28,11 +28,13 @@
   #:use-module (gnu packages curl)
   #:use-module (gnu packages elf)
   #:use-module (gnu packages graph)
+  #:use-module (gnu packages graphviz)
   #:use-module (gnu packages icu4c)
   #:use-module (gnu packages image)
   #:use-module (gnu packages java)
   #:use-module (gnu packages linux)
   #:use-module (gnu packages llvm)
+  #:use-module (gnu packages machine-learning)
   #:use-module (gnu packages maths)
   #:use-module (gnu packages mpi)
   #:use-module (gnu packages pdf)
@@ -1887,4 +1889,62 @@ integration of probabilistic methods with deep networks,
 gradient-based inference via automatic differentiation, and
 scalability to large datasets and models via hardware
 acceleration (e.g., GPUs) and distributed computation.")
+    (license license:asl2.0)))
+
+(define-public python-numpyro
+  (package
+    (name "python-numpyro")
+    (version "0.13.2")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "numpyro" version))
+       (sha256
+        (base32 "1s2fjmnzl93jc42rzinsfh9fm70wkh636vnzd27cg540a4ahnvsj"))))
+    (build-system pyproject-build-system)
+    (arguments
+     (list
+      #:test-flags
+      '(list
+        ;; These require internet access
+        "--ignore=test/test_example_utils.py"
+        ;; Examples are not included in this distribution
+        "--ignore=test/test_examples.py"
+        "-k"
+        (string-join
+         ;; The hpdi test produces a result that is not within the
+         ;; expected tolerances.
+         (list "not test_hpdi"
+               ;; Five of these tests fail due to deviations in the
+               ;; expected values.
+               "test_kl_univariate"
+               ;; Sometimes the return value is not within the
+               ;; expected tolerance.
+               "test_zero_inflated_logits_probs_agree")
+         " and not " 'infix))))
+    (propagated-inputs
+     (list python-funsor
+           python-jax
+           python-jaxlib
+           python-multipledispatch
+           python-numpy
+           python-tensorflow-probability
+           python-tqdm))
+    (native-inputs
+     (list python-black
+           python-flake8
+           python-graphviz
+           python-importlib-metadata
+           python-isort
+           python-matplotlib
+           python-pyro-api
+           python-pytest
+           python-pyyaml
+           python-requests
+           python-scipy))
+    (home-page "https://github.com/pyro-ppl/numpyro")
+    (synopsis "Pyro PPL on NumPy")
+    (description "NumPyro is a lightweight probabilistic programming
+library that provides a NumPy backend for Pyro.  It relies on JAX for
+automatic differentiation and JIT compilation to GPU / CPU.")
     (license license:asl2.0)))
