@@ -1948,3 +1948,52 @@ acceleration (e.g., GPUs) and distributed computation.")
 library that provides a NumPy backend for Pyro.  It relies on JAX for
 automatic differentiation and JIT compilation to GPU / CPU.")
     (license license:asl2.0)))
+
+(define-public python-chex
+  (package
+    (name "python-chex")
+    ;; A newer version exists but is not compatible with our numpy.
+    (version "0.1.8")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "chex" version))
+       (sha256
+        (base32 "0y9a2jjbjih2g4dn8q66y0b2b5kzxjrnir8x68cj0fcgnkyr80sr"))))
+    (build-system pyproject-build-system)
+    ;; Our version of np.testing.assert_array_equal does not support
+    ;; the "strict" argument.
+    (arguments
+     (list
+      #:test-flags
+      '(list "-k" "not test_assert_trees_all_equal_strict_mode")
+      #:phases
+      '(modify-phases %standard-phases
+         (add-after 'unpack 'compatibility
+           (lambda _
+             (substitute* "chex/_src/asserts.py"
+               (("strict=strict") "")))))))
+    (propagated-inputs (list python-absl-py
+                             python-jax
+                             python-jaxlib
+                             python-numpy
+                             python-toolz
+                             python-typing-extensions))
+    (native-inputs
+     (list python-cloudpickle
+           python-dm-tree
+           python-pytest))
+    (home-page "https://github.com/deepmind/chex")
+    (synopsis "Chex: Testing made fun, in JAX!")
+    (description "Chex is a library of utilities for helping to write
+reliable JAX code.  This includes utils to help:
+
+@itemize
+@item Instrument your code (e.g. assertions)
+@item Debug (e.g. transforming @code{pmaps} in @code{vmaps} within a
+  context manager).
+@item Test JAX code across many @code{variants} (e.g. jitted vs
+  non-jitted).
+@end itemize
+")
+    (license license:asl2.0)))
