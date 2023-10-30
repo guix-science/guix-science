@@ -1997,3 +1997,33 @@ reliable JAX code.  This includes utils to help:
 @end itemize
 ")
     (license license:asl2.0)))
+
+(define-public python-optax
+  (package
+    (name "python-optax")
+    ;; 0.1.6 needs a more recent numpy
+    (version "0.1.5")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "optax" version))
+       (sha256
+        (base32 "0bhgaaxvqli3b2081zp9ycb2c2hqba0fcpigaqjxbnsidyspk8qa"))))
+    (build-system pyproject-build-system)
+    ;; Tests require haiku, tensorflow, and flax, but flax needs
+    ;; optax.
+    (arguments
+     (list #:tests? #false))
+    (propagated-inputs (list python-absl-py
+                             python-chex
+                             python-jax
+                             python-jaxlib
+                             python-numpy))
+    (native-inputs
+     (list python-dm-tree
+           python-pytest))
+    (home-page "https://github.com/google-deepmind/optax/")
+    (synopsis "Gradient processing and optimization library for JAX")
+    (description "Optax is a gradient processing and optimization
+library for JAX.")
+    (license license:asl2.0)))
