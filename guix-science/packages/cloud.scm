@@ -59,8 +59,7 @@
                (copy-recursively "lib" lib)
                (copy-recursively "platform" platform)))))))
     (propagated-inputs
-     `(("python" ,python)
-       ("coreutils" ,coreutils)))
+     (list python coreutils))
     (home-page "https://cloud.google.com/sdk")
     (synopsis "Google Cloud SDK")
     (description "This package provides the Google Cloud SDK which includes the
@@ -139,7 +138,7 @@ packages.")
                 "01d34c66ymriav93faf2vf89mmbcifz693vcp38sm3yidl76a2h3"))))
     (build-system python-build-system)
     (propagated-inputs
-     `(("python-cachetools", python-cachetools)))
+     (list python-cachetools))
     (arguments
      `(#:tests? #f))
     (home-page "https://github.com/googleapis/google-resumable-media-python")

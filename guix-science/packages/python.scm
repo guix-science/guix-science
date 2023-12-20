@@ -79,8 +79,7 @@
                 "14dksvc8mxmci3m3083xzwz70anis95a5s01apqvvqv2z48yc1ir"))))
     (build-system python-build-system)
     (propagated-inputs
-     `(("python-pytest" ,python-pytest)
-       ("python-setuptools" ,python-setuptools)))
+     (list python-pytest python-setuptools))
     (home-page
      "https://github.com/pytest-dev/pytest-rerunfailures")
     (synopsis "Plugin for pytest to re-run tests to eliminate flaky failures")
@@ -148,16 +147,16 @@ download.")
             (substitute* (list "setup.py" "smart_open.egg-info/requires.txt")
               (("moto\\[server\\]==1.3.14") "moto")))))))
    (inputs
-    `(("python-boto3" ,python-boto3)
-      ("python-google-cloud-storage" ,python-google-cloud-storage)
-      ("python-moto" ,python-moto)
-      ("python-parameterizedtestcase" ,python-parameterizedtestcase)
-      ("python-paramiko" ,python-paramiko)
-      ("python-pathlib2" ,python-pathlib2)
-      ("python-pytest" ,python-pytest)
-      ("python-pytest-rerunfailures" ,python-pytest-rerunfailures)
-      ("python-requests" ,python-requests)
-      ("python-responses" ,python-responses)))
+    (list python-boto3
+          python-google-cloud-storage
+          python-moto
+          python-parameterizedtestcase
+          python-paramiko
+          python-pathlib2
+          python-pytest
+          python-pytest-rerunfailures
+          python-requests
+          python-responses))
    (home-page "https://github.com/piskvorky/smart_open")
    (synopsis "Utilities for streaming large files")
    (description "This package provides a library for efficient streaming of
@@ -239,9 +238,7 @@ lots of nifty extra stuff on top.")
               "084wl5kl2grr2yi3bibc6i2ak5s7vanwi21wssbwd4bgfskr84lp"))))
   (build-system python-build-system)
   (propagated-inputs
-   `(("python-numpy" ,python-numpy)
-     ("python-psutil" ,python-psutil)
-     ("pybind11" ,pybind11-2.6.1)))
+   (list python-numpy python-psutil pybind11-2.6.1))
   (home-page "https://github.com/nmslib/nmslib")
   (synopsis "Non-Metric Space Library (NMSLIB)")
   (description "Non-Metric Space Library (NMSLIB)")
@@ -259,7 +256,7 @@ lots of nifty extra stuff on top.")
                 "0w3yw014760ncm09ymbh0wnw4wwz7ph773dvvxcyaww5dw8w50gw"))))
     (build-system python-build-system)
     (propagated-inputs
-     `(("python-numpy" ,python-numpy)))
+     (list python-numpy))
     (home-page "http://github.com/wmayner/pyemd")
     (synopsis
      "Wrapper for Pele and Werman's implementation of the Earth Mover's Distance")
@@ -280,16 +277,16 @@ implementation of the Earth Mover's Distance.")
               "09kiczx2i5asqsv214fz7sx8wlyldgbqvxwrd0alhjn24cvx4fn7"))))
   (build-system python-build-system)
   (propagated-inputs
-   `(("python-jsonpatch" ,python-jsonpatch)
-     ("python-numpy" ,python-numpy)
-     ("python-pillow" ,python-pillow)
-     ("python-pyzmq" ,python-pyzmq)
-     ("python-requests" ,python-requests)
-     ("python-scipy" ,python-scipy)
-     ("python-six" ,python-six)
-     ("python-torchfile" ,python-torchfile)
-     ("python-tornado" ,python-tornado)
-     ("python-websocket-client" ,python-websocket-client)))
+   (list python-jsonpatch
+         python-numpy
+         python-pillow
+         python-pyzmq
+         python-requests
+         python-scipy
+         python-six
+         python-torchfile
+         python-tornado
+         python-websocket-client))
   (home-page "https://github.com/facebookresearch/visdom")
   (synopsis "Visualize live, rich data for Torch and Numpy")
   (description "This package provides tools for visualizing live, rich data
@@ -311,19 +308,17 @@ for @code{Torch} and @code{Numpy}.")
     (arguments
      `(#:tests? #f)) ; Tests need an outdated version of Morfessor.
     (propagated-inputs
-     `(("python-numpy" ,python-numpy)
-       ("python-scipy" ,python-scipy)
-       ("python-smart-open" ,python-smart-open)))
+     (list python-numpy python-scipy python-smart-open))
     (native-inputs
-     `(("python-cython" ,python-cython)
-       ("python-levenshtein" ,python-levenshtein)
-       ("python-mock" ,python-mock)
-       ;("python-morfessor" ,python-morfessor)
-       ("python-nmslib" ,python-nmslib)
-       ("python-pyemd" ,python-pyemd)
-       ("python-pytest" ,python-pytest)
-       ("python-testfixtures" ,python-testfixtures)
-       ("python-visdom" ,python-visdom)))
+     (list python-cython
+           python-levenshtein
+           python-mock
+           ;("python-morfessor" ,python-morfessor)
+           python-nmslib
+           python-pyemd
+           python-pytest
+           python-testfixtures
+           python-visdom))
     (home-page "https://radimrehurek.com/gensim/")
     (synopsis "Topic modelling for humans")
     (description "This package provides a Python library for topic modelling,
@@ -347,8 +342,7 @@ community.")
     (arguments
      `(#:tests? #f))
     (propagated-inputs
-     `(("python-numpy" ,python-numpy)
-       ("python-pysam" ,python-pysam)))
+     (list python-numpy python-pysam))
     (home-page "")
     (synopsis "Parallel BAM File Analysis")
     (description "Parallel BAM File Analysis")
@@ -369,10 +363,7 @@ community.")
     (arguments
      `(#:tests? #f))
     (propagated-inputs
-     `(("python-numpy" ,python-numpy)
-       ("python-pandas" ,python-pandas)
-       ("python-parabam" ,python-parabam)
-       ("python-pysam" ,python-pysam)))
+     (list python-numpy python-pandas python-parabam python-pysam))
     (home-page "https://pypi.org/project/telomerecat/")
     (synopsis "Telomere Computational Analysis Tool")
     (description "Telomerecat is a tool for estimating the average
@@ -391,8 +382,7 @@ telomere length for a paired end, whole genome sequencing sample.")
                 "04b0n1qqyqq0id55zxp2dl3zj367gf59c8jilca406aqnjryv9sl"))))
     (build-system python-build-system)
     (propagated-inputs
-     `(("python-numpy" ,python-numpy)
-       ("python-pandas" ,python-pandas)))
+     (list python-numpy python-pandas))
     (home-page "https://github.com/wdecoster/nanomath")
     (synopsis "Simple math function for other Oxford Nanopore scripts")
     (description "This package contains a few simple math function for other
@@ -411,11 +401,8 @@ Oxford Nanopore processing scripts.")
                 "0cs5sc2i7mfbikgssfaia28bagvka2a8qpmdzbf6i27piv2c7kyz"))))
     (build-system python-build-system)
     (propagated-inputs
-     `(("python-biopython" ,python-biopython)
-       ("python-nanomath" ,python-nanomath)
-       ("python-numpy" ,python-numpy)
-       ("python-pandas" ,python-pandas)
-       ("python-pysam" ,python-pysam)))
+     (list python-biopython python-nanomath python-numpy python-pandas
+           python-pysam))
     (home-page "https://github.com/wdecoster/nanoget")
     (synopsis "Functions for Oxford Nanopore sequencing data and alignments")
     (description "This package contains functions to extract information from
@@ -434,8 +421,7 @@ Oxford Nanopore sequencing data and alignments.")
                 "1mr81xl08qw1vyl552snnxafzmbg9rv9lskyzvzqg8dhm8baslya"))))
     (build-system python-build-system)
     (propagated-inputs
-     `(("python-nanoget" ,python-nanoget)
-       ("python-nanomath" ,python-nanomath)))
+     (list python-nanoget python-nanomath))
     (home-page "https://github.com/wdecoster/nanostat")
     (synopsis "Statistics for Oxford Nanopore sequencing data and alignments")
     (description
@@ -471,14 +457,14 @@ Nanopore sequencing data and alignments.")
            (("scipy==1.3.1") "scipy>=1.3.1")
            (("numpy==1.17.1") "numpy>=1.15.4")))))))
    (propagated-inputs
-    `(("python-h5py" ,python-h5py)
-      ("python-jinja2" ,python-jinja2)
-      ("python-numpy" ,python-numpy)
-      ("python-pandas" ,python-pandas)
-      ("python-plotly" ,python-plotly)
-      ("python-scipy" ,python-scipy)
-      ("python-tqdm" ,python-tqdm)
-      ("python-pysam" ,python-pysam)))
+    (list python-h5py
+          python-jinja2
+          python-numpy
+          python-pandas
+          python-plotly
+          python-scipy
+          python-tqdm
+          python-pysam))
    (home-page "https://github.com/a-slide/pycoQC")
    (synopsis "QC plots for Nanopore basecallers")
    (description "This package computes metrics and generates Interactive QC
@@ -497,7 +483,7 @@ technologies basecaller.")
               (base32
                "0jhjvzy5mdgvh1vx6fskpqrfjwh81k68rg25a9fgjhs19jha12kq"))))
     (build-system python-build-system)
-    (propagated-inputs `(("python-six" ,python-six)))
+    (propagated-inputs (list python-six))
     (home-page "https://git.niklasrosenstein.com/NiklasRosenstein/nr")
     (synopsis "Filesystem and path manipulation tools")
     (description "Filesystem and path manipulation tools.")
@@ -517,8 +503,7 @@ technologies basecaller.")
     (arguments
      `(#:tests? #f)) ; Needs old version of nr.pylang.utils
    (propagated-inputs
-    `(("python-dataclasses" ,python-dataclasses)
-      ("python-docspec" ,python-docspec)))
+    (list python-dataclasses python-docspec))
    (home-page "")
    (synopsis "Parser based on lib2to3 producing docspec data from Python code")
    (description "This package provides a parser based on lib2to3 producing
@@ -537,7 +522,7 @@ docspec data from Python source code.")
               "11mscz791vyc5133xvrggaz3srf6fs35qb7zx3k0a9hwn43cd4xq"))))
    (build-system python-build-system)
    (native-inputs
-    `(("python-pytest" ,python-pytest)))
+    (list python-pytest))
    (home-page "https://git.niklasrosenstein.com/NiklasRosenstein/nr")
    (synopsis "Utility functions for applying regular expressions")
    (description "This module provides some utility functions for applying
@@ -578,11 +563,8 @@ library.  It uses dateutil for timezone offset support.")
     (arguments
      `(#:tests? #f)) ; Needs old version of nr.pylang.utils
    (propagated-inputs
-    `(("python-nr.collections" ,python-nr.collections)
-      ("python-nr.databind.core" ,python-nr.databind.core)
-      ("python-nr.interface" ,python-nr.interface)
-      ("python-nr.parsing.date" ,python-nr.parsing.date)
-      ("python-nr.pylang.utils" ,python-nr.pylang.utils)))
+    (list python-nr.collections python-nr.databind.core python-nr.interface
+          python-nr.parsing.date python-nr.pylang.utils))
    (home-page "https://git.niklasrosenstein.com/NiklasRosenstein/nr")
    (synopsis "Deserialize JSON into Python objects and reverse")
    (description "This package provides a module to deserialize JSON into
@@ -601,11 +583,9 @@ Python objects and reverse.")
               "11wzmp8rpsl0vfvg6w6syfy50393zlmj13dhnbzzh1fhszdcjjaw"))))
    (build-system python-build-system)
    (native-inputs
-    `(("python-pytest" ,python-pytest)))
+    (list python-pytest))
    (propagated-inputs
-    `(("python-nr.collections" ,python-nr.collections)
-      ("python-nr.pylang.utils" ,python-nr.pylang.utils)
-      ("python-six" ,python-six)))
+    (list python-nr.collections python-nr.pylang.utils python-six))
    (home-page "https://git.niklasrosenstein.com/NiklasRosenstein/nr")
    (synopsis "Use iterators like Java streams")
    (description "This package provides a module to use iterators like
@@ -624,9 +604,9 @@ Java streams.")
               "1gysjx9b80xp1981qix0iz4p9s82mk319rjfhq1dbl5i4jfmgygx"))))
    (build-system python-build-system)
    (native-inputs
-    `(("python-pytest" ,python-pytest)))
+    (list python-pytest))
    (propagated-inputs
-    `(("python-nr.collections" ,python-nr.collections)))
+    (list python-nr.collections))
    (home-page "https://git.niklasrosenstein.com/NiklasRosenstein/nr")
    (synopsis "")
    (description "")
@@ -646,10 +626,8 @@ Java streams.")
    (arguments
     `(#:tests? #f)) ; Needs old version of nr.pylang.utils
    (propagated-inputs
-    `(("python-nr.collections" ,python-nr.collections)
-      ("python-nr.metaclass" ,python-nr.metaclass)
-      ("python-nr.pylang.utils" ,python-nr.pylang.utils)
-      ("python-six" ,python-six)))
+    (list python-nr.collections python-nr.metaclass python-nr.pylang.utils
+          python-six))
    (home-page "https://git.niklasrosenstein.com/NiklasRosenstein/nr")
    (synopsis "Interface definitions for Python")
    (description "This package provides a module to define interface
@@ -668,7 +646,7 @@ definitions for Python.")
               "041ban9b3vvigjdc5wbcya8n3hy3jfas1r9mj55r9hp30gkghlix"))))
    (build-system python-build-system)
    (native-inputs
-    `(("python-pytest" ,python-pytest)))
+    (list python-pytest))
    (home-page "https://git.niklasrosenstein.com/NiklasRosenstein/nr")
    (synopsis "Metaclass utilities.")
    (description "Metaclass utilities.")
@@ -687,11 +665,9 @@ definitions for Python.")
        "0klspp025f2d7yzh61pcfb73i23xrx3xsqwacf74xzg3dlx5snv4"))))
    (build-system python-build-system)
    (native-inputs
-    `(("python-pytest" ,python-pytest)))
+    (list python-pytest))
    (propagated-inputs
-    `(("python-nr.metaclass" ,python-nr.metaclass)
-      ("python-nr.fs" ,python-nr.fs)
-      ("python-six" ,python-six)))
+    (list python-nr.metaclass python-nr.fs python-six))
    (home-page "https://git.niklasrosenstein.com/NiklasRosenstein/nr")
    (synopsis "Useful container datatypes for Python")
    (description "This package provides container datatypes for
@@ -712,10 +688,8 @@ Python 2 and 3.")
     (arguments
      `(#:tests? #f)) ; Needs old version of nr.pylang.utils
     (propagated-inputs
-      `(("python-nr.collections" ,python-nr.collections)
-        ("python-nr.interface" ,python-nr.interface)
-        ("python-nr.pylang.utils" ,python-nr.pylang.utils)
-        ("python-nr.stream" ,python-nr.stream)))
+      (list python-nr.collections python-nr.interface python-nr.pylang.utils
+            python-nr.stream))
     (home-page
       "https://git.niklasrosenstein.com/NiklasRosenstein/nr")
     (synopsis "Bind structured data directly to typed objects")
@@ -738,8 +712,7 @@ directly to typed objects.")
     (arguments
      `(#:tests? #f)) ; Needs old version of nr.pylang.utils
    (propagated-inputs
-    `(("python-nr.databind.core" ,python-nr.databind.core)
-      ("python-nr.databind.json" ,python-nr.databind.json)))
+    (list python-nr.databind.core python-nr.databind.json))
    (home-page "")
    (synopsis "Specification for representing API documentation")
    (description "This package provides a JSON object specification for
@@ -760,20 +733,20 @@ representing API documentation of programming languages.")
    (arguments
     `(#:tests? #f)) ; Needs newer version of python-watchdog.
    (propagated-inputs
-    `(("python-click" ,python-click)
-      ("python-dataclasses" ,python-dataclasses)
-      ("python-docspec" ,python-docspec)
-      ("python-docspec-python" ,python-docspec-python)
-      ("python-nr.collections" ,python-nr.collections)
-      ("python-nr.databind.core" ,python-nr.databind.core)
-      ("python-nr.databind.json" ,python-nr.databind.json)
-      ("python-nr.fs" ,python-nr.fs)
-      ("python-nr.interface" ,python-nr.interface)
-      ("python-pyyaml" ,python-pyyaml)
-      ("python-requests" ,python-requests)
-      ("python-six" ,python-six)
-      ("python-toml" ,python-toml)
-      ("python-watchdog" ,python-watchdog)))
+    (list python-click
+          python-dataclasses
+          python-docspec
+          python-docspec-python
+          python-nr.collections
+          python-nr.databind.core
+          python-nr.databind.json
+          python-nr.fs
+          python-nr.interface
+          python-pyyaml
+          python-requests
+          python-six
+          python-toml
+          python-watchdog))
    (home-page "https://github.com/NiklasRosenstein/pydoc-markdown")
    (synopsis "Create Python API documentation in Markdown format.")
    (description
@@ -793,10 +766,7 @@ using the Markdown format.")
               "1sg848j1v65i636qr8d9p4b29ps4zpb1p7382cdyav5bglcm259j"))))
    (build-system python-build-system)
    (propagated-inputs
-    `(("python-coverage" ,python-coverage)
-      ("python-flake8" ,python-flake8)
-      ("python-nose" ,python-nose)
-      ("python-docopt" ,python-docopt)))
+    (list python-coverage python-flake8 python-nose python-docopt))
    (home-page "https://github.com/tqdm/pymake")
    (synopsis "Makefile execution powered by pure Python")
    (description "This package provides tools for Makefile execution powered

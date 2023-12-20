@@ -475,14 +475,14 @@ user's @file{~/.local/share/rstudio/r-versions}.")))
                    `("QTWEBENGINEPROCESS_PATH" ":" = (,qtwebengine-path))))
                #t))))))
     (inputs
-     `(("qtbase" ,qtbase-5)
-       ("qtdeclarative" ,qtdeclarative-5)
-       ("qtlocation" ,qtlocation)
-       ("qtsvg" ,qtsvg-5)
-       ("qtsensors" ,qtsensors)
-       ("qtxmlpatterns" ,qtxmlpatterns)
-       ("qtwebchannel" ,qtwebchannel-5)
-       ("qtwebengine" ,qtwebengine-5)
-       ,@(package-inputs rstudio-server)))
+     (modify-inputs (package-inputs rstudio-server)
+       (prepend qtbase-5
+                qtdeclarative-5
+                qtlocation
+                qtsvg-5
+                qtsensors
+                qtxmlpatterns
+                qtwebchannel-5
+                qtwebengine-5)))
     (synopsis "Integrated development environment (IDE) for R (desktop version)")))
 

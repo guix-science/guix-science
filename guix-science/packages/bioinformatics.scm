@@ -147,8 +147,7 @@ from FASTA and FASTQ files.")
    (build-system gnu-build-system)
    (arguments `(#:tests? #f))
    (inputs
-    `(("pcre" ,pcre "bin")
-      ("zlib" ,zlib)))
+    (list `(,pcre "bin") zlib))
    (home-page "https://homes.cs.washington.edu/~dcjones/fastq-tools/")
    (synopsis "Tools to work with FASTQ files")
    (description "This packages provides a collection of small and efficient
@@ -231,7 +230,7 @@ Oxford Nanopore Technologies sequencing data.")
      `(("perl" ,perl) ; Used for a runner script for the Java program.
        ("jdk" ,icedtea-7)))
     (native-inputs
-     `(("unzip" ,unzip)))
+     (list unzip))
     (home-page "http://www.bioinformatics.babraham.ac.uk/projects/fastqc/")
     (synopsis "A quality control tool for high throughput sequence data")
     (description
@@ -524,27 +523,26 @@ bioinformatics file formats, sequence alignment, and more.")
                 (("/usr/bin/env python")
                  (string-append (assoc-ref inputs "python") "/bin/python")))))))))
    (inputs
-    `(("boost" ,boost)
-      ("perl" ,perl)
-      ("bash" ,bash)
-      ("zlib" ,zlib)
-      ("samtools" ,samtools)
-      ("rapidjson" ,rapidjson)
-      ("codemin" ,codemin)
-      ("curl" ,curl)
-      ("xz" ,xz)
-      ("openssl" ,openssl)
-      ("samtools" ,samtools)
-      ("zlib" ,zlib)
-      ("python" ,python)))
+    (list boost
+          perl
+          bash
+          zlib
+          samtools
+          rapidjson
+          codemin
+          curl
+          xz
+          openssl
+          samtools
+          zlib
+          python))
    (native-inputs
     `(("bash" ,bash)
       ("python" ,python-2)
       ("doxygen" ,doxygen)
       ("graphviz" ,graphviz)))
    (propagated-inputs
-    `(("vcftools" ,vcftools)
-      ("htslib" ,htslib)))
+    (list vcftools htslib))
    (native-search-paths (package-native-search-paths perl))
    (home-page "https://github.com/Illumina/strelka")
    (synopsis "Small variant caller")
@@ -616,10 +614,9 @@ added to both callers to further improve precision.")
              #t))
          (delete 'configure))))
     (native-inputs
-     `(("vim" ,vim))) ; for xxd
+     (list vim)) ; for xxd
     (inputs
-     `(("htslib" ,htslib)
-       ("zlib" ,zlib)))
+     (list htslib zlib))
     (home-page "https://github.com/alexdobin/STAR")
     (synopsis "Universal RNA-seq aligner")
     (description
@@ -709,16 +706,9 @@ sequences.")
               (copy-recursively "FusionFilter"
                                 (string-append bin "/FusionFilter"))))))))
    (inputs
-    `(("perl" ,perl)
-      ("samtools" ,samtools)
-      ("coreutils" ,coreutils)
-      ("gzip" ,gzip)))
+    (list perl samtools coreutils gzip))
    (propagated-inputs
-    `(("perl-carp" ,perl-carp)
-      ("perl-pathtools" ,perl-pathtools)
-      ("perl-db-file" ,perl-db-file)
-      ("perl-uri" ,perl-uri)
-      ("perl-set-intervaltree" ,perl-set-intervaltree)))
+    (list perl-carp perl-pathtools perl-db-file perl-uri perl-set-intervaltree))
    (home-page "https://github.com/STAR-Fusion/STAR-Fusion/")
    (synopsis "Fusion detection based on STAR")
    (description "This package provides a component of the Trinity Cancer
@@ -756,7 +746,7 @@ spanning reads to a reference annotation set.")
                (for-each (lambda (file) (install-file file bin))
                          '("primer3_core" "oligotm" "ntdpal"))))))))
     (inputs
-     `(("perl" ,perl)))
+     (list perl))
     (home-page "https://github.com/primer3-org/primer3")
     (synopsis "Tool to design PCR primers")
     (description "Design PCR primers from DNA sequence.  From mispriming
@@ -860,7 +850,7 @@ capabilities.")
                      (string-append
                       gzip " -d " sv-sites
                       " -c > gnomad_v2.1_sv.sites.vcf"))))))))
-   (inputs `(("gzip" ,gzip)))
+   (inputs (list gzip))
    (home-page "https://gnomad.broadinstitute.org")
    (synopsis "gnomAD structural variant sites")
    (description "This package provides in uncompressed version of the gnomAD
@@ -1345,15 +1335,10 @@ bammarkduplicates, bammaskflags, bamrecompress, bamsort, bamtofastq.")
             (system* "perl" "Makefile.PL"
                      (string-append "PREFIX=" (assoc-ref outputs "out"))))))))
    (propagated-inputs
-    `(("bwa" ,bwa)
-      ("samtools" ,samtools)
-      ("biobambam" ,biobambam)))
+    (list bwa samtools biobambam))
    (native-inputs
-    `(("perl-module-install" ,perl-module-install)
-      ("perl-module-build" ,perl-module-build)
-      ("perl-file-sharedir-install" ,perl-file-sharedir-install)
-      ("perl" ,perl)
-      ("perltidy" ,perltidy)))
+    (list perl-module-install perl-module-build perl-file-sharedir-install
+          perl perltidy))
    (home-page "https://github.com/ICGC-TCGA-PanCancer/PCAP-core")
    (synopsis "NGS reference implementations and helper code for the ICGC/TCGA
 Pan-Cancer Analysis Project")
@@ -1376,17 +1361,12 @@ Pan-Cancer Analysis Project")
     ;; Only one test fails.
     (arguments `(#:tests? #f))
     (propagated-inputs
-     `(("htslib" ,htslib)
-       ("which" ,which)))
+     (list htslib which))
     (native-inputs
-     `(("perl-env-path" ,perl-env-path)
-       ("perl-test-most" ,perl-test-most)))
+     (list perl-env-path perl-test-most))
     (inputs
-     `(("bioperl-minimal" ,bioperl-minimal)
-       ("perl-exception-class" ,perl-exception-class)
-       ("perl-file-which" ,perl-file-which)
-       ("perl-moose" ,perl-moose)
-       ("perl-try-tiny" ,perl-try-tiny)))
+     (list bioperl-minimal perl-exception-class perl-file-which perl-moose
+           perl-try-tiny))
     (home-page "http://search.cpan.org/dist/Bio-Pipeline-Comparison")
     (synopsis "Comparative assesment of variant calling (CAVar)")
     (description "")
@@ -1413,15 +1393,10 @@ Pan-Cancer Analysis Project")
             (system* "perl" "Makefile.PL"
                      (string-append "PREFIX=" (assoc-ref outputs "out"))))))))
    (propagated-inputs
-    `(("perl-bio-pipeline-comparison" ,perl-bio-pipeline-comparison)
-      ("perl-const-fast" ,perl-const-fast)
-      ("perl-data-uuid" ,perl-data-uuid)
-      ("perl-datetime" ,perl-datetime)))
+    (list perl-bio-pipeline-comparison perl-const-fast perl-data-uuid
+          perl-datetime))
    (native-inputs
-    `(("perl-module-install" ,perl-module-install)
-      ("perl-module-build" ,perl-module-build)
-      ("perl" ,perl)
-      ("perltidy" ,perltidy)))
+    (list perl-module-install perl-module-build perl perltidy))
    (home-page "https://cancerit.github.io/cgpVcf/")
    (synopsis "Set of common Perl utilities for generating VCF headers")
    (description "This package contains a set of common Perl utilities for
@@ -1493,10 +1468,8 @@ requirements.")
           "14srnq51n98aizdlg6lhzpzdqyjvxf5nfm431qiylvsc9zj29gk1"))))
   (build-system perl-build-system)
   (propagated-inputs
-    `(("perl-acme-damn" ,perl-acme-damn)
-      ("perl-devel-symdump" ,perl-devel-symdump)
-      ("perl-list-moreutils" ,perl-list-moreutils)
-      ("perl-sys-sigaction" ,perl-sys-sigaction)))
+    (list perl-acme-damn perl-devel-symdump perl-list-moreutils
+          perl-sys-sigaction))
   (home-page "http://search.cpan.org/dist/forks")
   (synopsis "forks - emulate threads with fork")
   (description "")
@@ -1518,7 +1491,7 @@ requirements.")
        "03kykdsz3fk5ppb9g92pvnif67zlk501finrwi1csbcizw1js39i"))))
    (build-system perl-build-system)
    (inputs
-    `(("perl-test-exception" ,perl-test-exception)))
+    (list perl-test-exception))
    (home-page "http://search.cpan.org/dist/Acme-Damn")
    (synopsis "'Unbless' Perl objects.")
    (description "")
@@ -1587,23 +1560,23 @@ requirements.")
                (copy-recursively "config" config-dir)
                #t))))))
     (propagated-inputs
-     `(("perl-file-path" ,perl-file-path)
-       ("perl-file-which", perl-file-which)
-       ("perl-const-fast", perl-const-fast)
-       ("perl-capture-tiny", perl-capture-tiny)
-       ("perl-ipc-system-simple", perl-ipc-system-simple)
-       ("perl-try-tiny", perl-try-tiny)
-       ("perl-carp", perl-carp)
-       ("perl-forks", perl-forks)
-       ("perl-attribute-util", perl-attribute-util)
-       ("perl-config-inifiles", perl-config-inifiles)
-       ("perl-set-intervaltree", perl-set-intervaltree)
-       ("perl-libwww", perl-libwww)
-       ("pcap-core" ,pcap-core)
-       ("perl-cgpvcf", perl-cgpvcf)
-       ("perl-bio-db-hts", perl-bio-db-hts)
-       ("bioperl-minimal", bioperl-minimal)
-       ("perl" ,perl)))
+     (list perl-file-path
+           perl-file-which
+           perl-const-fast
+           perl-capture-tiny
+           perl-ipc-system-simple
+           perl-try-tiny
+           perl-carp
+           perl-forks
+           perl-attribute-util
+           perl-config-inifiles
+           perl-set-intervaltree
+           perl-libwww
+           pcap-core
+           perl-cgpvcf
+           perl-bio-db-hts
+           bioperl-minimal
+           perl))
     (home-page "https://github.com/cancerit/cgpCaVEManPostProcessing")
     (synopsis "Flagging add-on to CaVEMan")
     (description "This package is used to apply filtering on raw VCF calls
@@ -1626,7 +1599,7 @@ generated using CaVEMan.")
     (build-system perl-build-system)
     (arguments `(#:tests? #f))
     (propagated-inputs
-     `(("perl-log-message-simple" ,perl-log-message-simple)))
+     (list perl-log-message-simple))
     (home-page "http://search.cpan.org/dist/Term-UI")
     (synopsis "User interfaces via Term::ReadLine made easy")
     (description "")
@@ -1688,9 +1661,7 @@ coverage.")
          "1x252cqzcyxkmf8p5dw34ais47ci1ldv2ds02m7a2ijpryam0jg8"))))
     (build-system perl-build-system)
     (native-inputs
-     `(("perl-module-install" ,perl-module-install)
-       ("perl-module-build" ,perl-module-build)
-       ("perl-file-sharedir-install" ,perl-file-sharedir-install)))
+     (list perl-module-install perl-module-build perl-file-sharedir-install))
     (home-page
      "http://search.cpan.org/dist/Parallel-Iterator")
     (synopsis "Simple parallel execution")
@@ -1754,11 +1725,9 @@ coverage.")
     (arguments
      `(#:tests? #f))
     (propagated-inputs
-     `(("perl-module-install" ,perl-module-install)))
+     (list perl-module-install))
     (inputs
-     `(("perl-css-tiny" ,perl-css-tiny)
-       ("perl-params-util" ,perl-params-util)
-       ("perl-ppi" ,perl-ppi)))
+     (list perl-css-tiny perl-params-util perl-ppi))
     (home-page
      "http://search.cpan.org/dist/PPI-HTML")
     (synopsis
@@ -1815,27 +1784,25 @@ coverage.")
                       (string-append "PREFIX=" (assoc-ref outputs "out")))
              (system* "make"))))))
     (propagated-inputs
-     `(("perl" ,perl)
-       ("pcap-core" ,pcap-core)
-       ("perl-cgpvcf" ,perl-cgpvcf)
-       ("bioperl-minimal" ,bioperl-minimal)
-       ("perl-bio-db-hts" ,perl-bio-db-hts)
-       ("perl-const-fast" ,perl-const-fast)
-       ("perl-file-which" ,perl-file-which)
-       ("perl-pod-coverage" ,perl-pod-coverage)
-       ("perl-list-moreutils" ,perl-list-moreutils)
-       ("perl-test-fatal" ,perl-test-fatal)
-       ("perl-try-tiny" ,perl-try-tiny)
-       ("perl-capture-tiny" ,perl-capture-tiny)
-       ("perl-term-ui" ,perl-term-ui)
-       ("perl-log-message" ,perl-log-message)
-       ("perl-ipc-system-simple" ,perl-ipc-system-simple)
-       ("perl-sub-exporter-progressive" ,perl-sub-exporter-progressive)
-       ("perl-devel-cover" ,perl-devel-cover)))
+     (list perl
+           pcap-core
+           perl-cgpvcf
+           bioperl-minimal
+           perl-bio-db-hts
+           perl-const-fast
+           perl-file-which
+           perl-pod-coverage
+           perl-list-moreutils
+           perl-test-fatal
+           perl-try-tiny
+           perl-capture-tiny
+           perl-term-ui
+           perl-log-message
+           perl-ipc-system-simple
+           perl-sub-exporter-progressive
+           perl-devel-cover))
     (native-inputs
-     `(("perl-module-install" ,perl-module-install)
-       ("perl-module-build" ,perl-module-build)
-       ("perl-file-sharedir-install" ,perl-file-sharedir-install)))
+     (list perl-module-install perl-module-build perl-file-sharedir-install))
     (home-page "https://github.com/cancerit/cgpPindel")
     (synopsis "Cancer Genome Projects workflow for Pindel.")
     (description "")
@@ -1899,7 +1866,7 @@ coverage.")
                                            (assoc-ref inputs "openjdk")
                                            "/lib/security/cacerts"))))))))))
    (inputs
-    `(("openjdk" ,openjdk11)))
+    (list openjdk11))
    (home-page "https://docs.icgc.org/software/download/#score-client")
    (synopsis "Tool to view ICGC data")
    (description "This package provides a tool to download or view data in
@@ -1932,11 +1899,9 @@ the cloud environments of ICGC.")
               (substitute* "configure.ac"
                (("libboost_math_c99.a") "libboost_math_c99.so")))))))
      (native-inputs
-      `(("autoconf" ,autoconf)))
+      (list autoconf))
      (inputs
-      `(("boost" ,boost)
-        ("zlib" ,zlib)
-        ("gsl" ,gsl)))
+      (list boost zlib gsl))
      (home-page "https://github.com/DiltheyLab/MetaMaps")
      (synopsis "Long-read metagenomic analysis")
      (description "MetaMaps is tool specifically developed for the analysis
@@ -2042,10 +2007,9 @@ annotations.")
                 "0az6xiqkbdcq858m1dlwvf7f7pa5fjldckkawcj8a38a2fq9drds"))))
    (build-system gnu-build-system)
    (native-inputs
-    `(("unzip" ,unzip)
-      ("sed" ,sed)))
+    (list unzip sed))
    (inputs
-    `(("zlib" ,zlib)))
+    (list zlib))
    (arguments
     `(#:tests? #f
       #:phases
@@ -2102,9 +2066,7 @@ annotations.")
                 (wrap-program (string-append bin "/CAT")
                  `("PYTHONPATH" ":" = (,share "$PYTHONPATH"))))))))))
    (inputs
-    `(("diamond" ,diamond)
-      ("prodigal" ,prodigal)
-      ("python" ,python)))
+    (list diamond prodigal python))
    (home-page "https://github.com/dutilh/CAT")
    (synopsis "Tool for taxonomic classification of contigs and metagenome-assembled genomes")
    (description "Contig Annotation Tool (CAT) and Bin Annotation Tool (BAT)
@@ -2147,7 +2109,7 @@ be run from intermediate steps if files are formated appropriately")
               (mkdir-p share)
               (install-file "hiddenDomains.R" share)))))))
    (inputs
-    `(("perl" ,perl)))
+    (list perl))
    (propagated-inputs
     `(("r-depmixS4" ,r-depmixs4)
       ("r-hiddenmarkov" ,r-hiddenmarkov)))

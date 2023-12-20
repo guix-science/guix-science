@@ -156,10 +156,8 @@
           (delete 'configure)
           (delete 'build))))
     (inputs
-      `(("node-follow-redirects"
-         ,node-follow-redirects-1.15.2)
-        ("node-requires-port" ,node-requires-port-1.0.0)
-        ("node-eventemitter3" ,node-eventemitter3-4.0.7)))
+      (list node-follow-redirects-1.15.2 node-requires-port-1.0.0
+            node-eventemitter3-4.0.7))
     (home-page
       "https://github.com/http-party/node-http-proxy#readme")
     (synopsis "HTTP proxying for the masses")
@@ -213,7 +211,7 @@
           (delete 'configure)
           (delete 'build))))
     (inputs
-      `(("node-bintrees" ,node-bintrees-1.0.2)))
+      (list node-bintrees-1.0.2))
     (home-page "https://github.com/welch/tdigest")
     (synopsis
       "javascript implementation of Dunning's T-Digest for streaming quantile approximation")
@@ -241,7 +239,7 @@
           %standard-phases
           (delete 'configure)
           (delete 'build))))
-    (inputs `(("node-tdigest" ,node-tdigest-0.1.2)))
+    (inputs (list node-tdigest-0.1.2))
     (home-page
       "https://github.com/siimon/prom-client")
     (synopsis "Client for prometheus")
@@ -295,7 +293,7 @@
           (delete 'configure)
           (delete 'build))))
     (inputs
-      `(("node-color-name" ,node-color-name-1.1.4)))
+      (list node-color-name-1.1.4))
     (home-page
       "https://github.com/Qix-/color-convert#readme")
     (synopsis "Plain color conversion functions")
@@ -378,7 +376,7 @@
           (delete 'configure)
           (delete 'build))))
     (inputs
-      `(("node-is-arrayish" ,node-is-arrayish-0.3.2)))
+      (list node-is-arrayish-0.3.2))
     (home-page
       "https://github.com/qix-/node-simple-swizzle#readme")
     (synopsis "Simply swizzle your arguments")
@@ -406,9 +404,7 @@
           (delete 'configure)
           (delete 'build))))
     (inputs
-      `(("node-simple-swizzle"
-         ,node-simple-swizzle-0.2.2)
-        ("node-color-name" ,node-color-name-1.1.4)))
+      (list node-simple-swizzle-0.2.2 node-color-name-1.1.4))
     (home-page
       "https://github.com/Qix-/color-string#readme")
     (synopsis
@@ -438,8 +434,7 @@
           (delete 'configure)
           (delete 'build))))
     (inputs
-      `(("node-color-string" ,node-color-string-1.9.1)
-        ("node-color-convert" ,node-color-convert-1.9.3)))
+      (list node-color-string-1.9.1 node-color-convert-1.9.3))
     (home-page
       "https://github.com/Qix-/color#readme")
     (synopsis
@@ -497,8 +492,7 @@
           (delete 'configure)
           (delete 'build))))
     (inputs
-      `(("node-text-hex" ,node-text-hex-1.0.0)
-        ("node-color" ,node-color-3.2.1)))
+      (list node-text-hex-1.0.0 node-color-3.2.1))
     (home-page
       "https://github.com/3rd-Eden/colorspace")
     (synopsis
@@ -583,9 +577,7 @@
           (delete 'configure)
           (delete 'build))))
     (inputs
-      `(("node-kuler" ,node-kuler-2.0.0)
-        ("node-enabled" ,node-enabled-2.0.0)
-        ("node-colorspace" ,node-colorspace-1.1.4)))
+      (list node-kuler-2.0.0 node-enabled-2.0.0 node-colorspace-1.1.4))
     (home-page
       "https://github.com/3rd-Eden/diagnostics")
     (synopsis
@@ -670,12 +662,8 @@
           (delete 'configure)
           (delete 'build))))
     (inputs
-      `(("node-triple-beam" ,node-triple-beam-1.3.0)
-        ("node-safe-stable-stringify"
-         ,node-safe-stable-stringify-2.3.1)
-        ("node-ms" ,node-ms-2.1.3)
-        ("node-fecha" ,node-fecha-4.2.3)
-        ("node-colors-colors" ,node-colors-colors-1.5.0)))
+      (list node-triple-beam-1.3.0 node-safe-stable-stringify-2.3.1
+            node-ms-2.1.3 node-fecha-4.2.3 node-colors-colors-1.5.0))
     (home-page
       "https://github.com/winstonjs/logform#readme")
     (synopsis
@@ -729,7 +717,7 @@
           %standard-phases
           (delete 'configure)
           (delete 'build))))
-    (inputs `(("node-fn-name" ,node-fn-name-1.1.0)))
+    (inputs (list node-fn-name-1.1.0))
     (home-page
       "https://github.com/3rd-Eden/one-time#readme")
     (synopsis
@@ -759,11 +747,8 @@
           (delete 'configure)
           (delete 'build))))
     (inputs
-      `(("node-util-deprecate"
-         ,node-util-deprecate-1.0.2)
-        ("node-string-decoder"
-         ,node-string-decoder-1.3.0)
-        ("node-inherits" ,node-inherits-2.0.4)))
+      (list node-util-deprecate-1.0.2 node-string-decoder-1.3.0
+            node-inherits-2.0.4))
     (home-page
       "https://github.com/nodejs/readable-stream#readme")
     (synopsis
@@ -981,7 +966,7 @@
           (delete 'configure)
           (delete 'build))))
     (inputs
-      `(("node-safe-buffer" ,node-safe-buffer-5.2.1)))
+      (list node-safe-buffer-5.2.1))
     (home-page
       "https://github.com/nodejs/string_decoder")
     (synopsis
@@ -1067,10 +1052,8 @@
           (delete 'configure)
           (delete 'build))))
     (inputs
-      `(("node-triple-beam" ,node-triple-beam-1.3.0)
-        ("node-readable-stream"
-         ,node-readable-stream-3.6.0)
-        ("node-logform" ,node-logform-2.4.2)))
+      (list node-triple-beam-1.3.0 node-readable-stream-3.6.0
+            node-logform-2.4.2))
     (home-page
       "https://github.com/winstonjs/winston-transport#readme")
     (synopsis
@@ -1100,21 +1083,17 @@
           (delete 'configure)
           (delete 'build))))
     (inputs
-      `(("node-winston-transport"
-         ,node-winston-transport-4.5.0)
-        ("node-triple-beam" ,node-triple-beam-1.3.0)
-        ("node-stack-trace" ,node-stack-trace-0.0.10)
-        ("node-safe-stable-stringify"
-         ,node-safe-stable-stringify-2.3.1)
-        ("node-readable-stream"
-         ,node-readable-stream-3.6.0)
-        ("node-one-time" ,node-one-time-1.0.0)
-        ("node-logform" ,node-logform-2.4.2)
-        ("node-is-stream" ,node-is-stream-2.0.1)
-        ("node-async" ,node-async-3.2.4)
-        ("node-colors-colors" ,node-colors-colors-1.5.0)
-        ("node-dabh-diagnostics"
-         ,node-dabh-diagnostics-2.0.3)))
+      (list node-winston-transport-4.5.0
+            node-triple-beam-1.3.0
+            node-stack-trace-0.0.10
+            node-safe-stable-stringify-2.3.1
+            node-readable-stream-3.6.0
+            node-one-time-1.0.0
+            node-logform-2.4.2
+            node-is-stream-2.0.1
+            node-async-3.2.4
+            node-colors-colors-1.5.0
+            node-dabh-diagnostics-2.0.3))
     (home-page
       "https://github.com/winstonjs/winston#readme")
     (synopsis "A logger for just about everything.")
@@ -1143,11 +1122,8 @@
           (delete 'configure)
           (delete 'build))))
     (inputs
-      `(("node-winston" ,node-winston-3.8.2)
-        ("node-strftime" ,node-strftime-0.10.1)
-        ("node-prom-client" ,node-prom-client-14.1.0)
-        ("node-http-proxy" ,node-http-proxy-1.18.1)
-        ("node-commander" ,node-commander-7.2.0)))
+      (list node-winston-3.8.2 node-strftime-0.10.1 node-prom-client-14.1.0
+            node-http-proxy-1.18.1 node-commander-7.2.0))
     (home-page
       "https://github.com/jupyterhub/configurable-http-proxy#readme")
     (synopsis "A configurable-on-the-fly HTTP Proxy")

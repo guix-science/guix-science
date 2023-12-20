@@ -209,12 +209,9 @@ contributing code.")
      (arguments
       `(#:tests? #f))
      (native-inputs
-      `(("autoconf" ,autoconf)
-        ("automake" ,automake)
-        ("pkg-config" ,pkg-config)))
+      (list autoconf automake pkg-config))
      (inputs
-      `(("slurm" ,slurm)
-        ("guile" ,guile-3.0)))
+      (list slurm guile-3.0))
      (home-page "https://github.com/roelj/qsub-slurm")
      (synopsis "Compatibility tool to move from SGE to SLURM.")
      (description "This package an alternative @code{qsub} command that
@@ -238,12 +235,9 @@ will submit jobs to SLURM.")
      (arguments
       `(#:tests? #f))
      (native-inputs
-      `(("autoconf" ,autoconf)
-        ("automake" ,automake)
-        ("pkg-config" ,pkg-config)))
+      (list autoconf automake pkg-config))
      (inputs
-      `(("bash" ,bash)
-        ("guile" ,guile-3.0)))
+      (list bash guile-3.0))
      (home-page "https://github.com/roelj/qsub-local")
      (synopsis "Compatibility tool to run SGE pipelines locally.")
      (description "This package an alternative @code{qsub} command that

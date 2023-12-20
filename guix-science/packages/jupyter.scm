@@ -220,8 +220,7 @@ based on the Jupyter Notebook and Architecture.")
     (arguments
      `(#:tests? #f))
     (propagated-inputs
-     `(("python-jupyterhub" ,python-jupyterhub)
-       ("python-pamela" ,python-pamela)))
+     (list python-jupyterhub python-pamela))
     (home-page "http://jupyter.org")
     (synopsis "Add-on for Jupyterhub to spawn notebooks using batch systems")
     (description
@@ -241,10 +240,8 @@ batch resource managers.")
                 "052khyn6h97jxl3k5i2m81xvga5v6vwh5qixzrax4w6zwcx62p24"))))
     (build-system python-build-system)
     (propagated-inputs
-     `(("python-json-logger" ,python-json-logger)
-       ("python-jsonschema" ,python-jsonschema)
-       ("python-ruamel.yaml" ,python-ruamel.yaml)
-       ("python-traitlets" ,python-traitlets)))
+     (list python-json-logger python-jsonschema python-ruamel.yaml
+           python-traitlets))
     (home-page "https://jupyter.org/")
     (synopsis "Jupyter telemetry library")
     (description "Jupyter telemetry library")
@@ -263,11 +260,8 @@ batch resource managers.")
                 "12xby5j7wmi6qsbb2fjd5qbckkcg5fmdij8qpc9n7ci8vfxq303m"))))
     (build-system python-build-system)
     (propagated-inputs
-     `(("python-jupyterhub" ,python-jupyterhub)
-       ("python-jupyter-telemetry" ,python-jupyter-telemetry)
-       ("python-ldap3" ,python-ldap3)
-       ("python-tornado" ,python-tornado-6)
-       ("python-traitlets" ,python-traitlets)))
+     (list python-jupyterhub python-jupyter-telemetry python-ldap3
+           python-tornado-6 python-traitlets))
     (home-page "https://github.com/yuvipanda/ldapauthenticator")
     (synopsis "LDAP Authenticator for JupyterHub")
     (description "LDAP Authenticator for JupyterHub")
@@ -285,9 +279,7 @@ batch resource managers.")
                (base32
                 "1fqlzg06mpglfgkrh9117sx3dj4b2y3xqh476q89533j9v98qqyr"))))
     (inputs
-     `(("jupyter" ,jupyter)
-       ("python-tornado" ,python-tornado)
-       ("python-jupyterhub" ,python-jupyterhub)))
+     (list jupyter python-tornado python-jupyterhub))
     (build-system python-build-system)
     (home-page "https://github.com/jupyterhub/wrapspawner")
     (synopsis "Wrapspawner for JupyterHub")

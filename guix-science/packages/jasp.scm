@@ -120,44 +120,44 @@
                    (,(string-append out "/site-library:" (getenv "R_LIBS_SITE"))))))
              #t)))))
     (native-inputs
-     `(("qtbase" ,qtbase-5)))             ; qmake
+     (list qtbase-5))             ; qmake
     (inputs
-     `(("qtwebengine" ,qtwebengine-5)
-       ("qtsvg" ,qtsvg-5)
-       ("qtwebchannel" ,qtwebchannel-5)
-       ("qtquickcontrols" ,qtquickcontrols-5) ; qtquick styles
-       ("qtquickcontrols2" ,qtquickcontrols2-5)
-       ("qtdeclarative" ,qtdeclarative-5)
-       ("qtgraphicaleffects" ,qtgraphicaleffects)
-       ("boost" ,boost)
-       ("libarchive" ,libarchive)
-       ("zlib" ,zlib)
-       ("readstat" ,readstat)
-       ("r-minimal" ,r-minimal)
-       ("r-rcpp" ,r-rcpp)
-       ("r-kknn" ,r-kknn)
-       ;; Required to build JASPgraphs.
-       ("r-ggplot2" ,r-ggplot2)
-       ("r-gridextra" ,r-gridextra)
-       ("r-scales" ,r-scales)
-       ("r-gtable" ,r-gtable)
-       ("r-jsonlite" ,r-jsonlite)
-       ("r-r6" ,r-r6)
-       ("r-rcolorbrewer" ,r-rcolorbrewer)
-       ("r-rlang" ,r-rlang)
-       ("r-scales" ,r-scales)
-       ("r-stringr" ,r-stringr)
-       ("r-viridislite" ,r-viridislite)
-       ;; Runtime deps.
-       ("r-rjson" ,r-rjson)
-       ("r-hypergeo" ,r-hypergeo)
-       ("r-logspline" ,r-logspline)
-       ("r-effects" ,r-effects)
-       ("r-car" ,r-car)
-       ("r-afex" ,r-afex)
-       ("r-lme4" ,r-lme4)
-       ("r-bayesfactor" ,r-bayesfactor)
-       ("r-lmtest" ,r-lmtest)))
+     (list qtwebengine-5
+           qtsvg-5
+           qtwebchannel-5
+           qtquickcontrols-5 ; qtquick styles
+           qtquickcontrols2-5
+           qtdeclarative-5
+           qtgraphicaleffects
+           boost
+           libarchive
+           zlib
+           readstat
+           r-minimal
+           r-rcpp
+           r-kknn
+           ;; Required to build JASPgraphs.
+           r-ggplot2
+           r-gridextra
+           r-scales
+           r-gtable
+           r-jsonlite
+           r-r6
+           r-rcolorbrewer
+           r-rlang
+           r-scales
+           r-stringr
+           r-viridislite
+           ;; Runtime deps.
+           r-rjson
+           r-hypergeo
+           r-logspline
+           r-effects
+           r-car
+           r-afex
+           r-lme4
+           r-bayesfactor
+           r-lmtest))
     (home-page "https://jasp-stats.org/")
     (synopsis "Statistical package for Bayesian and Frequentist statistical
 methods")

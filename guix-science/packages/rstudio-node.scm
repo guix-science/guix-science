@@ -87,8 +87,7 @@
                                              "eslint-plugin-standard"
                                              "mocha"
                                              "nyc")))))))
-    (inputs `(("node-negotiator" ,node-negotiator-0.6.3)
-              ("node-mime-types" ,node-mime-types-2.1.35)))
+    (inputs (list node-negotiator-0.6.3 node-mime-types-2.1.35))
     (home-page "https://github.com/jshttp/accepts#readme")
     (synopsis "Higher-level content negotiation")
     (description "Higher-level content negotiation")
@@ -146,7 +145,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("chai" "mocha")))))))
-    (inputs `(("node-acorn" ,node-acorn-5.7.4)))
+    (inputs (list node-acorn-5.7.4))
     (home-page "https://github.com/RReverser/acorn-jsx")
     (synopsis "Alternative, faster React.js JSX parser")
     (description "Alternative, faster React.js JSX parser")
@@ -190,7 +189,7 @@
                                              "semver"
                                              "typescript"
                                              "ws")))))))
-    (inputs `(("node-debug" ,node-debug-4.3.4)))
+    (inputs (list node-debug-4.3.4))
     (home-page "https://github.com/TooTallNate/node-agent-base#readme")
     (synopsis "Turn a function into an `http.Agent` instance")
     (description "Turn a function into an `http.Agent` instance")
@@ -217,8 +216,7 @@
                       (delete-dependencies '("body-parser" "express" "grunt"
                                              "grunt-contrib-jshint"
                                              "serve-static")))))))
-    (inputs `(("node-utils-extend" ,node-utils-extend-1.0.8)
-              ("node-file-system" ,node-file-system-2.2.2)))
+    (inputs (list node-utils-extend-1.0.8 node-file-system-2.2.2))
     (home-page "https://github.com/douzi8/ajax-request#readme")
     (synopsis "Http request for nodejs, and it also support file download")
     (description "Http request for nodejs, and it also support file download")
@@ -266,10 +264,9 @@
                                              "typescript"
                                              "uglify-js"
                                              "watch")))))))
-    (inputs `(("node-uri-js" ,node-uri-js-4.4.1)
-              ("node-json-schema-traverse" ,node-json-schema-traverse-0.4.1)
-              ("node-fast-json-stable-stringify" ,node-fast-json-stable-stringify-2.1.0)
-              ("node-fast-deep-equal" ,node-fast-deep-equal-3.1.3)))
+    (inputs (list node-uri-js-4.4.1 node-json-schema-traverse-0.4.1
+                  node-fast-json-stable-stringify-2.1.0
+                  node-fast-deep-equal-3.1.3))
     (home-page "https://github.com/ajv-validator/ajv")
     (synopsis "Another JSON Schema Validator")
     (description "Another JSON Schema Validator")
@@ -387,7 +384,7 @@
                     (lambda _
                       (delete-dependencies '("ava" "babel-polyfill"
                                              "svg-term-cli" "xo")))))))
-    (inputs `(("node-color-convert" ,node-color-convert-1.9.3)))
+    (inputs (list node-color-convert-1.9.3))
     (home-page "https://github.com/chalk/ansi-styles#readme")
     (synopsis "ANSI escape codes for styling strings in the terminal")
     (description "ANSI escape codes for styling strings in the terminal")
@@ -413,7 +410,7 @@
                     (lambda _
                       (delete-dependencies '("@types/color-convert" "ava"
                                              "svg-term-cli" "tsd" "xo")))))))
-    (inputs `(("node-color-convert" ,node-color-convert-2.0.1)))
+    (inputs (list node-color-convert-2.0.1))
     (home-page "https://github.com/chalk/ansi-styles#readme")
     (synopsis "ANSI escape codes for styling strings in the terminal")
     (description "ANSI escape codes for styling strings in the terminal")
@@ -437,8 +434,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("coveralls" "istanbul" "mocha")))))))
-    (inputs `(("node-normalize-path" ,node-normalize-path-2.1.1)
-              ("node-micromatch" ,node-micromatch-2.3.11)))
+    (inputs (list node-normalize-path-2.1.1 node-micromatch-2.3.11))
     (home-page "https://github.com/es128/anymatch")
     (synopsis
      "Matches strings against configurable strings, globs, regular expressions, and/or functions")
@@ -559,8 +555,7 @@
                       (delete-dependencies '("@npmcli/eslint-config"
                                              "@npmcli/template-oss" "eslint"
                                              "eslint-plugin-node" "tap")))))))
-    (inputs `(("node-readable-stream" ,node-readable-stream-3.6.2)
-              ("node-delegates" ,node-delegates-1.0.0)))
+    (inputs (list node-readable-stream-3.6.2 node-delegates-1.0.0))
     (home-page "https://github.com/npm/are-we-there-yet")
     (synopsis
      "Keep track of the overall completion of many disparate processes")
@@ -613,7 +608,7 @@
                       (delete-dependencies '("array-differ" "array-slice"
                                              "benchmarked" "chalk" "mocha"
                                              "should")))))))
-    (inputs `(("node-arr-flatten" ,node-arr-flatten-1.1.0)))
+    (inputs (list node-arr-flatten-1.1.0))
     (home-page "https://github.com/jonschlinkert/arr-diff")
     (synopsis
      "Returns an array with only the unique values from the first array, by excluding all values from additional arrays using strict equality for comparisons.")
@@ -819,7 +814,7 @@
                     (lambda _
                       (delete-dependencies '("istanbul" "faucet" "tape"
                                              "eslint" "eslint-plugin-joyent")))))))
-    (inputs `(("node-safer-buffer" ,node-safer-buffer-2.1.2)))
+    (inputs (list node-safer-buffer-2.1.2))
     (home-page "https://github.com/joyent/node-asn1#readme")
     (synopsis
      "Contains parsers and serializers for ASN.1 (currently BER only)")
@@ -1022,7 +1017,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("strip-ansi")))))))
-    (inputs `(("node-babel-highlight" ,node-babel-highlight-7.22.5)))
+    (inputs (list node-babel-highlight-7.22.5))
     (home-page "https://babel.dev/docs/en/next/babel-code-frame")
     (synopsis
      "Generate errors that contain a code frame that point to source locations.")
@@ -1049,7 +1044,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("@babel/core" "@babel/traverse")))))))
-    (inputs `(("node-babel-types" ,node-babel-types-7.22.5)))
+    (inputs (list node-babel-types-7.22.5))
     (home-page "https://babel.dev/docs/en/next/babel-helper-module-imports")
     (synopsis "Babel helper functions for inserting module loads")
     (description "Babel helper functions for inserting module loads")
@@ -1124,9 +1119,8 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("@types/chalk" "strip-ansi")))))))
-    (inputs `(("node-js-tokens" ,node-js-tokens-4.0.0)
-              ("node-chalk" ,node-chalk-2.4.2)
-              ("node-babel-helper-validator-identifier" ,node-babel-helper-validator-identifier-7.22.5)))
+    (inputs (list node-js-tokens-4.0.0 node-chalk-2.4.2
+                  node-babel-helper-validator-identifier-7.22.5))
     (home-page "https://babel.dev/docs/en/next/babel-highlight")
     (synopsis "Syntax highlight JavaScript strings for output in terminals.")
     (description
@@ -1153,18 +1147,18 @@
                     (lambda _
                       (delete-dependencies '("babel-check-duplicated-nodes"
                                              "babel-core")))))))
-    (inputs `(("node-touch" ,node-touch-2.0.2)
-              ("node-source-map" ,node-source-map-0.5.7)
-              ("node-mkdirp" ,node-mkdirp-0.5.6)
-              ("node-find-root" ,node-find-root-1.1.0)
-              ("node-convert-source-map" ,node-convert-source-map-1.9.0)
-              ("node-babel-plugin-syntax-jsx" ,node-babel-plugin-syntax-jsx-6.18.0)
-              ("node-babel-plugin-macros" ,node-babel-plugin-macros-2.8.0)
-              ("node-emotion-stylis" ,node-emotion-stylis-0.7.1)
-              ("node-emotion-memoize" ,node-emotion-memoize-0.6.6)
-              ("node-emotion-hash" ,node-emotion-hash-0.6.6)
-              ("node-emotion-babel-utils" ,node-emotion-babel-utils-0.6.10)
-              ("node-babel-helper-module-imports" ,node-babel-helper-module-imports-7.22.5)))
+    (inputs (list node-touch-2.0.2
+                  node-source-map-0.5.7
+                  node-mkdirp-0.5.6
+                  node-find-root-1.1.0
+                  node-convert-source-map-1.9.0
+                  node-babel-plugin-syntax-jsx-6.18.0
+                  node-babel-plugin-macros-2.8.0
+                  node-emotion-stylis-0.7.1
+                  node-emotion-memoize-0.6.6
+                  node-emotion-hash-0.6.6
+                  node-emotion-babel-utils-0.6.10
+                  node-babel-helper-module-imports-7.22.5))
     (home-page "https://emotion.sh")
     (synopsis
      "A recommended babel preprocessing plugin for emotion, The Next Generation of CSS-in-JS.")
@@ -1197,9 +1191,8 @@
                                              "babel-plugin-transform-es2015-modules-commonjs"
                                              "cpy"
                                              "kcd-scripts")))))))
-    (inputs `(("node-resolve" ,node-resolve-1.22.3)
-              ("node-cosmiconfig" ,node-cosmiconfig-6.0.0)
-              ("node-babel-runtime" ,node-babel-runtime-7.22.5)))
+    (inputs (list node-resolve-1.22.3 node-cosmiconfig-6.0.0
+                  node-babel-runtime-7.22.5))
     (home-page "https://github.com/kentcdodds/babel-plugin-macros#readme")
     (synopsis "Allows you to build compile-time libraries")
     (description "Allows you to build compile-time libraries")
@@ -1230,9 +1223,8 @@
                                              "babel-plugin-transform-es2015-modules-commonjs"
                                              "cpy"
                                              "kcd-scripts")))))))
-    (inputs `(("node-resolve" ,node-resolve-1.22.3)
-              ("node-cosmiconfig" ,node-cosmiconfig-7.1.0)
-              ("node-babel-runtime" ,node-babel-runtime-7.22.5)))
+    (inputs (list node-resolve-1.22.3 node-cosmiconfig-7.1.0
+                  node-babel-runtime-7.22.5))
     (home-page "https://github.com/kentcdodds/babel-plugin-macros#readme")
     (synopsis "Allows you to build compile-time libraries")
     (description "Allows you to build compile-time libraries")
@@ -1279,8 +1271,7 @@
                     (lambda _
                       (delete-dependencies '("babel-helpers"
                                              "babel-plugin-transform-runtime")))))))
-    (inputs `(("node-regenerator-runtime" ,node-regenerator-runtime-0.11.1)
-              ("node-core-js" ,node-core-js-2.6.12)))
+    (inputs (list node-regenerator-runtime-0.11.1 node-core-js-2.6.12))
     (home-page "https://www.npmjs.com/package/node-babel-runtime")
     (synopsis "babel selfContained runtime")
     (description "babel selfContained runtime")
@@ -1302,7 +1293,7 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-regenerator-runtime" ,node-regenerator-runtime-0.13.11)))
+    (inputs (list node-regenerator-runtime-0.13.11))
     (home-page "https://babel.dev/docs/en/next/babel-runtime")
     (synopsis "babel's modular runtime helpers")
     (description "babel's modular runtime helpers")
@@ -1324,8 +1315,7 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-regenerator-runtime" ,node-regenerator-runtime-0.13.11)
-              ("node-core-js-pure" ,node-core-js-pure-3.30.2)))
+    (inputs (list node-regenerator-runtime-0.13.11 node-core-js-pure-3.30.2))
     (home-page "https://www.npmjs.com/package/node-babel-runtime-corejs3")
     (synopsis "babel's modular runtime helpers with core-js@@3 polyfilling")
     (description "babel's modular runtime helpers with core-js@@3 polyfilling")
@@ -1351,9 +1341,9 @@
                     (lambda _
                       (delete-dependencies '("@babel/generator"
                                              "@babel/parser" "chalk" "glob")))))))
-    (inputs `(("node-to-fast-properties" ,node-to-fast-properties-2.0.0)
-              ("node-babel-helper-validator-identifier" ,node-babel-helper-validator-identifier-7.22.5)
-              ("node-babel-helper-string-parser" ,node-babel-helper-string-parser-7.22.5)))
+    (inputs (list node-to-fast-properties-2.0.0
+                  node-babel-helper-validator-identifier-7.22.5
+                  node-babel-helper-string-parser-7.22.5))
     (home-page "https://babel.dev/docs/en/next/babel-types")
     (synopsis "Babel Types is a Lodash-esque utility library for AST nodes")
     (description "Babel Types is a Lodash-esque utility library for AST nodes")
@@ -1409,13 +1399,13 @@
                                              "should"
                                              "through2"
                                              "verb-generate-readme")))))))
-    (inputs `(("node-pascalcase" ,node-pascalcase-0.1.1)
-              ("node-mixin-deep" ,node-mixin-deep-1.3.2)
-              ("node-isobject" ,node-isobject-3.0.1)
-              ("node-define-property" ,node-define-property-1.0.0)
-              ("node-component-emitter" ,node-component-emitter-1.3.0)
-              ("node-class-utils" ,node-class-utils-0.3.6)
-              ("node-cache-base" ,node-cache-base-1.0.1)))
+    (inputs (list node-pascalcase-0.1.1
+                  node-mixin-deep-1.3.2
+                  node-isobject-3.0.1
+                  node-define-property-1.0.0
+                  node-component-emitter-1.3.0
+                  node-class-utils-0.3.6
+                  node-cache-base-1.0.1))
     (home-page "https://github.com/node-base/base")
     (synopsis
      "base is the foundation for creating modular, unit testable and highly pluggable node.js applications, starting with a handful of common methods, like `set`, `get`, `del` and `use`.")
@@ -1470,8 +1460,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("grunt" "grunt-contrib-jshint")))))))
-    (inputs `(("node-file-system" ,node-file-system-2.2.2)
-              ("node-ajax-request" ,node-ajax-request-1.2.3)))
+    (inputs (list node-file-system-2.2.2 node-ajax-request-1.2.3))
     (home-page "https://github.com/douzi8/base64-img")
     (synopsis "Convert img or svg to base64, or convert base64 to img")
     (description "Convert img or svg to base64, or convert base64 to img")
@@ -1518,7 +1507,7 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-tweetnacl" ,node-tweetnacl-0.14.5)))
+    (inputs (list node-tweetnacl-0.14.5))
     (home-page "https://github.com/joyent/node-bcrypt-pbkdf#readme")
     (synopsis "Port of the OpenBSD bcrypt_pbkdf function to pure JS")
     (description "Port of the OpenBSD bcrypt_pbkdf function to pure JS")
@@ -1573,7 +1562,7 @@
                                              "tslib"
                                              "typescript"
                                              "updates")))))))
-    (inputs `(("node-xregexp" ,node-xregexp-5.1.1)))
+    (inputs (list node-xregexp-5.1.1))
     (home-page "https://github.com/fiduswriter/biblatex-csl-converter#readme")
     (synopsis
      "a set of converters: biblatex => json, json => biblatex, json => CSL")
@@ -1637,18 +1626,18 @@
                                              "nyc"
                                              "safe-buffer"
                                              "supertest")))))))
-    (inputs `(("node-unpipe" ,node-unpipe-1.0.0)
-              ("node-type-is" ,node-type-is-1.6.18)
-              ("node-raw-body" ,node-raw-body-2.5.1)
-              ("node-qs" ,node-qs-6.11.0)
-              ("node-on-finished" ,node-on-finished-2.4.1)
-              ("node-iconv-lite" ,node-iconv-lite-0.4.24)
-              ("node-http-errors" ,node-http-errors-2.0.0)
-              ("node-destroy" ,node-destroy-1.2.0)
-              ("node-depd" ,node-depd-2.0.0)
-              ("node-debug" ,node-debug-2.6.9)
-              ("node-content-type" ,node-content-type-1.0.5)
-              ("node-bytes" ,node-bytes-3.1.2)))
+    (inputs (list node-unpipe-1.0.0
+                  node-type-is-1.6.18
+                  node-raw-body-2.5.1
+                  node-qs-6.11.0
+                  node-on-finished-2.4.1
+                  node-iconv-lite-0.4.24
+                  node-http-errors-2.0.0
+                  node-destroy-1.2.0
+                  node-depd-2.0.0
+                  node-debug-2.6.9
+                  node-content-type-1.0.5
+                  node-bytes-3.1.2))
     (home-page "https://github.com/expressjs/body-parser#readme")
     (synopsis "Node.js body parsing middleware")
     (description "Node.js body parsing middleware")
@@ -1751,8 +1740,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("matcha" "tape")))))))
-    (inputs `(("node-concat-map" ,node-concat-map-0.0.1)
-              ("node-balanced-match" ,node-balanced-match-1.0.2)))
+    (inputs (list node-concat-map-0.0.1 node-balanced-match-1.0.2))
     (home-page "https://github.com/juliangruber/brace-expansion")
     (synopsis "Brace expansion as known from sh/bash")
     (description "Brace expansion as known from sh/bash")
@@ -1782,9 +1770,8 @@
                                              "minimist"
                                              "mocha"
                                              "should")))))))
-    (inputs `(("node-repeat-element" ,node-repeat-element-1.1.4)
-              ("node-preserve" ,node-preserve-0.2.0)
-              ("node-expand-range" ,node-expand-range-1.8.2)))
+    (inputs (list node-repeat-element-1.1.4 node-preserve-0.2.0
+                  node-expand-range-1.8.2))
     (home-page "https://github.com/jonschlinkert/braces")
     (synopsis
      "Fastest brace expansion for node.js, with the most complete support for the Bash 4.3 braces specification.")
@@ -1825,16 +1812,16 @@
                                              "text-table"
                                              "time-diff"
                                              "yargs-parser")))))))
-    (inputs `(("node-to-regex" ,node-to-regex-3.0.2)
-              ("node-split-string" ,node-split-string-3.1.0)
-              ("node-snapdragon-node" ,node-snapdragon-node-2.1.1)
-              ("node-snapdragon" ,node-snapdragon-0.8.2)
-              ("node-repeat-element" ,node-repeat-element-1.1.4)
-              ("node-isobject" ,node-isobject-3.0.1)
-              ("node-fill-range" ,node-fill-range-4.0.0)
-              ("node-extend-shallow" ,node-extend-shallow-2.0.1)
-              ("node-array-unique" ,node-array-unique-0.3.2)
-              ("node-arr-flatten" ,node-arr-flatten-1.1.0)))
+    (inputs (list node-to-regex-3.0.2
+                  node-split-string-3.1.0
+                  node-snapdragon-node-2.1.1
+                  node-snapdragon-0.8.2
+                  node-repeat-element-1.1.4
+                  node-isobject-3.0.1
+                  node-fill-range-4.0.0
+                  node-extend-shallow-2.0.1
+                  node-array-unique-0.3.2
+                  node-arr-flatten-1.1.0))
     (home-page "https://github.com/micromatch/braces")
     (synopsis
      "Bash-like brace expansion, implemented in JavaScript. Safer than other brace expansion libs, with complete support for the Bash 4.3 braces specification, without sacrificing speed.")
@@ -1887,7 +1874,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("mocha" "node-gyp" "prebuildify")))))))
-    (inputs `(("node-node-gyp-build" ,node-node-gyp-build-4.6.0)))
+    (inputs (list node-node-gyp-build-4.6.0))
     (home-page "https://github.com/websockets/bufferutil")
     (synopsis "WebSocket buffer utils")
     (description "WebSocket buffer utils")
@@ -1936,15 +1923,15 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha")))))))
-    (inputs `(("node-unset-value" ,node-unset-value-1.0.0)
-              ("node-union-value" ,node-union-value-1.0.1)
-              ("node-to-object-path" ,node-to-object-path-0.3.0)
-              ("node-set-value" ,node-set-value-2.0.1)
-              ("node-isobject" ,node-isobject-3.0.1)
-              ("node-has-value" ,node-has-value-1.0.0)
-              ("node-get-value" ,node-get-value-2.0.6)
-              ("node-component-emitter" ,node-component-emitter-1.3.0)
-              ("node-collection-visit" ,node-collection-visit-1.0.0)))
+    (inputs (list node-unset-value-1.0.0
+                  node-union-value-1.0.1
+                  node-to-object-path-0.3.0
+                  node-set-value-2.0.1
+                  node-isobject-3.0.1
+                  node-has-value-1.0.0
+                  node-get-value-2.0.6
+                  node-component-emitter-1.3.0
+                  node-collection-visit-1.0.0))
     (home-page "https://github.com/jonschlinkert/cache-base")
     (synopsis
      "Basic object cache with `get`, `set`, `del`, and `has` methods for node.js/javascript projects.")
@@ -1976,8 +1963,7 @@
                                              "nyc"
                                              "safe-publish-latest"
                                              "tape")))))))
-    (inputs `(("node-get-intrinsic" ,node-get-intrinsic-1.2.1)
-              ("node-function-bind" ,node-function-bind-1.1.1)))
+    (inputs (list node-get-intrinsic-1.2.1 node-function-bind-1.1.1))
     (home-page "https://github.com/ljharb/call-bind#readme")
     (synopsis "Robustly `.call.bind()` a function")
     (description "Robustly `.call.bind()` a function")
@@ -2077,7 +2063,7 @@
                                              "rollup"
                                              "rollup-plugin-commonjs"
                                              "rollup-plugin-node-resolve")))))))
-    (inputs `(("node-inspector-gadget" ,node-inspector-gadget-1.0.0)))
+    (inputs (list node-inspector-gadget-1.0.0))
     (home-page "https://github.com/fluents/chain-able#readme")
     (synopsis "next level chaining.")
     (description "next level chaining.")
@@ -2165,9 +2151,8 @@
                                              "resolve-from"
                                              "typescript"
                                              "xo")))))))
-    (inputs `(("node-supports-color" ,node-supports-color-5.5.0)
-              ("node-escape-string-regexp" ,node-escape-string-regexp-1.0.5)
-              ("node-ansi-styles" ,node-ansi-styles-3.2.1)))
+    (inputs (list node-supports-color-5.5.0 node-escape-string-regexp-1.0.5
+                  node-ansi-styles-3.2.1))
     (home-page "https://github.com/chalk/chalk#readme")
     (synopsis "Terminal string styling done right")
     (description "Terminal string styling done right")
@@ -2220,14 +2205,14 @@
                                              "rimraf"
                                              "sinon"
                                              "sinon-chai")))))))
-    (inputs `(("node-readdirp" ,node-readdirp-2.2.1)
-              ("node-path-is-absolute" ,node-path-is-absolute-1.0.1)
-              ("node-is-glob" ,node-is-glob-2.0.1)
-              ("node-is-binary-path" ,node-is-binary-path-1.0.1)
-              ("node-inherits" ,node-inherits-2.0.4)
-              ("node-glob-parent" ,node-glob-parent-2.0.0)
-              ("node-async-each" ,node-async-each-1.0.6)
-              ("node-anymatch" ,node-anymatch-1.3.2)))
+    (inputs (list node-readdirp-2.2.1
+                  node-path-is-absolute-1.0.1
+                  node-is-glob-2.0.1
+                  node-is-binary-path-1.0.1
+                  node-inherits-2.0.4
+                  node-glob-parent-2.0.0
+                  node-async-each-1.0.6
+                  node-anymatch-1.3.2))
     (home-page "https://github.com/paulmillr/chokidar")
     (synopsis
      "A neat wrapper around node.js fs.watch / fs.watchFile / fsevents.")
@@ -2283,10 +2268,8 @@
                                              "mocha"
                                              "should"
                                              "through2")))))))
-    (inputs `(("node-static-extend" ,node-static-extend-0.1.2)
-              ("node-isobject" ,node-isobject-3.0.1)
-              ("node-define-property" ,node-define-property-0.2.5)
-              ("node-arr-union" ,node-arr-union-3.1.0)))
+    (inputs (list node-static-extend-0.1.2 node-isobject-3.0.1
+                  node-define-property-0.2.5 node-arr-union-3.1.0))
     (home-page "https://github.com/jonschlinkert/class-utils")
     (synopsis
      "Utils for working with JavaScript classes and prototype methods.")
@@ -2318,7 +2301,7 @@
                                              "server-destroy"
                                              "uglify-js"
                                              "vows")))))))
-    (inputs `(("node-source-map" ,node-source-map-0.6.1)))
+    (inputs (list node-source-map-0.6.1))
     (home-page "https://github.com/jakubpawlowicz/clean-css")
     (synopsis "A well-tested CSS minifier")
     (description "A well-tested CSS minifier")
@@ -2343,7 +2326,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("ava" "xo")))))))
-    (inputs `(("node-restore-cursor" ,node-restore-cursor-2.0.0)))
+    (inputs (list node-restore-cursor-2.0.0))
     (home-page "https://github.com/sindresorhus/cli-cursor#readme")
     (synopsis "Toggle the CLI cursor")
     (description "Toggle the CLI cursor")
@@ -2419,9 +2402,8 @@
                                              "uglifyjs-webpack-plugin"
                                              "webpack"
                                              "webpack-cli")))))))
-    (inputs `(("node-tiny-emitter" ,node-tiny-emitter-2.1.0)
-              ("node-select" ,node-select-1.1.2)
-              ("node-good-listener" ,node-good-listener-1.2.2)))
+    (inputs (list node-tiny-emitter-2.1.0 node-select-1.1.2
+                  node-good-listener-1.2.2))
     (home-page "https://clipboardjs.com")
     (synopsis "Modern copy to clipboard. No Flash. Just 2kb")
     (description "Modern copy to clipboard. No Flash. Just 2kb")
@@ -2490,9 +2472,8 @@
                                              "rollup-plugin-ts"
                                              "standardx"
                                              "typescript")))))))
-    (inputs `(("node-wrap-ansi" ,node-wrap-ansi-7.0.0)
-              ("node-strip-ansi" ,node-strip-ansi-6.0.1)
-              ("node-string-width" ,node-string-width-4.2.3)))
+    (inputs (list node-wrap-ansi-7.0.0 node-strip-ansi-6.0.1
+                  node-string-width-4.2.3))
     (home-page "https://github.com/yargs/cliui#readme")
     (synopsis "easily create complex multi-column command-line-interfaces")
     (description "easily create complex multi-column command-line-interfaces")
@@ -2522,8 +2503,7 @@
                                              "gulp-istanbul"
                                              "gulp-mocha"
                                              "mocha")))))))
-    (inputs `(("node-object-visit" ,node-object-visit-1.0.1)
-              ("node-map-visit" ,node-map-visit-1.0.0)))
+    (inputs (list node-object-visit-1.0.1 node-map-visit-1.0.0))
     (home-page "https://github.com/jonschlinkert/collection-visit")
     (synopsis
      "Visit a method over the items in an object, or map visit over the objects in an array.")
@@ -2575,7 +2555,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("chalk" "xo")))))))
-    (inputs `(("node-color-name" ,node-color-name-1.1.4)))
+    (inputs (list node-color-name-1.1.4))
     (home-page "https://github.com/Qix-/color-convert#readme")
     (synopsis "Plain color conversion functions")
     (description "Plain color conversion functions")
@@ -2650,7 +2630,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("far")))))))
-    (inputs `(("node-delayed-stream" ,node-delayed-stream-1.0.0)))
+    (inputs (list node-delayed-stream-1.0.0))
     (home-page "https://github.com/felixge/node-combined-stream")
     (synopsis "A stream that emits multiple other streams one after another.")
     (description
@@ -2676,7 +2656,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("should")))))))
-    (inputs `(("node-keypress" ,node-keypress-0.1.0)))
+    (inputs (list node-keypress-0.1.0))
     (home-page "https://www.npmjs.com/package/node-commander")
     (synopsis "the complete solution for node.js command-line programs")
     (description "the complete solution for node.js command-line programs")
@@ -2778,10 +2758,8 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("tape")))))))
-    (inputs `(("node-typedarray" ,node-typedarray-0.0.6)
-              ("node-readable-stream" ,node-readable-stream-2.3.8)
-              ("node-inherits" ,node-inherits-2.0.4)
-              ("node-buffer-from" ,node-buffer-from-1.1.2)))
+    (inputs (list node-typedarray-0.0.6 node-readable-stream-2.3.8
+                  node-inherits-2.0.4 node-buffer-from-1.1.2))
     (home-page "https://github.com/maxogden/concat-stream#readme")
     (synopsis
      "writable stream that concatenates strings or binary data and calls a callback with the result")
@@ -2808,10 +2786,8 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("tape")))))))
-    (inputs `(("node-typedarray" ,node-typedarray-0.0.6)
-              ("node-readable-stream" ,node-readable-stream-3.6.2)
-              ("node-inherits" ,node-inherits-2.0.4)
-              ("node-buffer-from" ,node-buffer-from-1.1.2)))
+    (inputs (list node-typedarray-0.0.6 node-readable-stream-3.6.2
+                  node-inherits-2.0.4 node-buffer-from-1.1.2))
     (home-page "https://github.com/maxogden/concat-stream#readme")
     (synopsis
      "writable stream that concatenates strings or binary data and calls a callback with the result")
@@ -2872,7 +2848,7 @@
                                              "eslint-plugin-standard"
                                              "istanbul"
                                              "mocha")))))))
-    (inputs `(("node-safe-buffer" ,node-safe-buffer-5.2.1)))
+    (inputs (list node-safe-buffer-5.2.1))
     (home-page "https://github.com/jshttp/content-disposition#readme")
     (synopsis "Create and parse Content-Disposition header")
     (description "Create and parse Content-Disposition header")
@@ -3168,11 +3144,8 @@
                                              "prettier"
                                              "remark-preset-davidtheclark"
                                              "typescript")))))))
-    (inputs `(("node-yaml" ,node-yaml-1.10.2)
-              ("node-path-type" ,node-path-type-4.0.0)
-              ("node-parse-json" ,node-parse-json-5.2.0)
-              ("node-import-fresh" ,node-import-fresh-3.3.0)
-              ("node-types-parse-json" ,node-types-parse-json-4.0.0)))
+    (inputs (list node-yaml-1.10.2 node-path-type-4.0.0 node-parse-json-5.2.0
+                  node-import-fresh-3.3.0 node-types-parse-json-4.0.0))
     (home-page "https://github.com/davidtheclark/cosmiconfig#readme")
     (synopsis
      "Find and load configuration from a package.json property, rc file, or CommonJS module")
@@ -3222,11 +3195,8 @@
                                              "prettier"
                                              "remark-preset-davidtheclark"
                                              "typescript")))))))
-    (inputs `(("node-yaml" ,node-yaml-1.10.2)
-              ("node-path-type" ,node-path-type-4.0.0)
-              ("node-parse-json" ,node-parse-json-5.2.0)
-              ("node-import-fresh" ,node-import-fresh-3.3.0)
-              ("node-types-parse-json" ,node-types-parse-json-4.0.0)))
+    (inputs (list node-yaml-1.10.2 node-path-type-4.0.0 node-parse-json-5.2.0
+                  node-import-fresh-3.3.0 node-types-parse-json-4.0.0))
     (home-page "https://github.com/davidtheclark/cosmiconfig#readme")
     (synopsis
      "Find and load configuration from a package.json property, rc file, or CommonJS module")
@@ -3255,13 +3225,13 @@
                       (delete-dependencies '("@types/react"
                                              "babel-plugin-transform-define"
                                              "dtslint")))))))
-    (inputs `(("node-stylis-rule-sheet" ,node-stylis-rule-sheet-0.0.10)
-              ("node-stylis" ,node-stylis-3.5.4)
-              ("node-csstype" ,node-csstype-2.6.21)
-              ("node-emotion-unitless" ,node-emotion-unitless-0.6.7)
-              ("node-emotion-stylis" ,node-emotion-stylis-0.7.1)
-              ("node-emotion-memoize" ,node-emotion-memoize-0.6.6)
-              ("node-emotion-hash" ,node-emotion-hash-0.6.6)))
+    (inputs (list node-stylis-rule-sheet-0.0.10
+                  node-stylis-3.5.4
+                  node-csstype-2.6.21
+                  node-emotion-unitless-0.6.7
+                  node-emotion-stylis-0.7.1
+                  node-emotion-memoize-0.6.6
+                  node-emotion-hash-0.6.6))
     (home-page "https://emotion.sh")
     (synopsis "The Next Generation of CSS-in-JS.")
     (description "The Next Generation of CSS-in-JS.")
@@ -3287,8 +3257,7 @@
                     (lambda _
                       (delete-dependencies '("@types/react" "dtslint"
                                              "prop-types")))))))
-    (inputs `(("node-emotion-is-prop-valid" ,node-emotion-is-prop-valid-0.6.8)
-              ("node-prop-types" ,node-prop-types-15.8.1)))
+    (inputs (list node-emotion-is-prop-valid-0.6.8 node-prop-types-15.8.1))
     (home-page "https://emotion.sh")
     (synopsis "The styled API for emotion")
     (description "The styled API for emotion")
@@ -3446,7 +3415,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("nodeunit")))))))
-    (inputs `(("node-assert-plus" ,node-assert-plus-1.0.0)))
+    (inputs (list node-assert-plus-1.0.0))
     (home-page "https://github.com/trentm/node-dashdash#readme")
     (synopsis "A light, featureful and explicit option parsing library.")
     (description "A light, featureful and explicit option parsing library.")
@@ -3484,7 +3453,7 @@
                                              "rimraf"
                                              "sinon"
                                              "sinon-chai")))))))
-    (inputs `(("node-ms" ,node-ms-2.0.0)))
+    (inputs (list node-ms-2.0.0))
     (home-page "https://github.com/visionmedia/debug#readme")
     (synopsis "small debugging utility")
     (description "small debugging utility")
@@ -3517,7 +3486,7 @@
                                              "mocha"
                                              "mocha-lcov-reporter"
                                              "xo")))))))
-    (inputs `(("node-ms" ,node-ms-2.1.2)))
+    (inputs (list node-ms-2.1.2))
     (home-page "https://github.com/debug-js/debug#readme")
     (synopsis "Lightweight debugging utility for Node.js and the browser")
     (description "Lightweight debugging utility for Node.js and the browser")
@@ -3591,7 +3560,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("mocha" "should")))))))
-    (inputs `(("node-is-descriptor" ,node-is-descriptor-0.1.6)))
+    (inputs (list node-is-descriptor-0.1.6))
     (home-page "https://github.com/jonschlinkert/define-property")
     (synopsis "Define a non-enumerable property on an object.")
     (description "Define a non-enumerable property on an object.")
@@ -3616,7 +3585,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha")))))))
-    (inputs `(("node-is-descriptor" ,node-is-descriptor-1.0.2)))
+    (inputs (list node-is-descriptor-1.0.2))
     (home-page "https://github.com/jonschlinkert/define-property")
     (synopsis "Define a non-enumerable property on an object.")
     (description "Define a non-enumerable property on an object.")
@@ -3641,8 +3610,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha")))))))
-    (inputs `(("node-isobject" ,node-isobject-3.0.1)
-              ("node-is-descriptor" ,node-is-descriptor-1.0.2)))
+    (inputs (list node-isobject-3.0.1 node-is-descriptor-1.0.2))
     (home-page "https://github.com/jonschlinkert/define-property")
     (synopsis
      "Define a non-enumerable property on an object. Uses Reflect.defineProperty when available, otherwise Object.defineProperty.")
@@ -3890,8 +3858,7 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-safer-buffer" ,node-safer-buffer-2.1.2)
-              ("node-jsbn" ,node-jsbn-0.1.1)))
+    (inputs (list node-safer-buffer-2.1.2 node-jsbn-0.1.1))
     (home-page "https://github.com/quartzjer/ecc-jsbn")
     (synopsis "ECC JS code based on JSBN")
     (description "ECC JS code based on JSBN")
@@ -3971,8 +3938,7 @@
                       (delete-dependencies '("@types/react"
                                              "babel-plugin-transform-define"
                                              "dtslint")))))))
-    (inputs `(("node-create-emotion" ,node-create-emotion-9.2.12)
-              ("node-babel-plugin-emotion" ,node-babel-plugin-emotion-9.2.11)))
+    (inputs (list node-create-emotion-9.2.12 node-babel-plugin-emotion-9.2.11))
     (home-page "https://emotion.sh")
     (synopsis "The Next Generation of CSS-in-JS.")
     (description "The Next Generation of CSS-in-JS.")
@@ -3998,17 +3964,17 @@
                     (lambda _
                       (delete-dependencies '("@babel/core"
                                              "babel-check-duplicated-nodes")))))))
-    (inputs `(("node-stylis" ,node-stylis-4.2.0)
-              ("node-source-map" ,node-source-map-0.5.7)
-              ("node-find-root" ,node-find-root-1.1.0)
-              ("node-escape-string-regexp" ,node-escape-string-regexp-4.0.0)
-              ("node-convert-source-map" ,node-convert-source-map-1.9.0)
-              ("node-babel-plugin-macros" ,node-babel-plugin-macros-3.1.0)
-              ("node-emotion-serialize" ,node-emotion-serialize-1.1.2)
-              ("node-emotion-memoize" ,node-emotion-memoize-0.8.1)
-              ("node-emotion-hash" ,node-emotion-hash-0.9.1)
-              ("node-babel-runtime" ,node-babel-runtime-7.22.5)
-              ("node-babel-helper-module-imports" ,node-babel-helper-module-imports-7.22.5)))
+    (inputs (list node-stylis-4.2.0
+                  node-source-map-0.5.7
+                  node-find-root-1.1.0
+                  node-escape-string-regexp-4.0.0
+                  node-convert-source-map-1.9.0
+                  node-babel-plugin-macros-3.1.0
+                  node-emotion-serialize-1.1.2
+                  node-emotion-memoize-0.8.1
+                  node-emotion-hash-0.9.1
+                  node-babel-runtime-7.22.5
+                  node-babel-helper-module-imports-7.22.5))
     (home-page "https://emotion.sh")
     (synopsis
      "A recommended babel preprocessing plugin for emotion, The Next Generation of CSS-in-JS.")
@@ -4032,12 +3998,12 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-source-map" ,node-source-map-0.7.4)
-              ("node-find-root" ,node-find-root-1.1.0)
-              ("node-convert-source-map" ,node-convert-source-map-1.9.0)
-              ("node-emotion-serialize" ,node-emotion-serialize-0.9.1)
-              ("node-emotion-memoize" ,node-emotion-memoize-0.6.6)
-              ("node-emotion-hash" ,node-emotion-hash-0.6.6)))
+    (inputs (list node-source-map-0.7.4
+                  node-find-root-1.1.0
+                  node-convert-source-map-1.9.0
+                  node-emotion-serialize-0.9.1
+                  node-emotion-memoize-0.6.6
+                  node-emotion-hash-0.6.6))
     (home-page "https://www.npmjs.com/package/node-emotion-babel-utils")
     (synopsis "Internal Babel utils used in various macros")
     (description "Internal Babel utils used in various macros")
@@ -4063,11 +4029,9 @@
                     (lambda _
                       (delete-dependencies '("@definitelytyped/dtslint"
                                              "@emotion/hash" "typescript")))))))
-    (inputs `(("node-stylis" ,node-stylis-4.2.0)
-              ("node-emotion-weak-memoize" ,node-emotion-weak-memoize-0.3.1)
-              ("node-emotion-utils" ,node-emotion-utils-1.2.1)
-              ("node-emotion-sheet" ,node-emotion-sheet-1.2.2)
-              ("node-emotion-memoize" ,node-emotion-memoize-0.8.1)))
+    (inputs (list node-stylis-4.2.0 node-emotion-weak-memoize-0.3.1
+                  node-emotion-utils-1.2.1 node-emotion-sheet-1.2.2
+                  node-emotion-memoize-0.8.1))
     (home-page "https://github.com/emotion-js/emotion/tree/main#readme")
     (synopsis "emotion's cache")
     (description "emotion's cache")
@@ -4092,11 +4056,9 @@
                     (lambda _
                       (delete-dependencies '("@definitelytyped/dtslint"
                                              "typescript")))))))
-    (inputs `(("node-emotion-utils" ,node-emotion-utils-1.2.1)
-              ("node-emotion-sheet" ,node-emotion-sheet-1.2.2)
-              ("node-emotion-serialize" ,node-emotion-serialize-1.1.2)
-              ("node-emotion-cache" ,node-emotion-cache-11.11.0)
-              ("node-emotion-babel-plugin" ,node-emotion-babel-plugin-11.11.0)))
+    (inputs (list node-emotion-utils-1.2.1 node-emotion-sheet-1.2.2
+                  node-emotion-serialize-1.1.2 node-emotion-cache-11.11.0
+                  node-emotion-babel-plugin-11.11.0))
     (home-page "https://emotion.sh")
     (synopsis "The Next Generation of CSS-in-JS.")
     (description "The Next Generation of CSS-in-JS.")
@@ -4162,7 +4124,7 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-emotion-memoize" ,node-emotion-memoize-0.6.6)))
+    (inputs (list node-emotion-memoize-0.6.6))
     (home-page "https://www.npmjs.com/package/node-emotion-is-prop-valid")
     (synopsis
      "A function to check whether a prop is valid for HTML and SVG elements")
@@ -4190,7 +4152,7 @@
                     (lambda _
                       (delete-dependencies '("@definitelytyped/dtslint"
                                              "typescript")))))))
-    (inputs `(("node-emotion-memoize" ,node-emotion-memoize-0.8.1)))
+    (inputs (list node-emotion-memoize-0.8.1))
     (home-page "https://github.com/emotion-js/emotion/tree/main#readme")
     (synopsis
      "A function to check whether a prop is valid for HTML and SVG elements")
@@ -4271,15 +4233,15 @@
                                              "react"
                                              "svg-tag-names"
                                              "typescript")))))))
-    (inputs `(("node-hoist-non-react-statics" ,node-hoist-non-react-statics-3.3.2)
-              ("node-emotion-weak-memoize" ,node-emotion-weak-memoize-0.3.1)
-              ("node-emotion-utils" ,node-emotion-utils-1.2.1)
-              ("node-emotion-use-insertion-effect-with-fallbacks" ,node-emotion-use-insertion-effect-with-fallbacks-1.0.1)
-              ("node-emotion-serialize" ,node-emotion-serialize-1.1.2)
-              ("node-emotion-cache" ,node-emotion-cache-11.11.0)
-              ("node-emotion-babel-plugin" ,node-emotion-babel-plugin-11.11.0)
-              ("node-babel-runtime" ,node-babel-runtime-7.22.5)
-              ("node-react" ,node-react-18.2.0)))
+    (inputs (list node-hoist-non-react-statics-3.3.2
+                  node-emotion-weak-memoize-0.3.1
+                  node-emotion-utils-1.2.1
+                  node-emotion-use-insertion-effect-with-fallbacks-1.0.1
+                  node-emotion-serialize-1.1.2
+                  node-emotion-cache-11.11.0
+                  node-emotion-babel-plugin-11.11.0
+                  node-babel-runtime-7.22.5
+                  node-react-18.2.0))
     (home-page "https://github.com/emotion-js/emotion/tree/main#readme")
     (synopsis "> Simple styling in React.")
     (description "> Simple styling in React.")
@@ -4301,10 +4263,8 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-emotion-utils" ,node-emotion-utils-0.8.2)
-              ("node-emotion-unitless" ,node-emotion-unitless-0.6.7)
-              ("node-emotion-memoize" ,node-emotion-memoize-0.6.6)
-              ("node-emotion-hash" ,node-emotion-hash-0.6.6)))
+    (inputs (list node-emotion-utils-0.8.2 node-emotion-unitless-0.6.7
+                  node-emotion-memoize-0.6.6 node-emotion-hash-0.6.6))
     (home-page "https://www.npmjs.com/package/node-emotion-serialize")
     (synopsis "serialization utils for emotion")
     (description "serialization utils for emotion")
@@ -4330,11 +4290,9 @@
                     (lambda _
                       (delete-dependencies '("@definitelytyped/dtslint"
                                              "typescript")))))))
-    (inputs `(("node-csstype" ,node-csstype-3.1.2)
-              ("node-emotion-utils" ,node-emotion-utils-1.2.1)
-              ("node-emotion-unitless" ,node-emotion-unitless-0.8.1)
-              ("node-emotion-memoize" ,node-emotion-memoize-0.8.1)
-              ("node-emotion-hash" ,node-emotion-hash-0.9.1)))
+    (inputs (list node-csstype-3.1.2 node-emotion-utils-1.2.1
+                  node-emotion-unitless-0.8.1 node-emotion-memoize-0.8.1
+                  node-emotion-hash-0.9.1))
     (home-page "https://github.com/emotion-js/emotion/tree/main#readme")
     (synopsis "serialization utils for emotion")
     (description "serialization utils for emotion")
@@ -4386,14 +4344,14 @@
                       (delete-dependencies '("@definitelytyped/dtslint"
                                              "@emotion/react" "react"
                                              "typescript")))))))
-    (inputs `(("node-emotion-utils" ,node-emotion-utils-1.2.1)
-              ("node-emotion-use-insertion-effect-with-fallbacks" ,node-emotion-use-insertion-effect-with-fallbacks-1.0.1)
-              ("node-emotion-serialize" ,node-emotion-serialize-1.1.2)
-              ("node-emotion-is-prop-valid" ,node-emotion-is-prop-valid-1.2.1)
-              ("node-emotion-babel-plugin" ,node-emotion-babel-plugin-11.11.0)
-              ("node-babel-runtime" ,node-babel-runtime-7.22.5)
-              ("node-react" ,node-react-18.2.0)
-              ("node-emotion-react" ,node-emotion-react-11.11.1)))
+    (inputs (list node-emotion-utils-1.2.1
+                  node-emotion-use-insertion-effect-with-fallbacks-1.0.1
+                  node-emotion-serialize-1.1.2
+                  node-emotion-is-prop-valid-1.2.1
+                  node-emotion-babel-plugin-11.11.0
+                  node-babel-runtime-7.22.5
+                  node-react-18.2.0
+                  node-emotion-react-11.11.1))
     (home-page "https://github.com/emotion-js/emotion/tree/main#readme")
     (synopsis "styled API for emotion")
     (description "styled API for emotion")
@@ -4620,7 +4578,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("nodeunit")))))))
-    (inputs `(("node-iconv-lite" ,node-iconv-lite-0.6.3)))
+    (inputs (list node-iconv-lite-0.6.3))
     (home-page "https://github.com/andris9/encoding#readme")
     (synopsis "Convert encodings, uses iconv-lite")
     (description "Convert encodings, uses iconv-lite")
@@ -4702,7 +4660,7 @@
                     (lambda _
                       (delete-dependencies '("coffee-script" "coveralls"
                                              "istanbul" "mocha" "should" "xo")))))))
-    (inputs `(("node-is-arrayish" ,node-is-arrayish-0.2.1)))
+    (inputs (list node-is-arrayish-0.2.1))
     (home-page "https://github.com/qix-/node-error-ex#readme")
     (synopsis "Easy error subclassing and stack customization")
     (description "Easy error subclassing and stack customization")
@@ -4801,7 +4759,7 @@
                     (lambda _
                       (delete-dependencies '("babel-preset-es2015" "eslint"
                                              "gulp" "gulp-babel" "nodeunit")))))))
-    (inputs `(("node-es6-promise" ,node-es6-promise-4.2.8)))
+    (inputs (list node-es6-promise-4.2.8))
     (home-page "https://github.com/digitaldesignlabs/es6-promisify#readme")
     (synopsis "Converts callback-based functions to ES6 Promises")
     (description "Converts callback-based functions to ES6 Promises")
@@ -4930,11 +4888,8 @@
                                              "gulp-eslint"
                                              "gulp-mocha"
                                              "semver")))))))
-    (inputs `(("node-source-map" ,node-source-map-0.6.1)
-              ("node-optionator" ,node-optionator-0.8.3)
-              ("node-esprima" ,node-esprima-4.0.1)
-              ("node-esutils" ,node-esutils-2.0.3)
-              ("node-estraverse" ,node-estraverse-4.3.0)))
+    (inputs (list node-source-map-0.6.1 node-optionator-0.8.3
+                  node-esprima-4.0.1 node-esutils-2.0.3 node-estraverse-4.3.0))
     (home-page "http://github.com/estools/escodegen")
     (synopsis "ECMAScript code generator")
     (description "ECMAScript code generator")
@@ -5103,7 +5058,7 @@
                                              "mocha"
                                              "sinon"
                                              "standard")))))))
-    (inputs `(("node-merge" ,node-merge-1.2.1)))
+    (inputs (list node-merge-1.2.1))
     (home-page "https://github.com/tsertkov/exec-sh#readme")
     (synopsis "Execute shell command forwarding all stdio.")
     (description "Execute shell command forwarding all stdio.")
@@ -5128,7 +5083,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha" "should")))))))
-    (inputs `(("node-is-posix-bracket" ,node-is-posix-bracket-0.1.1)))
+    (inputs (list node-is-posix-bracket-0.1.1))
     (home-page "https://github.com/jonschlinkert/expand-brackets")
     (synopsis
      "Expand POSIX bracket expressions (character classes) in glob patterns.")
@@ -5160,13 +5115,13 @@
                                              "mocha"
                                              "multimatch"
                                              "yargs-parser")))))))
-    (inputs `(("node-to-regex" ,node-to-regex-3.0.2)
-              ("node-snapdragon" ,node-snapdragon-0.8.2)
-              ("node-regex-not" ,node-regex-not-1.0.2)
-              ("node-posix-character-classes" ,node-posix-character-classes-0.1.1)
-              ("node-extend-shallow" ,node-extend-shallow-2.0.1)
-              ("node-define-property" ,node-define-property-0.2.5)
-              ("node-debug" ,node-debug-2.6.9)))
+    (inputs (list node-to-regex-3.0.2
+                  node-snapdragon-0.8.2
+                  node-regex-not-1.0.2
+                  node-posix-character-classes-0.1.1
+                  node-extend-shallow-2.0.1
+                  node-define-property-0.2.5
+                  node-debug-2.6.9))
     (home-page "https://github.com/jonschlinkert/expand-brackets")
     (synopsis
      "Expand POSIX bracket expressions (character classes) in glob patterns.")
@@ -5195,7 +5150,7 @@
                       (delete-dependencies '("benchmarked" "brace-expansion"
                                              "glob" "gulp-format-md"
                                              "minimatch" "mocha")))))))
-    (inputs `(("node-fill-range" ,node-fill-range-2.2.4)))
+    (inputs (list node-fill-range-2.2.4))
     (home-page "https://github.com/jonschlinkert/expand-range")
     (synopsis
      "Fast, bash-like range expansion. Expand a range of numbers or letters, uppercase or lowercase. See the benchmarks. Used by micromatch.")
@@ -5236,37 +5191,37 @@
                                              "pbkdf2-password"
                                              "supertest"
                                              "vhost")))))))
-    (inputs `(("node-vary" ,node-vary-1.1.2)
-              ("node-utils-merge" ,node-utils-merge-1.0.1)
-              ("node-type-is" ,node-type-is-1.6.18)
-              ("node-statuses" ,node-statuses-2.0.1)
-              ("node-setprototypeof" ,node-setprototypeof-1.2.0)
-              ("node-serve-static" ,node-serve-static-1.15.0)
-              ("node-send" ,node-send-0.18.0)
-              ("node-safe-buffer" ,node-safe-buffer-5.2.1)
-              ("node-range-parser" ,node-range-parser-1.2.1)
-              ("node-qs" ,node-qs-6.11.0)
-              ("node-proxy-addr" ,node-proxy-addr-2.0.7)
-              ("node-path-to-regexp" ,node-path-to-regexp-0.1.7)
-              ("node-parseurl" ,node-parseurl-1.3.3)
-              ("node-on-finished" ,node-on-finished-2.4.1)
-              ("node-methods" ,node-methods-1.1.2)
-              ("node-merge-descriptors" ,node-merge-descriptors-1.0.1)
-              ("node-http-errors" ,node-http-errors-2.0.0)
-              ("node-fresh" ,node-fresh-0.5.2)
-              ("node-finalhandler" ,node-finalhandler-1.2.0)
-              ("node-etag" ,node-etag-1.8.1)
-              ("node-escape-html" ,node-escape-html-1.0.3)
-              ("node-encodeurl" ,node-encodeurl-1.0.2)
-              ("node-depd" ,node-depd-2.0.0)
-              ("node-debug" ,node-debug-2.6.9)
-              ("node-cookie-signature" ,node-cookie-signature-1.0.6)
-              ("node-cookie" ,node-cookie-0.5.0)
-              ("node-content-type" ,node-content-type-1.0.5)
-              ("node-content-disposition" ,node-content-disposition-0.5.4)
-              ("node-body-parser" ,node-body-parser-1.20.1)
-              ("node-array-flatten" ,node-array-flatten-1.1.1)
-              ("node-accepts" ,node-accepts-1.3.8)))
+    (inputs (list node-vary-1.1.2
+                  node-utils-merge-1.0.1
+                  node-type-is-1.6.18
+                  node-statuses-2.0.1
+                  node-setprototypeof-1.2.0
+                  node-serve-static-1.15.0
+                  node-send-0.18.0
+                  node-safe-buffer-5.2.1
+                  node-range-parser-1.2.1
+                  node-qs-6.11.0
+                  node-proxy-addr-2.0.7
+                  node-path-to-regexp-0.1.7
+                  node-parseurl-1.3.3
+                  node-on-finished-2.4.1
+                  node-methods-1.1.2
+                  node-merge-descriptors-1.0.1
+                  node-http-errors-2.0.0
+                  node-fresh-0.5.2
+                  node-finalhandler-1.2.0
+                  node-etag-1.8.1
+                  node-escape-html-1.0.3
+                  node-encodeurl-1.0.2
+                  node-depd-2.0.0
+                  node-debug-2.6.9
+                  node-cookie-signature-1.0.6
+                  node-cookie-0.5.0
+                  node-content-type-1.0.5
+                  node-content-disposition-0.5.4
+                  node-body-parser-1.20.1
+                  node-array-flatten-1.1.1
+                  node-accepts-1.3.8))
     (home-page "http://expressjs.com/")
     (synopsis "Fast, unopinionated, minimalist web framework")
     (description "Fast, unopinionated, minimalist web framework")
@@ -5323,7 +5278,7 @@
                                              "minimist"
                                              "mocha"
                                              "should")))))))
-    (inputs `(("node-is-extendable" ,node-is-extendable-0.1.1)))
+    (inputs (list node-is-extendable-0.1.1))
     (home-page "https://github.com/jonschlinkert/extend-shallow")
     (synopsis
      "Extend an object with the properties of additional objects. node.js/javascript util.")
@@ -5357,8 +5312,7 @@
                                              "minimist"
                                              "mocha"
                                              "object-assign")))))))
-    (inputs `(("node-is-extendable" ,node-is-extendable-1.0.1)
-              ("node-assign-symbols" ,node-assign-symbols-1.0.0)))
+    (inputs (list node-is-extendable-1.0.1 node-assign-symbols-1.0.0))
     (home-page "https://github.com/jonschlinkert/extend-shallow")
     (synopsis
      "Extend an object with the properties of additional objects. node.js/javascript util.")
@@ -5386,9 +5340,7 @@
                     (lambda _
                       (delete-dependencies '("chai" "coffee-script"
                                              "coffeelint" "mocha")))))))
-    (inputs `(("node-tmp" ,node-tmp-0.0.33)
-              ("node-iconv-lite" ,node-iconv-lite-0.4.24)
-              ("node-chardet" ,node-chardet-0.4.2)))
+    (inputs (list node-tmp-0.0.33 node-iconv-lite-0.4.24 node-chardet-0.4.2))
     (home-page "https://github.com/mrkmg/node-external-editor#readme")
     (synopsis
      "Edit a string with the users preferred text editor using $VISUAL or $ENVIRONMENT")
@@ -5419,7 +5371,7 @@
                                              "mocha"
                                              "should"
                                              "success-symbol")))))))
-    (inputs `(("node-is-extglob" ,node-is-extglob-1.0.0)))
+    (inputs (list node-is-extglob-1.0.0))
     (home-page "https://github.com/jonschlinkert/extglob")
     (synopsis
      "Convert extended globs to regex-compatible strings. Add (almost) the expressive power of regular expressions to glob patterns.")
@@ -5458,14 +5410,14 @@
                                              "minimist"
                                              "mocha"
                                              "multimatch")))))))
-    (inputs `(("node-to-regex" ,node-to-regex-3.0.2)
-              ("node-snapdragon" ,node-snapdragon-0.8.2)
-              ("node-regex-not" ,node-regex-not-1.0.2)
-              ("node-fragment-cache" ,node-fragment-cache-0.2.1)
-              ("node-extend-shallow" ,node-extend-shallow-2.0.1)
-              ("node-expand-brackets" ,node-expand-brackets-2.1.4)
-              ("node-define-property" ,node-define-property-1.0.0)
-              ("node-array-unique" ,node-array-unique-0.3.2)))
+    (inputs (list node-to-regex-3.0.2
+                  node-snapdragon-0.8.2
+                  node-regex-not-1.0.2
+                  node-fragment-cache-0.2.1
+                  node-extend-shallow-2.0.1
+                  node-expand-brackets-2.1.4
+                  node-define-property-1.0.0
+                  node-array-unique-0.3.2))
     (home-page "https://github.com/micromatch/extglob")
     (synopsis
      "Extended glob support for JavaScript. Adds (almost) the expressive power of regular expressions to glob patterns.")
@@ -5654,7 +5606,7 @@
                     (lambda _
                       (delete-dependencies '("ava" "markdown-table"
                                              "require-uncached" "xo")))))))
-    (inputs `(("node-escape-string-regexp" ,node-escape-string-regexp-1.0.5)))
+    (inputs (list node-escape-string-regexp-1.0.5))
     (home-page "https://github.com/sindresorhus/figures#readme")
     (synopsis "Unicode symbols with Windows CMD fallbacks")
     (description "Unicode symbols with Windows CMD fallbacks")
@@ -5680,7 +5632,7 @@
                     (lambda _
                       (delete-dependencies '("grunt" "grunt-contrib-jshint"
                                              "mocha")))))))
-    (inputs `(("node-utils-extend" ,node-utils-extend-1.0.8)))
+    (inputs (list node-utils-extend-1.0.8))
     (home-page "https://github.com/douzi8/file-match")
     (synopsis
      "Match filepath is validated, or exclude filepath that don't need.")
@@ -5708,8 +5660,7 @@
                     (lambda _
                       (delete-dependencies '("grunt" "grunt-contrib-jshint"
                                              "mocha")))))))
-    (inputs `(("node-utils-extend" ,node-utils-extend-1.0.8)
-              ("node-file-match" ,node-file-match-1.0.2)))
+    (inputs (list node-utils-extend-1.0.8 node-file-match-1.0.2))
     (home-page "https://github.com/douzi8/file-system")
     (synopsis "Strengthen the ability of file system")
     (description "Strengthen the ability of file system")
@@ -5761,11 +5712,9 @@
                     (lambda _
                       (delete-dependencies '("benchmarked" "chalk"
                                              "gulp-format-md" "should")))))))
-    (inputs `(("node-repeat-string" ,node-repeat-string-1.6.1)
-              ("node-repeat-element" ,node-repeat-element-1.1.4)
-              ("node-randomatic" ,node-randomatic-3.1.1)
-              ("node-isobject" ,node-isobject-2.1.0)
-              ("node-is-number" ,node-is-number-2.1.0)))
+    (inputs (list node-repeat-string-1.6.1 node-repeat-element-1.1.4
+                  node-randomatic-3.1.1 node-isobject-2.1.0
+                  node-is-number-2.1.0))
     (home-page "https://github.com/jonschlinkert/fill-range")
     (synopsis
      "Fill in a range of numbers or letters, optionally passing an increment or multiplier to use.")
@@ -5794,10 +5743,8 @@
                       (delete-dependencies '("ansi-cyan" "benchmarked"
                                              "gulp-format-md" "minimist"
                                              "mocha")))))))
-    (inputs `(("node-to-regex-range" ,node-to-regex-range-2.1.1)
-              ("node-repeat-string" ,node-repeat-string-1.6.1)
-              ("node-is-number" ,node-is-number-3.0.0)
-              ("node-extend-shallow" ,node-extend-shallow-2.0.1)))
+    (inputs (list node-to-regex-range-2.1.1 node-repeat-string-1.6.1
+                  node-is-number-3.0.0 node-extend-shallow-2.0.1))
     (home-page "https://github.com/jonschlinkert/fill-range")
     (synopsis
      "Fill in a range of numbers or letters, optionally passing an increment or `step` to use, or create a regex-compatible range with `options.toRegex`")
@@ -5834,13 +5781,13 @@
                                              "readable-stream"
                                              "safe-buffer"
                                              "supertest")))))))
-    (inputs `(("node-unpipe" ,node-unpipe-1.0.0)
-              ("node-statuses" ,node-statuses-2.0.1)
-              ("node-parseurl" ,node-parseurl-1.3.3)
-              ("node-on-finished" ,node-on-finished-2.4.1)
-              ("node-escape-html" ,node-escape-html-1.0.3)
-              ("node-encodeurl" ,node-encodeurl-1.0.2)
-              ("node-debug" ,node-debug-2.6.9)))
+    (inputs (list node-unpipe-1.0.0
+                  node-statuses-2.0.1
+                  node-parseurl-1.3.3
+                  node-on-finished-2.4.1
+                  node-escape-html-1.0.3
+                  node-encodeurl-1.0.2
+                  node-debug-2.6.9))
     (home-page "https://github.com/pillarjs/finalhandler#readme")
     (synopsis "Node.js final http responder")
     (description "Node.js final http responder")
@@ -5886,7 +5833,7 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-chain-able" ,node-chain-able-1.0.1)))
+    (inputs (list node-chain-able-1.0.1))
     (home-page "https://github.com/fliphub/fliplog")
     (synopsis
      "fluent logging with verbose insight, colors, tables, emoji, filtering, spinners, progress bars, timestamps, capturing, stack traces, clearing, & presets")
@@ -5937,7 +5884,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha")))))))
-    (inputs `(("node-for-in" ,node-for-in-1.0.2)))
+    (inputs (list node-for-in-1.0.2))
     (home-page "https://github.com/jonschlinkert/for-own")
     (synopsis
      "Iterate over the own enumerable properties of an object, and return an object with properties that evaluate to true from the callback. Exit early by returning `false`. JavaScript/Node.js.")
@@ -6004,9 +5951,8 @@
                                              "request"
                                              "rimraf"
                                              "tape")))))))
-    (inputs `(("node-mime-types" ,node-mime-types-2.1.35)
-              ("node-combined-stream" ,node-combined-stream-1.0.8)
-              ("node-asynckit" ,node-asynckit-0.4.0)))
+    (inputs (list node-mime-types-2.1.35 node-combined-stream-1.0.8
+                  node-asynckit-0.4.0))
     (home-page "https://github.com/form-data/form-data#readme")
     (synopsis
      "A library to create readable \"multipart/form-data\" streams. Can be used to submit forms and file uploads to other web applications.")
@@ -6068,7 +6014,7 @@
                       (delete-dependencies '("gulp" "gulp-eslint"
                                              "gulp-format-md" "gulp-istanbul"
                                              "gulp-mocha" "mocha")))))))
-    (inputs `(("node-map-cache" ,node-map-cache-0.2.2)))
+    (inputs (list node-map-cache-0.2.2))
     (home-page "https://github.com/jonschlinkert/fragment-cache")
     (synopsis "A cache for managing namespaced sub-caches")
     (description "A cache for managing namespaced sub-caches")
@@ -6135,9 +6081,8 @@
                                              "semver"
                                              "standard"
                                              "standard-markdown")))))))
-    (inputs `(("node-universalify" ,node-universalify-0.1.2)
-              ("node-jsonfile" ,node-jsonfile-4.0.0)
-              ("node-graceful-fs" ,node-graceful-fs-4.2.11)))
+    (inputs (list node-universalify-0.1.2 node-jsonfile-4.0.0
+                  node-graceful-fs-4.2.11))
     (home-page "https://github.com/jprichardson/node-fs-extra")
     (synopsis
      "fs-extra contains methods that aren't included in the vanilla Node.js fs package. Such as mkdir -p, cp -r, and rm -rf.")
@@ -6164,7 +6109,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("mutate-fs" "tap")))))))
-    (inputs `(("node-minipass" ,node-minipass-3.3.6)))
+    (inputs (list node-minipass-3.3.6))
     (home-page "https://github.com/npm/fs-minipass#readme")
     (synopsis "fs read and write streams based on minipass")
     (description "fs read and write streams based on minipass")
@@ -6297,39 +6242,39 @@
                                              "vue-template-compiler"
                                              "vue-template-es2015-compiler"
                                              "wires-reactive")))))))
-    (inputs `(("node-ws" ,node-ws-1.1.5)
-              ("node-watch" ,node-watch-1.0.2)
-              ("node-tslib" ,node-tslib-1.14.1)
-              ("node-sourcemap-blender" ,node-sourcemap-blender-1.0.5)
-              ("node-stream-browserify" ,node-stream-browserify-2.0.2)
-              ("node-source-map" ,node-source-map-0.7.4)
-              ("node-shorthash" ,node-shorthash-0.0.2)
-              ("node-request" ,node-request-2.88.2)
-              ("node-regexpu-core" ,node-regexpu-core-4.8.0)
-              ("node-realm-utils" ,node-realm-utils-1.0.9)
-              ("node-prettysize" ,node-prettysize-0.0.3)
-              ("node-pretty-time" ,node-pretty-time-0.2.0)
-              ("node-postcss" ,node-postcss-6.0.23)
-              ("node-mustache" ,node-mustache-2.3.2)
-              ("node-lego-api" ,node-lego-api-1.0.8)
-              ("node-inquirer" ,node-inquirer-3.3.0)
-              ("node-ieee754" ,node-ieee754-1.2.1)
-              ("node-glob" ,node-glob-7.2.3)
-              ("node-getopts" ,node-getopts-2.3.0)
-              ("node-fuse-concat-with-sourcemaps" ,node-fuse-concat-with-sourcemaps-1.0.5)
-              ("node-fs-extra" ,node-fs-extra-7.0.1)
-              ("node-fliplog" ,node-fliplog-0.3.13)
-              ("node-express" ,node-express-4.18.2)
-              ("node-escodegen" ,node-escodegen-1.14.3)
-              ("node-clean-css" ,node-clean-css-4.2.4)
-              ("node-chokidar" ,node-chokidar-1.7.0)
-              ("node-bowser" ,node-bowser-2.11.0)
-              ("node-base64-js" ,node-base64-js-1.5.1)
-              ("node-base64-img" ,node-base64-img-1.0.4)
-              ("node-app-root-path" ,node-app-root-path-2.2.1)
-              ("node-ansi" ,node-ansi-0.3.1)
-              ("node-acorn-jsx" ,node-acorn-jsx-4.1.1)
-              ("node-acorn" ,node-acorn-5.7.4)))
+    (inputs (list node-ws-1.1.5
+                  node-watch-1.0.2
+                  node-tslib-1.14.1
+                  node-sourcemap-blender-1.0.5
+                  node-stream-browserify-2.0.2
+                  node-source-map-0.7.4
+                  node-shorthash-0.0.2
+                  node-request-2.88.2
+                  node-regexpu-core-4.8.0
+                  node-realm-utils-1.0.9
+                  node-prettysize-0.0.3
+                  node-pretty-time-0.2.0
+                  node-postcss-6.0.23
+                  node-mustache-2.3.2
+                  node-lego-api-1.0.8
+                  node-inquirer-3.3.0
+                  node-ieee754-1.2.1
+                  node-glob-7.2.3
+                  node-getopts-2.3.0
+                  node-fuse-concat-with-sourcemaps-1.0.5
+                  node-fs-extra-7.0.1
+                  node-fliplog-0.3.13
+                  node-express-4.18.2
+                  node-escodegen-1.14.3
+                  node-clean-css-4.2.4
+                  node-chokidar-1.7.0
+                  node-bowser-2.11.0
+                  node-base64-js-1.5.1
+                  node-base64-img-1.0.4
+                  node-app-root-path-2.2.1
+                  node-ansi-0.3.1
+                  node-acorn-jsx-4.1.1
+                  node-acorn-5.7.4))
     (home-page "https://github.com/fuse-box/fuse-box#readme")
     (synopsis "Fuse-Box a bundler that does it right")
     (description "Fuse-Box a bundler that does it right")
@@ -6355,7 +6300,7 @@
                     (lambda _
                       (delete-dependencies '("jshint" "tape" "istanbul"
                                              "faucet" "coveralls")))))))
-    (inputs `(("node-source-map" ,node-source-map-0.6.1)))
+    (inputs (list node-source-map-0.6.1))
     (home-page "http://github.com/floridoo/concat-with-sourcemaps")
     (synopsis
      "Concatenate file contents with a custom separator and generate a source map")
@@ -6443,15 +6388,15 @@
                       (delete-dependencies '("readable-stream"
                                              "require-inject" "standard" "tap"
                                              "through2")))))))
-    (inputs `(("node-wide-align" ,node-wide-align-1.1.5)
-              ("node-strip-ansi" ,node-strip-ansi-6.0.1)
-              ("node-string-width" ,node-string-width-4.2.3)
-              ("node-signal-exit" ,node-signal-exit-3.0.7)
-              ("node-object-assign" ,node-object-assign-4.1.1)
-              ("node-has-unicode" ,node-has-unicode-2.0.1)
-              ("node-console-control-strings" ,node-console-control-strings-1.1.0)
-              ("node-color-support" ,node-color-support-1.1.3)
-              ("node-aproba" ,node-aproba-2.0.0)))
+    (inputs (list node-wide-align-1.1.5
+                  node-strip-ansi-6.0.1
+                  node-string-width-4.2.3
+                  node-signal-exit-3.0.7
+                  node-object-assign-4.1.1
+                  node-has-unicode-2.0.1
+                  node-console-control-strings-1.1.0
+                  node-color-support-1.1.3
+                  node-aproba-2.0.0))
     (home-page "https://github.com/npm/gauge")
     (synopsis "A terminal based horizontal guage")
     (description "A terminal based horizontal guage")
@@ -6555,10 +6500,8 @@
                                              "object-inspect"
                                              "safe-publish-latest"
                                              "tape")))))))
-    (inputs `(("node-has-symbols" ,node-has-symbols-1.0.3)
-              ("node-has-proto" ,node-has-proto-1.0.1)
-              ("node-has" ,node-has-1.0.3)
-              ("node-function-bind" ,node-function-bind-1.1.1)))
+    (inputs (list node-has-symbols-1.0.3 node-has-proto-1.0.1 node-has-1.0.3
+                  node-function-bind-1.1.1))
     (home-page "https://github.com/ljharb/get-intrinsic#readme")
     (synopsis
      "Get and robustly cache all JS language-level intrinsics at first require time")
@@ -6670,7 +6613,7 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-assert-plus" ,node-assert-plus-1.0.0)))
+    (inputs (list node-assert-plus-1.0.0))
     (home-page "https://github.com/arekinath/node-getpass#readme")
     (synopsis "getpass for node.js")
     (description "getpass for node.js")
@@ -6695,12 +6638,12 @@
                     (lambda _
                       (delete-dependencies '("memfs" "mkdirp" "rimraf" "tap"
                                              "tick")))))))
-    (inputs `(("node-path-is-absolute" ,node-path-is-absolute-1.0.1)
-              ("node-once" ,node-once-1.4.0)
-              ("node-minimatch" ,node-minimatch-3.1.2)
-              ("node-inherits" ,node-inherits-2.0.4)
-              ("node-inflight" ,node-inflight-1.0.6)
-              ("node-fs-realpath" ,node-fs-realpath-1.0.0)))
+    (inputs (list node-path-is-absolute-1.0.1
+                  node-once-1.4.0
+                  node-minimatch-3.1.2
+                  node-inherits-2.0.4
+                  node-inflight-1.0.6
+                  node-fs-realpath-1.0.0))
     (home-page "https://github.com/isaacs/node-glob#readme")
     (synopsis "a little globber")
     (description "a little globber")
@@ -6725,8 +6668,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("mocha" "should")))))))
-    (inputs `(("node-is-glob" ,node-is-glob-2.0.1)
-              ("node-glob-parent" ,node-glob-parent-2.0.0)))
+    (inputs (list node-is-glob-2.0.1 node-glob-parent-2.0.0))
     (home-page "https://github.com/jonschlinkert/glob-base")
     (synopsis
      "Returns an object with the (non-glob) base path and the actual pattern.")
@@ -6753,7 +6695,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("coveralls" "istanbul" "mocha")))))))
-    (inputs `(("node-is-glob" ,node-is-glob-2.0.1)))
+    (inputs (list node-is-glob-2.0.1))
     (home-page "https://github.com/es128/glob-parent")
     (synopsis "Strips glob magic from a string to provide the parent path")
     (description "Strips glob magic from a string to provide the parent path")
@@ -6790,7 +6732,7 @@
                                              "simulant"
                                              "sinon"
                                              "watchify")))))))
-    (inputs `(("node-delegate" ,node-delegate-3.2.0)))
+    (inputs (list node-delegate-3.2.0))
     (home-page "https://github.com/zenorocha/good-listener#readme")
     (synopsis "A more versatile way of adding & removing event listeners")
     (description "A more versatile way of adding & removing event listeners")
@@ -6869,8 +6811,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("tap")))))))
-    (inputs `(("node-har-schema" ,node-har-schema-2.0.0)
-              ("node-ajv" ,node-ajv-6.12.6)))
+    (inputs (list node-har-schema-2.0.0 node-ajv-6.12.6))
     (home-page "https://github.com/ahmadnassri/node-har-validator")
     (synopsis "Extremely fast HTTP Archive (HAR) validator using JSON Schema")
     (description
@@ -6896,7 +6837,7 @@
                     (lambda _
                       (delete-dependencies '("@ljharb/eslint-config" "eslint"
                                              "tape")))))))
-    (inputs `(("node-function-bind" ,node-function-bind-1.1.1)))
+    (inputs (list node-function-bind-1.1.1))
     (home-page "https://github.com/tarruda/has")
     (synopsis "Object.prototype.hasOwnProperty.call shortcut")
     (description "Object.prototype.hasOwnProperty.call shortcut")
@@ -7033,9 +6974,8 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha")))))))
-    (inputs `(("node-isobject" ,node-isobject-2.1.0)
-              ("node-has-values" ,node-has-values-0.1.4)
-              ("node-get-value" ,node-get-value-2.0.6)))
+    (inputs (list node-isobject-2.1.0 node-has-values-0.1.4
+                  node-get-value-2.0.6))
     (home-page "https://github.com/jonschlinkert/has-value")
     (synopsis
      "Returns true if a value exists, false if empty. Works with deeply nested values using object paths.")
@@ -7062,9 +7002,8 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha")))))))
-    (inputs `(("node-isobject" ,node-isobject-3.0.1)
-              ("node-has-values" ,node-has-values-1.0.0)
-              ("node-get-value" ,node-get-value-2.0.6)))
+    (inputs (list node-isobject-3.0.1 node-has-values-1.0.0
+                  node-get-value-2.0.6))
     (home-page "https://github.com/jonschlinkert/has-value")
     (synopsis
      "Returns true if a value exists, false if empty. Works with deeply nested values using object paths.")
@@ -7117,8 +7056,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha")))))))
-    (inputs `(("node-kind-of" ,node-kind-of-4.0.0)
-              ("node-is-number" ,node-is-number-3.0.0)))
+    (inputs (list node-kind-of-4.0.0 node-is-number-3.0.0))
     (home-page "https://github.com/jonschlinkert/has-values")
     (synopsis
      "Returns true if any values exist, false if empty. Works for booleans, functions, numbers, strings, nulls, objects and arrays. ")
@@ -7164,7 +7102,7 @@
                                              "rollup-plugin-commonjs"
                                              "rollup-plugin-node-resolve"
                                              "rollup-plugin-terser")))))))
-    (inputs `(("node-react-is" ,node-react-is-16.13.1)))
+    (inputs (list node-react-is-16.13.1))
     (home-page "https://github.com/mridgway/hoist-non-react-statics#readme")
     (synopsis
      "Copies non-react specific statics from a child component to a parent component")
@@ -7187,7 +7125,7 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-concat-stream" ,node-concat-stream-1.6.2)))
+    (inputs (list node-concat-stream-1.6.2))
     (home-page "https://github.com/maxogden/commonjs-html-prettyprinter")
     (synopsis "HTML pretty printer CLI utility (based on jsbeautifier)")
     (description "HTML pretty printer CLI utility (based on jsbeautifier)")
@@ -7219,11 +7157,9 @@
                                              "eslint-plugin-standard"
                                              "mocha"
                                              "nyc")))))))
-    (inputs `(("node-toidentifier" ,node-toidentifier-1.0.1)
-              ("node-statuses" ,node-statuses-2.0.1)
-              ("node-setprototypeof" ,node-setprototypeof-1.2.0)
-              ("node-inherits" ,node-inherits-2.0.4)
-              ("node-depd" ,node-depd-2.0.0)))
+    (inputs (list node-toidentifier-1.0.1 node-statuses-2.0.1
+                  node-setprototypeof-1.2.0 node-inherits-2.0.4
+                  node-depd-2.0.0))
     (home-page "https://github.com/jshttp/http-errors#readme")
     (synopsis "Create HTTP error objects")
     (description "Create HTTP error objects")
@@ -7248,9 +7184,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("tap" "uuid")))))))
-    (inputs `(("node-sshpk" ,node-sshpk-1.17.0)
-              ("node-jsprim" ,node-jsprim-1.4.2)
-              ("node-assert-plus" ,node-assert-plus-1.0.0)))
+    (inputs (list node-sshpk-1.17.0 node-jsprim-1.4.2 node-assert-plus-1.0.0))
     (home-page "https://github.com/joyent/node-http-signature/")
     (synopsis "Reference implementation of Joyent's HTTP Signature scheme.")
     (description "Reference implementation of Joyent's HTTP Signature scheme.")
@@ -7288,8 +7222,7 @@
                                              "proxy"
                                              "rimraf"
                                              "typescript")))))))
-    (inputs `(("node-debug" ,node-debug-4.3.4)
-              ("node-agent-base" ,node-agent-base-6.0.2)))
+    (inputs (list node-debug-4.3.4 node-agent-base-6.0.2))
     (home-page "https://github.com/TooTallNate/node-https-proxy-agent#readme")
     (synopsis "An HTTP(s) proxy `http.Agent` implementation for HTTPS")
     (description "An HTTP(s) proxy `http.Agent` implementation for HTTPS")
@@ -7320,7 +7253,7 @@
                                              "istanbul"
                                              "semver"
                                              "iconv")))))))
-    (inputs `(("node-safer-buffer" ,node-safer-buffer-2.1.2)))
+    (inputs (list node-safer-buffer-2.1.2))
     (home-page "https://github.com/ashtuchkin/iconv-lite")
     (synopsis "Convert character encodings in pure javascript.")
     (description "Convert character encodings in pure javascript.")
@@ -7351,7 +7284,7 @@
                                              "request"
                                              "semver"
                                              "unorm")))))))
-    (inputs `(("node-safer-buffer" ,node-safer-buffer-2.1.2)))
+    (inputs (list node-safer-buffer-2.1.2))
     (home-page "https://github.com/ashtuchkin/iconv-lite")
     (synopsis "Convert character encodings in pure javascript.")
     (description "Convert character encodings in pure javascript.")
@@ -7422,8 +7355,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("ava" "heapdump" "tsd" "xo")))))))
-    (inputs `(("node-resolve-from" ,node-resolve-from-4.0.0)
-              ("node-parent-module" ,node-parent-module-1.0.1)))
+    (inputs (list node-resolve-from-4.0.0 node-parent-module-1.0.1))
     (home-page "https://github.com/sindresorhus/import-fresh#readme")
     (synopsis "Import a module while bypassing the cache")
     (description "Import a module while bypassing the cache")
@@ -7447,8 +7379,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("tap")))))))
-    (inputs `(("node-wrappy" ,node-wrappy-1.0.2)
-              ("node-once" ,node-once-1.4.0)))
+    (inputs (list node-wrappy-1.0.2 node-once-1.4.0))
     (home-page "https://github.com/isaacs/inflight")
     (synopsis "Add callbacks to requests in flight to avoid async duplication")
     (description
@@ -7491,20 +7422,20 @@
                                              "mocha"
                                              "mockery"
                                              "sinon")))))))
-    (inputs `(("node-through" ,node-through-2.3.8)
-              ("node-strip-ansi" ,node-strip-ansi-4.0.0)
-              ("node-string-width" ,node-string-width-2.1.1)
-              ("node-rx-lite-aggregates" ,node-rx-lite-aggregates-4.0.8)
-              ("node-rx-lite" ,node-rx-lite-4.0.8)
-              ("node-run-async" ,node-run-async-2.4.1)
-              ("node-mute-stream" ,node-mute-stream-0.0.7)
-              ("node-lodash" ,node-lodash-4.17.21)
-              ("node-figures" ,node-figures-2.0.0)
-              ("node-external-editor" ,node-external-editor-2.2.0)
-              ("node-cli-width" ,node-cli-width-2.2.1)
-              ("node-cli-cursor" ,node-cli-cursor-2.1.0)
-              ("node-chalk" ,node-chalk-2.4.2)
-              ("node-ansi-escapes" ,node-ansi-escapes-3.2.0)))
+    (inputs (list node-through-2.3.8
+                  node-strip-ansi-4.0.0
+                  node-string-width-2.1.1
+                  node-rx-lite-aggregates-4.0.8
+                  node-rx-lite-4.0.8
+                  node-run-async-2.4.1
+                  node-mute-stream-0.0.7
+                  node-lodash-4.17.21
+                  node-figures-2.0.0
+                  node-external-editor-2.2.0
+                  node-cli-width-2.2.1
+                  node-cli-cursor-2.1.0
+                  node-chalk-2.4.2
+                  node-ansi-escapes-3.2.0))
     (home-page "https://github.com/SBoudrias/Inquirer.js#readme")
     (synopsis
      "A collection of common interactive command line user interfaces.")
@@ -7528,7 +7459,7 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-javascript-stringify" ,node-javascript-stringify-1.6.0)))
+    (inputs (list node-javascript-stringify-1.6.0))
     (home-page "https://github.com/fliphub/fliphub#readme")
     (synopsis
      "preconfigured nodejs util for inspecting, and customizing inspecting")
@@ -7582,7 +7513,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("mocha" "should")))))))
-    (inputs `(("node-kind-of" ,node-kind-of-3.2.2)))
+    (inputs (list node-kind-of-3.2.2))
     (home-page "https://github.com/jonschlinkert/is-accessor-descriptor")
     (synopsis
      "Returns true if a value has the characteristics of a valid JavaScript accessor descriptor.")
@@ -7609,7 +7540,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha")))))))
-    (inputs `(("node-kind-of" ,node-kind-of-6.0.3)))
+    (inputs (list node-kind-of-6.0.3))
     (home-page "https://github.com/jonschlinkert/is-accessor-descriptor")
     (synopsis
      "Returns true if a value has the characteristics of a valid JavaScript accessor descriptor.")
@@ -7661,7 +7592,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("ava")))))))
-    (inputs `(("node-binary-extensions" ,node-binary-extensions-1.13.1)))
+    (inputs (list node-binary-extensions-1.13.1))
     (home-page "https://github.com/sindresorhus/is-binary-path")
     (synopsis "Check if a filepath is a binary file")
     (description "Check if a filepath is a binary file")
@@ -7719,7 +7650,7 @@
                                              "safe-publish-latest"
                                              "semver"
                                              "tape")))))))
-    (inputs `(("node-has" ,node-has-1.0.3)))
+    (inputs (list node-has-1.0.3))
     (home-page "https://github.com/inspect-js/is-core-module")
     (synopsis "Is this specifier a node.js core module?")
     (description "Is this specifier a node.js core module?")
@@ -7744,7 +7675,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("mocha" "should")))))))
-    (inputs `(("node-kind-of" ,node-kind-of-3.2.2)))
+    (inputs (list node-kind-of-3.2.2))
     (home-page "https://github.com/jonschlinkert/is-data-descriptor")
     (synopsis
      "Returns true if a value has the characteristics of a valid JavaScript data descriptor.")
@@ -7771,7 +7702,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha")))))))
-    (inputs `(("node-kind-of" ,node-kind-of-6.0.3)))
+    (inputs (list node-kind-of-6.0.3))
     (home-page "https://github.com/jonschlinkert/is-data-descriptor")
     (synopsis
      "Returns true if a value has the characteristics of a valid JavaScript data descriptor.")
@@ -7798,9 +7729,8 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha")))))))
-    (inputs `(("node-kind-of" ,node-kind-of-5.1.0)
-              ("node-is-data-descriptor" ,node-is-data-descriptor-0.1.4)
-              ("node-is-accessor-descriptor" ,node-is-accessor-descriptor-0.1.6)))
+    (inputs (list node-kind-of-5.1.0 node-is-data-descriptor-0.1.4
+                  node-is-accessor-descriptor-0.1.6))
     (home-page "https://github.com/jonschlinkert/is-descriptor")
     (synopsis
      "Returns true if a value has the characteristics of a valid JavaScript descriptor. Works for data descriptors and accessor descriptors.")
@@ -7827,9 +7757,8 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha")))))))
-    (inputs `(("node-kind-of" ,node-kind-of-6.0.3)
-              ("node-is-data-descriptor" ,node-is-data-descriptor-1.0.0)
-              ("node-is-accessor-descriptor" ,node-is-accessor-descriptor-1.0.0)))
+    (inputs (list node-kind-of-6.0.3 node-is-data-descriptor-1.0.0
+                  node-is-accessor-descriptor-1.0.0))
     (home-page "https://github.com/jonschlinkert/is-descriptor")
     (synopsis
      "Returns true if a value has the characteristics of a valid JavaScript descriptor. Works for data descriptors and accessor descriptors.")
@@ -7883,7 +7812,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("mocha" "should")))))))
-    (inputs `(("node-is-primitive" ,node-is-primitive-2.0.0)))
+    (inputs (list node-is-primitive-2.0.0))
     (home-page "https://github.com/jonschlinkert/is-equal-shallow")
     (synopsis
      "Does a shallow comparison of two objects, returning false if the keys or values differ.")
@@ -7936,7 +7865,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha")))))))
-    (inputs `(("node-is-plain-object" ,node-is-plain-object-2.0.4)))
+    (inputs (list node-is-plain-object-2.0.4))
     (home-page "https://github.com/jonschlinkert/is-extendable")
     (synopsis "Returns true if a value is a plain object, array or function.")
     (description
@@ -8039,7 +7968,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("mocha")))))))
-    (inputs `(("node-is-extglob" ,node-is-extglob-1.0.0)))
+    (inputs (list node-is-extglob-1.0.0))
     (home-page "https://github.com/jonschlinkert/is-glob")
     (synopsis
      "Returns `true` if the given string looks like a glob pattern or an extglob pattern. This makes it easy to create code that only uses external modules like node-glob when necessary, resulting in much faster code execution and initialization time, and a bet")
@@ -8066,7 +7995,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("benchmarked" "chalk" "mocha")))))))
-    (inputs `(("node-kind-of" ,node-kind-of-3.2.2)))
+    (inputs (list node-kind-of-3.2.2))
     (home-page "https://github.com/jonschlinkert/is-number")
     (synopsis "Returns true if the value is a number. comprehensive tests.")
     (description "Returns true if the value is a number. comprehensive tests.")
@@ -8092,7 +8021,7 @@
                     (lambda _
                       (delete-dependencies '("benchmarked" "chalk"
                                              "gulp-format-md" "mocha")))))))
-    (inputs `(("node-kind-of" ,node-kind-of-3.2.2)))
+    (inputs (list node-kind-of-3.2.2))
     (home-page "https://github.com/jonschlinkert/is-number")
     (synopsis "Returns true if the value is a number. comprehensive tests.")
     (description "Returns true if the value is a number. comprehensive tests.")
@@ -8147,7 +8076,7 @@
                                              "mocha-phantomjs"
                                              "phantomjs"
                                              "uglify-js")))))))
-    (inputs `(("node-isobject" ,node-isobject-3.0.1)))
+    (inputs (list node-isobject-3.0.1))
     (home-page "https://github.com/jonschlinkert/is-plain-object")
     (synopsis
      "Returns true if an object was created by the `Object` constructor.")
@@ -8296,7 +8225,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha")))))))
-    (inputs `(("node-isarray" ,node-isarray-1.0.0)))
+    (inputs (list node-isarray-1.0.0))
     (home-page "https://github.com/jonschlinkert/isobject")
     (synopsis
      "Returns true if the value is an object and not an array or null.")
@@ -8435,18 +8364,18 @@
                                              "should"
                                              "superagent"
                                              "typescript")))))))
-    (inputs `(("node-ws" ,node-ws-7.5.9)
-              ("node-uuid" ,node-uuid-8.3.2)
-              ("node-jsonstream" ,node-jsonstream-1.3.5)
-              ("node-json-stringify-safe" ,node-json-stringify-safe-5.0.1)
-              ("node-isomorphic-ws" ,node-isomorphic-ws-4.0.1)
-              ("node-eyes" ,node-eyes-0.1.8)
-              ("node-es6-promisify" ,node-es6-promisify-5.0.0)
-              ("node-delay" ,node-delay-5.0.0)
-              ("node-commander" ,node-commander-2.20.3)
-              ("node-types-ws" ,node-types-ws-7.4.7)
-              ("node-types-node" ,node-types-node-12.20.55)
-              ("node-types-connect" ,node-types-connect-3.4.35)))
+    (inputs (list node-ws-7.5.9
+                  node-uuid-8.3.2
+                  node-jsonstream-1.3.5
+                  node-json-stringify-safe-5.0.1
+                  node-isomorphic-ws-4.0.1
+                  node-eyes-0.1.8
+                  node-es6-promisify-5.0.0
+                  node-delay-5.0.0
+                  node-commander-2.20.3
+                  node-types-ws-7.4.7
+                  node-types-node-12.20.55
+                  node-types-connect-3.4.35))
     (home-page "https://jayson.tedeh.net")
     (synopsis "JSON-RPC 1.0/2.0 compliant server and client")
     (description "JSON-RPC 1.0/2.0 compliant server and client")
@@ -8508,7 +8437,7 @@
                                              "rollup-plugin-node-polyfills"
                                              "rollup-plugin-terser"
                                              "shelljs")))))))
-    (inputs `(("node-argparse" ,node-argparse-2.0.1)))
+    (inputs (list node-argparse-2.0.1))
     (home-page "https://github.com/nodeca/js-yaml#readme")
     (synopsis "YAML 1.2 parser and serializer")
     (description "YAML 1.2 parser and serializer")
@@ -8715,8 +8644,7 @@
                                              "rollup-plugin-node-resolve"
                                              "rollup-plugin-replace"
                                              "rollup-plugin-visualizer")))))))
-    (inputs `(("node-diff-match-patch" ,node-diff-match-patch-1.0.5)
-              ("node-chalk" ,node-chalk-2.4.2)))
+    (inputs (list node-diff-match-patch-1.0.5 node-chalk-2.4.2))
     (home-page "https://github.com/benjamine/jsondiffpatch")
     (synopsis "Diff & Patch for Javascript objects")
     (description "Diff & Patch for Javascript objects")
@@ -8773,8 +8701,7 @@
                                              "rollup-plugin-node-resolve"
                                              "rollup-plugin-replace"
                                              "rollup-plugin-visualizer")))))))
-    (inputs `(("node-diff-match-patch" ,node-diff-match-patch-1.0.5)
-              ("node-chalk" ,node-chalk-2.4.2)))
+    (inputs (list node-diff-match-patch-1.0.5 node-chalk-2.4.2))
     (home-page "https://github.com/benjamine/jsondiffpatch")
     (synopsis "Diff & Patch for Javascript objects")
     (description "Diff & Patch for Javascript objects")
@@ -8798,7 +8725,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("mocha" "rimraf" "standard")))))))
-    (inputs `(("node-graceful-fs" ,node-graceful-fs-4.2.11)))
+    (inputs (list node-graceful-fs-4.2.11))
     (home-page "https://github.com/jprichardson/node-jsonfile#readme")
     (synopsis "Easily read/write JSON files.")
     (description "Easily read/write JSON files.")
@@ -8848,8 +8775,7 @@
                     (lambda _
                       (delete-dependencies '("it-is" "assertions" "render"
                                              "trees" "event-stream" "tape")))))))
-    (inputs `(("node-through" ,node-through-2.3.8)
-              ("node-jsonparse" ,node-jsonparse-1.3.1)))
+    (inputs (list node-through-2.3.8 node-jsonparse-1.3.1))
     (home-page "http://github.com/dominictarr/JSONStream")
     (synopsis "rawStream.pipe(JSONStream.parse()).pipe(streamOfObjects)")
     (description "rawStream.pipe(JSONStream.parse()).pipe(streamOfObjects)")
@@ -8870,10 +8796,8 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-verror" ,node-verror-1.10.0)
-              ("node-json-schema" ,node-json-schema-0.4.0)
-              ("node-extsprintf" ,node-extsprintf-1.3.0)
-              ("node-assert-plus" ,node-assert-plus-1.0.0)))
+    (inputs (list node-verror-1.10.0 node-json-schema-0.4.0
+                  node-extsprintf-1.3.0 node-assert-plus-1.0.0))
     (home-page "https://github.com/joyent/node-jsprim#readme")
     (synopsis "utilities for primitive JavaScript types")
     (description "utilities for primitive JavaScript types")
@@ -8923,7 +8847,7 @@
                                              "mocha"
                                              "type-of"
                                              "typeof")))))))
-    (inputs `(("node-is-buffer" ,node-is-buffer-1.1.6)))
+    (inputs (list node-is-buffer-1.1.6))
     (home-page "https://github.com/jonschlinkert/kind-of")
     (synopsis "Get the native type of a value.")
     (description "Get the native type of a value.")
@@ -8953,7 +8877,7 @@
                                              "mocha"
                                              "type-of"
                                              "typeof")))))))
-    (inputs `(("node-is-buffer" ,node-is-buffer-1.1.6)))
+    (inputs (list node-is-buffer-1.1.6))
     (home-page "https://github.com/jonschlinkert/kind-of")
     (synopsis "Get the native type of a value.")
     (description "Get the native type of a value.")
@@ -9035,7 +8959,7 @@
                                              "flow-remove-types"
                                              "prettier"
                                              "prettier-eslint")))))))
-    (inputs `(("node-chain-able" ,node-chain-able-3.0.0)))
+    (inputs (list node-chain-able-3.0.0))
     (home-page "https://github.com/fuse-box/lego-api#readme")
     (synopsis "lego api")
     (description "lego api")
@@ -9059,8 +8983,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("livescript" "mocha" "istanbul")))))))
-    (inputs `(("node-type-check" ,node-type-check-0.3.2)
-              ("node-prelude-ls" ,node-prelude-ls-1.1.2)))
+    (inputs (list node-type-check-0.3.2 node-prelude-ls-1.1.2))
     (home-page "https://github.com/gkz/levn")
     (synopsis
      "Light ECMAScript (JavaScript) Value Notation - human written, concise, typed, flexible")
@@ -9136,7 +9059,7 @@
                                              "shx"
                                              "stylus"
                                              "tlds")))))))
-    (inputs `(("node-uc-micro" ,node-uc-micro-1.0.6)))
+    (inputs (list node-uc-micro-1.0.6))
     (home-page "https://github.com/markdown-it/linkify-it#readme")
     (synopsis "Links recognition library with FULL unicode support")
     (description "Links recognition library with FULL unicode support")
@@ -9222,7 +9145,7 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-lodash--getnative" ,node-lodash--getnative-3.9.1)))
+    (inputs (list node-lodash--getnative-3.9.1))
     (home-page "https://lodash.com/")
     (synopsis "The modern build of lodashâs `_.debounce` as a module.")
     (description "The modern build of lodashâs `_.debounce` as a module.")
@@ -9331,7 +9254,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("browserify" "envify" "tap")))))))
-    (inputs `(("node-js-tokens" ,node-js-tokens-4.0.0)))
+    (inputs (list node-js-tokens-4.0.0))
     (home-page "https://github.com/zertosh/loose-envify")
     (synopsis
      "Fast (and loose) selective `process.env` replacer using js-tokens instead of an AST")
@@ -9358,7 +9281,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("benchmark" "tap")))))))
-    (inputs `(("node-yallist" ,node-yallist-4.0.0)))
+    (inputs (list node-yallist-4.0.0))
     (home-page "https://github.com/isaacs/node-lru-cache#readme")
     (synopsis "A cache object that deletes the least-recently-used items.")
     (description "A cache object that deletes the least-recently-used items.")
@@ -9391,7 +9314,7 @@
                                              "tempy"
                                              "tsd"
                                              "xo")))))))
-    (inputs `(("node-semver" ,node-semver-6.3.0)))
+    (inputs (list node-semver-6.3.0))
     (home-page "https://github.com/sindresorhus/make-dir#readme")
     (synopsis "Make a directory and its parents if needed - Think `mkdir -p`")
     (description
@@ -9442,7 +9365,7 @@
                     (lambda _
                       (delete-dependencies '("clone-deep" "extend-shallow"
                                              "gulp-format-md" "lodash" "mocha")))))))
-    (inputs `(("node-object-visit" ,node-object-visit-1.0.1)))
+    (inputs (list node-object-visit-1.0.1))
     (home-page "https://github.com/jonschlinkert/map-visit")
     (synopsis "Map `visit` over an array of objects.")
     (description "Map `visit` over an array of objects.")
@@ -9478,15 +9401,15 @@
                                              "nyc"
                                              "tape"
                                              "tar-fs")))))))
-    (inputs `(("node-tar" ,node-tar-6.1.15)
-              ("node-semver" ,node-semver-7.5.1)
-              ("node-rimraf" ,node-rimraf-3.0.2)
-              ("node-npmlog" ,node-npmlog-5.0.1)
-              ("node-nopt" ,node-nopt-5.0.0)
-              ("node-node-fetch" ,node-node-fetch-2.6.11)
-              ("node-make-dir" ,node-make-dir-3.1.0)
-              ("node-https-proxy-agent" ,node-https-proxy-agent-5.0.1)
-              ("node-detect-libc" ,node-detect-libc-2.0.1)))
+    (inputs (list node-tar-6.1.15
+                  node-semver-7.5.1
+                  node-rimraf-3.0.2
+                  node-npmlog-5.0.1
+                  node-nopt-5.0.0
+                  node-node-fetch-2.6.11
+                  node-make-dir-3.1.0
+                  node-https-proxy-agent-5.0.1
+                  node-detect-libc-2.0.1))
     (home-page "https://github.com/mapbox/node-pre-gyp#readme")
     (synopsis "Node.js native addon binary install tool")
     (description "Node.js native addon binary install tool")
@@ -9545,11 +9468,8 @@
                                              "shelljs"
                                              "stylus"
                                              "supertest")))))))
-    (inputs `(("node-uc-micro" ,node-uc-micro-1.0.6)
-              ("node-mdurl" ,node-mdurl-1.0.1)
-              ("node-linkify-it" ,node-linkify-it-4.0.1)
-              ("node-entities" ,node-entities-3.0.1)
-              ("node-argparse" ,node-argparse-2.0.1)))
+    (inputs (list node-uc-micro-1.0.6 node-mdurl-1.0.1 node-linkify-it-4.0.1
+                  node-entities-3.0.1 node-argparse-2.0.1))
     (home-page "https://github.com/markdown-it/markdown-it#readme")
     (synopsis "Markdown-it - modern pluggable markdown parser.")
     (description "Markdown-it - modern pluggable markdown parser.")
@@ -9777,19 +9697,19 @@
                                              "multimatch"
                                              "should"
                                              "write")))))))
-    (inputs `(("node-regex-cache" ,node-regex-cache-0.4.4)
-              ("node-parse-glob" ,node-parse-glob-3.0.4)
-              ("node-object-omit" ,node-object-omit-2.0.1)
-              ("node-normalize-path" ,node-normalize-path-2.1.1)
-              ("node-kind-of" ,node-kind-of-3.2.2)
-              ("node-is-glob" ,node-is-glob-2.0.1)
-              ("node-is-extglob" ,node-is-extglob-1.0.0)
-              ("node-filename-regex" ,node-filename-regex-2.0.1)
-              ("node-extglob" ,node-extglob-0.3.2)
-              ("node-expand-brackets" ,node-expand-brackets-0.1.5)
-              ("node-braces" ,node-braces-1.8.5)
-              ("node-array-unique" ,node-array-unique-0.2.1)
-              ("node-arr-diff" ,node-arr-diff-2.0.0)))
+    (inputs (list node-regex-cache-0.4.4
+                  node-parse-glob-3.0.4
+                  node-object-omit-2.0.1
+                  node-normalize-path-2.1.1
+                  node-kind-of-3.2.2
+                  node-is-glob-2.0.1
+                  node-is-extglob-1.0.0
+                  node-filename-regex-2.0.1
+                  node-extglob-0.3.2
+                  node-expand-brackets-0.1.5
+                  node-braces-1.8.5
+                  node-array-unique-0.2.1
+                  node-arr-diff-2.0.0))
     (home-page "https://github.com/jonschlinkert/micromatch")
     (synopsis
      "Glob matching for javascript/node.js. A drop-in replacement and faster alternative to minimatch and multimatch.")
@@ -9826,19 +9746,19 @@
                                              "minimist"
                                              "mocha"
                                              "multimatch")))))))
-    (inputs `(("node-to-regex" ,node-to-regex-3.0.2)
-              ("node-snapdragon" ,node-snapdragon-0.8.2)
-              ("node-regex-not" ,node-regex-not-1.0.2)
-              ("node-object-pick" ,node-object-pick-1.3.0)
-              ("node-nanomatch" ,node-nanomatch-1.2.13)
-              ("node-kind-of" ,node-kind-of-6.0.3)
-              ("node-fragment-cache" ,node-fragment-cache-0.2.1)
-              ("node-extglob" ,node-extglob-2.0.4)
-              ("node-extend-shallow" ,node-extend-shallow-3.0.2)
-              ("node-define-property" ,node-define-property-2.0.2)
-              ("node-braces" ,node-braces-2.3.2)
-              ("node-array-unique" ,node-array-unique-0.3.2)
-              ("node-arr-diff" ,node-arr-diff-4.0.0)))
+    (inputs (list node-to-regex-3.0.2
+                  node-snapdragon-0.8.2
+                  node-regex-not-1.0.2
+                  node-object-pick-1.3.0
+                  node-nanomatch-1.2.13
+                  node-kind-of-6.0.3
+                  node-fragment-cache-0.2.1
+                  node-extglob-2.0.4
+                  node-extend-shallow-3.0.2
+                  node-define-property-2.0.2
+                  node-braces-2.3.2
+                  node-array-unique-0.3.2
+                  node-arr-diff-4.0.0))
     (home-page "https://github.com/micromatch/micromatch")
     (synopsis
      "Glob matching for javascript/node.js. A drop-in replacement and faster alternative to minimatch and multimatch.")
@@ -9963,7 +9883,7 @@
                                              "eslint-plugin-standard"
                                              "mocha"
                                              "nyc")))))))
-    (inputs `(("node-mime-db" ,node-mime-db-1.52.0)))
+    (inputs (list node-mime-db-1.52.0))
     (home-page "https://github.com/jshttp/mime-types#readme")
     (synopsis "The ultimate javascript content-type utility.")
     (description "The ultimate javascript content-type utility.")
@@ -10011,7 +9931,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("tap")))))))
-    (inputs `(("node-brace-expansion" ,node-brace-expansion-1.1.11)))
+    (inputs (list node-brace-expansion-1.1.11))
     (home-page "https://github.com/isaacs/minimatch#readme")
     (synopsis "a glob matcher in javascript")
     (description "a glob matcher in javascript")
@@ -10070,7 +9990,7 @@
                                              "through2"
                                              "ts-node"
                                              "typescript")))))))
-    (inputs `(("node-yallist" ,node-yallist-4.0.0)))
+    (inputs (list node-yallist-4.0.0))
     (home-page "https://github.com/isaacs/minipass#readme")
     (synopsis "minimal implementation of a PassThrough stream")
     (description "minimal implementation of a PassThrough stream")
@@ -10153,8 +10073,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("tap")))))))
-    (inputs `(("node-yallist" ,node-yallist-4.0.0)
-              ("node-minipass" ,node-minipass-3.3.6)))
+    (inputs (list node-yallist-4.0.0 node-minipass-3.3.6))
     (home-page "https://github.com/isaacs/minizlib#readme")
     (synopsis
      "A small fast zlib stream built on [minipass](http://npm.im/minipass) and Node.js's zlib binding.")
@@ -10181,8 +10100,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha" "should")))))))
-    (inputs `(("node-is-extendable" ,node-is-extendable-1.0.1)
-              ("node-for-in" ,node-for-in-1.0.2)))
+    (inputs (list node-is-extendable-1.0.1 node-for-in-1.0.2))
     (home-page "https://github.com/jonschlinkert/mixin-deep")
     (synopsis
      "Deeply mix the properties of objects into the first object. Like merge-deep, but doesn't clone.")
@@ -10208,7 +10126,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("tap")))))))
-    (inputs `(("node-minimist" ,node-minimist-1.2.8)))
+    (inputs (list node-minimist-1.2.8))
     (home-page "https://github.com/substack/node-mkdirp#readme")
     (synopsis "Recursively mkdir, like `mkdir -p`")
     (description "Recursively mkdir, like `mkdir -p`")
@@ -10421,17 +10339,17 @@
                                              "minimist"
                                              "mocha"
                                              "multimatch")))))))
-    (inputs `(("node-to-regex" ,node-to-regex-3.0.2)
-              ("node-snapdragon" ,node-snapdragon-0.8.2)
-              ("node-regex-not" ,node-regex-not-1.0.2)
-              ("node-object-pick" ,node-object-pick-1.3.0)
-              ("node-kind-of" ,node-kind-of-6.0.3)
-              ("node-is-windows" ,node-is-windows-1.0.2)
-              ("node-fragment-cache" ,node-fragment-cache-0.2.1)
-              ("node-extend-shallow" ,node-extend-shallow-3.0.2)
-              ("node-define-property" ,node-define-property-2.0.2)
-              ("node-array-unique" ,node-array-unique-0.3.2)
-              ("node-arr-diff" ,node-arr-diff-4.0.0)))
+    (inputs (list node-to-regex-3.0.2
+                  node-snapdragon-0.8.2
+                  node-regex-not-1.0.2
+                  node-object-pick-1.3.0
+                  node-kind-of-6.0.3
+                  node-is-windows-1.0.2
+                  node-fragment-cache-0.2.1
+                  node-extend-shallow-3.0.2
+                  node-define-property-2.0.2
+                  node-array-unique-0.3.2
+                  node-arr-diff-4.0.0))
     (home-page "https://github.com/micromatch/nanomatch")
     (synopsis
      "Fast, minimal glob matcher for node.js. Similar to micromatch, minimatch and multimatch, but complete Bash 4.3 wildcard support only (no support for exglobs, posix brackets or braces)")
@@ -10590,8 +10508,7 @@
                                              "string-to-arraybuffer"
                                              "teeny-request"
                                              "encoding")))))))
-    (inputs `(("node-whatwg-url" ,node-whatwg-url-5.0.0)
-              ("node-encoding" ,node-encoding-0.1.13)))
+    (inputs (list node-whatwg-url-5.0.0 node-encoding-0.1.13))
     (home-page "https://github.com/bitinn/node-fetch")
     (synopsis "A light-weight module that brings window.fetch to node.js")
     (description "A light-weight module that brings window.fetch to node.js")
@@ -10680,7 +10597,7 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-abbrev" ,node-abbrev-1.1.1)))
+    (inputs (list node-abbrev-1.1.1))
     (home-page "https://www.npmjs.com/package/node-nopt")
     (synopsis
      "Option parsing for Node, supporting types, shorthands, etc. Used by npm.")
@@ -10706,7 +10623,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("tap")))))))
-    (inputs `(("node-abbrev" ,node-abbrev-1.1.1)))
+    (inputs (list node-abbrev-1.1.1))
     (home-page "https://github.com/npm/nopt#readme")
     (synopsis
      "Option parsing for Node, supporting types, shorthands, etc. Used by npm.")
@@ -10734,7 +10651,7 @@
                     (lambda _
                       (delete-dependencies '("benchmarked" "gulp-format-md"
                                              "minimist" "mocha")))))))
-    (inputs `(("node-remove-trailing-separator" ,node-remove-trailing-separator-1.1.0)))
+    (inputs (list node-remove-trailing-separator-1.1.0))
     (home-page "https://github.com/jonschlinkert/normalize-path")
     (synopsis
      "Normalize file path slashes to be unix-like forward slashes. Also condenses repeat slashes to a single slash and removes and trailing slashes unless disabled.")
@@ -10760,10 +10677,9 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("@npmcli/lint" "tap")))))))
-    (inputs `(("node-set-blocking" ,node-set-blocking-2.0.0)
-              ("node-gauge" ,node-gauge-3.0.2)
-              ("node-console-control-strings" ,node-console-control-strings-1.1.0)
-              ("node-are-we-there-yet" ,node-are-we-there-yet-2.0.0)))
+    (inputs (list node-set-blocking-2.0.0 node-gauge-3.0.2
+                  node-console-control-strings-1.1.0
+                  node-are-we-there-yet-2.0.0))
     (home-page "https://github.com/npm/npmlog#readme")
     (synopsis "logger for npm")
     (description "logger for npm")
@@ -10835,9 +10751,8 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha")))))))
-    (inputs `(("node-kind-of" ,node-kind-of-3.2.2)
-              ("node-define-property" ,node-define-property-0.2.5)
-              ("node-copy-descriptor" ,node-copy-descriptor-0.1.1)))
+    (inputs (list node-kind-of-3.2.2 node-define-property-0.2.5
+                  node-copy-descriptor-0.1.1))
     (home-page "https://github.com/jonschlinkert/object-copy")
     (synopsis
      "Copy static properties, prototype properties, and descriptors from one object to another.")
@@ -10906,8 +10821,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha" "should")))))))
-    (inputs `(("node-is-extendable" ,node-is-extendable-0.1.1)
-              ("node-for-own" ,node-for-own-0.1.5)))
+    (inputs (list node-is-extendable-0.1.1 node-for-own-0.1.5))
     (home-page "https://github.com/jonschlinkert/object.omit")
     (synopsis
      "Return a copy of an object excluding the given key, or array of keys. Also accepts an optional filter function as the last argument.")
@@ -10934,7 +10848,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha" "vinyl")))))))
-    (inputs `(("node-isobject" ,node-isobject-3.0.1)))
+    (inputs (list node-isobject-3.0.1))
     (home-page "https://github.com/jonschlinkert/object.pick")
     (synopsis
      "Returns a filtered copy of an object with only the specified keys, similar to `_.pick` from lodash / underscore.")
@@ -10984,7 +10898,7 @@
                       (delete-dependencies '("gulp" "gulp-eslint"
                                              "gulp-format-md" "gulp-istanbul"
                                              "gulp-mocha" "mocha")))))))
-    (inputs `(("node-isobject" ,node-isobject-3.0.1)))
+    (inputs (list node-isobject-3.0.1))
     (home-page "https://github.com/jonschlinkert/object-visit")
     (synopsis "Call a specified method on each value in the given object.")
     (description "Call a specified method on each value in the given object.")
@@ -11016,7 +10930,7 @@
                                              "eslint-plugin-standard"
                                              "mocha"
                                              "nyc")))))))
-    (inputs `(("node-ee-first" ,node-ee-first-1.1.1)))
+    (inputs (list node-ee-first-1.1.1))
     (home-page "https://github.com/jshttp/on-finished#readme")
     (synopsis "Execute a callback when a request closes, finishes, or errors")
     (description
@@ -11044,7 +10958,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("ava" "xo")))))))
-    (inputs `(("node-mimic-fn" ,node-mimic-fn-1.2.0)))
+    (inputs (list node-mimic-fn-1.2.0))
     (home-page "https://github.com/sindresorhus/onetime#readme")
     (synopsis "Ensure a function is only called once")
     (description "Ensure a function is only called once")
@@ -11069,12 +10983,12 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("livescript" "mocha" "istanbul")))))))
-    (inputs `(("node-fast-levenshtein" ,node-fast-levenshtein-2.0.6)
-              ("node-levn" ,node-levn-0.3.0)
-              ("node-type-check" ,node-type-check-0.3.2)
-              ("node-word-wrap" ,node-word-wrap-1.2.3)
-              ("node-deep-is" ,node-deep-is-0.1.4)
-              ("node-prelude-ls" ,node-prelude-ls-1.1.2)))
+    (inputs (list node-fast-levenshtein-2.0.6
+                  node-levn-0.3.0
+                  node-type-check-0.3.2
+                  node-word-wrap-1.2.3
+                  node-deep-is-0.1.4
+                  node-prelude-ls-1.1.2))
     (home-page "https://github.com/gkz/optionator")
     (synopsis "option parsing and help generation")
     (description "option parsing and help generation")
@@ -11246,7 +11160,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("ava" "execa" "xo")))))))
-    (inputs `(("node-callsites" ,node-callsites-3.1.0)))
+    (inputs (list node-callsites-3.1.0))
     (home-page "https://github.com/sindresorhus/parent-module#readme")
     (synopsis "Get the path of the parent module")
     (description "Get the path of the parent module")
@@ -11271,10 +11185,8 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("browserify" "lodash" "mocha")))))))
-    (inputs `(("node-is-glob" ,node-is-glob-2.0.1)
-              ("node-is-extglob" ,node-is-extglob-1.0.0)
-              ("node-is-dotfile" ,node-is-dotfile-1.0.3)
-              ("node-glob-base" ,node-glob-base-0.3.0)))
+    (inputs (list node-is-glob-2.0.1 node-is-extglob-1.0.0
+                  node-is-dotfile-1.0.3 node-glob-base-0.3.0))
     (home-page "https://github.com/jonschlinkert/parse-glob")
     (synopsis "Parse a glob pattern into an object of tokens.")
     (description "Parse a glob pattern into an object of tokens.")
@@ -11299,10 +11211,9 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("ava" "nyc" "xo")))))))
-    (inputs `(("node-lines-and-columns" ,node-lines-and-columns-1.2.4)
-              ("node-json-parse-even-better-errors" ,node-json-parse-even-better-errors-2.3.1)
-              ("node-error-ex" ,node-error-ex-1.3.2)
-              ("node-babel-code-frame" ,node-babel-code-frame-7.22.5)))
+    (inputs (list node-lines-and-columns-1.2.4
+                  node-json-parse-even-better-errors-2.3.1 node-error-ex-1.3.2
+                  node-babel-code-frame-7.22.5))
     (home-page "https://github.com/sindresorhus/parse-json#readme")
     (synopsis "Parse JSON with more helpful errors")
     (description "Parse JSON with more helpful errors")
@@ -11516,9 +11427,8 @@
                                              "nyc"
                                              "react-json-view"
                                              "request")))))))
-    (inputs `(("node-nodejieba" ,node-nodejieba-2.5.2)
-              ("node-object-assign" ,node-object-assign-4.1.1)
-              ("node-commander" ,node-commander-1.1.1)))
+    (inputs (list node-nodejieba-2.5.2 node-object-assign-4.1.1
+                  node-commander-1.1.1))
     (home-page "http://pinyin.hotoo.me/")
     (synopsis "æ±è¯­æ¼é³è½¬æ¢å·¥å·ã")
     (description "æ±è¯­æ¼é³è½¬æ¢å·¥å·ã")
@@ -11563,9 +11473,8 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-supports-color" ,node-supports-color-5.5.0)
-              ("node-source-map" ,node-source-map-0.6.1)
-              ("node-chalk" ,node-chalk-2.4.2)))
+    (inputs (list node-supports-color-5.5.0 node-source-map-0.6.1
+                  node-chalk-2.4.2))
     (home-page "https://postcss.org/")
     (synopsis "Tool for transforming styles with JS plugins")
     (description "Tool for transforming styles with JS plugins")
@@ -11645,8 +11554,7 @@
                       (delete-dependencies '("gulp" "gulp-istanbul"
                                              "gulp-jshint" "gulp-mocha"
                                              "jshint-stylish" "mocha")))))))
-    (inputs `(("node-nanoseconds" ,node-nanoseconds-0.1.0)
-              ("node-is-number" ,node-is-number-2.1.0)))
+    (inputs (list node-nanoseconds-0.1.0 node-is-number-2.1.0))
     (home-page "https://github.com/jonschlinkert/pretty-time")
     (synopsis
      "Easily format the time from node.js `process.hrtime`. Works with timescales ranging from weeks to nanoseconds.")
@@ -11730,9 +11638,8 @@
                                              "react"
                                              "uglifyify"
                                              "uglifyjs")))))))
-    (inputs `(("node-react-is" ,node-react-is-16.13.1)
-              ("node-object-assign" ,node-object-assign-4.1.1)
-              ("node-loose-envify" ,node-loose-envify-1.4.0)))
+    (inputs (list node-react-is-16.13.1 node-object-assign-4.1.1
+                  node-loose-envify-1.4.0))
     (home-page "https://facebook.github.io/react/")
     (synopsis "Runtime type checking for React props and similar objects.")
     (description "Runtime type checking for React props and similar objects.")
@@ -11759,7 +11666,7 @@
                       (delete-dependencies '("@prosemirror/buildhelper"
                                              "prosemirror-model"
                                              "prosemirror-test-builder")))))))
-    (inputs `(("node-prosemirror-transform" ,node-prosemirror-transform-1.7.3)))
+    (inputs (list node-prosemirror-transform-1.7.3))
     (home-page "https://github.com/prosemirror/prosemirror-changeset#readme")
     (synopsis
      "Distills a series of editing steps into deleted and added ranges")
@@ -11787,9 +11694,9 @@
                     (lambda _
                       (delete-dependencies '("@prosemirror/buildhelper"
                                              "prosemirror-test-builder")))))))
-    (inputs `(("node-prosemirror-state" ,node-prosemirror-state-1.4.3)
-              ("node-prosemirror-transform" ,node-prosemirror-transform-1.7.3)
-              ("node-prosemirror-model" ,node-prosemirror-model-1.19.2)))
+    (inputs (list node-prosemirror-state-1.4.3
+                  node-prosemirror-transform-1.7.3
+                  node-prosemirror-model-1.19.2))
     (home-page "https://github.com/prosemirror/prosemirror-commands#readme")
     (synopsis "Editing commands for ProseMirror")
     (description "Editing commands for ProseMirror")
@@ -11836,21 +11743,21 @@
                                              "react-dom"
                                              "rimraf"
                                              "vite")))))))
-    (inputs `(("node-unstated" ,node-unstated-2.1.1)
-              ("node-react-json-tree" ,node-react-json-tree-0.11.2)
-              ("node-react-dock" ,node-react-dock-0.2.4)
-              ("node-prosemirror-state" ,node-prosemirror-state-1.4.3)
-              ("node-prosemirror-model" ,node-prosemirror-model-1.19.2)
-              ("node-prop-types" ,node-prop-types-15.8.1)
-              ("node-nanoid" ,node-nanoid-2.1.11)
-              ("node-jsondiffpatch" ,node-jsondiffpatch-0.4.1)
-              ("node-html" ,node-html-1.0.0)
-              ("node-emotion-styled" ,node-emotion-styled-11.11.0)
-              ("node-emotion-react" ,node-emotion-react-11.11.1)
-              ("node-emotion-css" ,node-emotion-css-11.11.2)
-              ("node-babel-runtime" ,node-babel-runtime-7.22.5)
-              ("node-react-dom" ,node-react-dom-18.2.0)
-              ("node-react" ,node-react-18.2.0)))
+    (inputs (list node-unstated-2.1.1
+                  node-react-json-tree-0.11.2
+                  node-react-dock-0.2.4
+                  node-prosemirror-state-1.4.3
+                  node-prosemirror-model-1.19.2
+                  node-prop-types-15.8.1
+                  node-nanoid-2.1.11
+                  node-jsondiffpatch-0.4.1
+                  node-html-1.0.0
+                  node-emotion-styled-11.11.0
+                  node-emotion-react-11.11.1
+                  node-emotion-css-11.11.2
+                  node-babel-runtime-7.22.5
+                  node-react-dom-18.2.0
+                  node-react-18.2.0))
     (home-page "https://github.com/d4rkr00t/prosemirror-dev-tools#readme")
     (synopsis "Dev Tools for ProseMirror")
     (description "Dev Tools for ProseMirror")
@@ -11875,9 +11782,8 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("@prosemirror/buildhelper")))))))
-    (inputs `(("node-prosemirror-transform" ,node-prosemirror-transform-1.7.3)
-              ("node-prosemirror-view" ,node-prosemirror-view-1.31.5)
-              ("node-prosemirror-state" ,node-prosemirror-state-1.4.3)))
+    (inputs (list node-prosemirror-transform-1.7.3
+                  node-prosemirror-view-1.31.5 node-prosemirror-state-1.4.3))
     (home-page "https://github.com/prosemirror/prosemirror-dropcursor#readme")
     (synopsis "Drop cursor plugin for ProseMirror")
     (description "Drop cursor plugin for ProseMirror")
@@ -11902,10 +11808,8 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("@prosemirror/buildhelper")))))))
-    (inputs `(("node-prosemirror-view" ,node-prosemirror-view-1.31.5)
-              ("node-prosemirror-state" ,node-prosemirror-state-1.4.3)
-              ("node-prosemirror-model" ,node-prosemirror-model-1.19.2)
-              ("node-prosemirror-keymap" ,node-prosemirror-keymap-1.2.2)))
+    (inputs (list node-prosemirror-view-1.31.5 node-prosemirror-state-1.4.3
+                  node-prosemirror-model-1.19.2 node-prosemirror-keymap-1.2.2))
     (home-page "https://github.com/prosemirror/prosemirror-gapcursor#readme")
     (synopsis
      "ProseMirror plugin for cursors at normally impossible-to-reach positions")
@@ -11933,10 +11837,9 @@
                     (lambda _
                       (delete-dependencies '("@prosemirror/buildhelper"
                                              "prosemirror-test-builder")))))))
-    (inputs `(("node-rope-sequence" ,node-rope-sequence-1.3.4)
-              ("node-prosemirror-view" ,node-prosemirror-view-1.31.5)
-              ("node-prosemirror-transform" ,node-prosemirror-transform-1.7.3)
-              ("node-prosemirror-state" ,node-prosemirror-state-1.4.3)))
+    (inputs (list node-rope-sequence-1.3.4 node-prosemirror-view-1.31.5
+                  node-prosemirror-transform-1.7.3
+                  node-prosemirror-state-1.4.3))
     (home-page "https://github.com/prosemirror/prosemirror-history#readme")
     (synopsis "Undo history for ProseMirror")
     (description "Undo history for ProseMirror")
@@ -11961,8 +11864,8 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("@prosemirror/buildhelper")))))))
-    (inputs `(("node-prosemirror-transform" ,node-prosemirror-transform-1.7.3)
-              ("node-prosemirror-state" ,node-prosemirror-state-1.4.3)))
+    (inputs (list node-prosemirror-transform-1.7.3
+                  node-prosemirror-state-1.4.3))
     (home-page "https://github.com/prosemirror/prosemirror-inputrules#readme")
     (synopsis "Automatic transforms on text input for ProseMirror")
     (description "Automatic transforms on text input for ProseMirror")
@@ -12017,8 +11920,7 @@
                     (lambda _
                       (delete-dependencies '("@prosemirror/buildhelper"
                                              "prosemirror-test-builder")))))))
-    (inputs `(("node-prosemirror-state" ,node-prosemirror-state-1.4.3)
-              ("node-w3c-keyname" ,node-w3c-keyname-2.2.8)))
+    (inputs (list node-prosemirror-state-1.4.3 node-w3c-keyname-2.2.8))
     (home-page "https://github.com/prosemirror/prosemirror-keymap#readme")
     (synopsis "Keymap plugin for ProseMirror")
     (description "Keymap plugin for ProseMirror")
@@ -12071,7 +11973,7 @@
                       (delete-dependencies '("@prosemirror/buildhelper"
                                              "jsdom"
                                              "prosemirror-test-builder")))))))
-    (inputs `(("node-orderedmap" ,node-orderedmap-2.1.1)))
+    (inputs (list node-orderedmap-2.1.1))
     (home-page "https://github.com/prosemirror/prosemirror-model#readme")
     (synopsis "ProseMirror's document model")
     (description "ProseMirror's document model")
@@ -12098,9 +12000,9 @@
                       (delete-dependencies '("prosemirror-state"
                                              "@prosemirror/buildhelper"
                                              "prosemirror-test-builder")))))))
-    (inputs `(("node-prosemirror-state" ,node-prosemirror-state-1.4.3)
-              ("node-prosemirror-transform" ,node-prosemirror-transform-1.7.3)
-              ("node-prosemirror-model" ,node-prosemirror-model-1.19.2)))
+    (inputs (list node-prosemirror-state-1.4.3
+                  node-prosemirror-transform-1.7.3
+                  node-prosemirror-model-1.19.2))
     (home-page "https://github.com/prosemirror/prosemirror-schema-list#readme")
     (synopsis "List-related schema elements and commands for ProseMirror")
     (description "List-related schema elements and commands for ProseMirror")
@@ -12154,9 +12056,9 @@
                                              "prosemirror-test-builder"
                                              ;; Remove to avoid circular reference
                                              "prosemirror-view")))))))
-    (inputs `( ;("node-prosemirror-view" ,node-prosemirror-view-1.31.5)
-               ("node-prosemirror-transform" ,node-prosemirror-transform-1.7.3)
-              ("node-prosemirror-model" ,node-prosemirror-model-1.19.2)))
+    (inputs (list ;("node-prosemirror-view" ,node-prosemirror-view-1.31.5)
+                  node-prosemirror-transform-1.7.3
+                  node-prosemirror-model-1.19.2))
     (home-page "https://github.com/prosemirror/prosemirror-state#readme")
     (synopsis "ProseMirror editor state")
     (description "ProseMirror editor state")
@@ -12196,11 +12098,10 @@
                                              "typescript"
                                              "vite"
                                              "vitest")))))))
-    (inputs `(("node-prosemirror-view" ,node-prosemirror-view-1.31.5)
-              ("node-prosemirror-transform" ,node-prosemirror-transform-1.7.3)
-              ("node-prosemirror-state" ,node-prosemirror-state-1.4.3)
-              ("node-prosemirror-model" ,node-prosemirror-model-1.19.2)
-              ("node-prosemirror-keymap" ,node-prosemirror-keymap-1.2.2)))
+    (inputs (list node-prosemirror-view-1.31.5
+                  node-prosemirror-transform-1.7.3
+                  node-prosemirror-state-1.4.3 node-prosemirror-model-1.19.2
+                  node-prosemirror-keymap-1.2.2))
     (home-page "https://www.npmjs.com/package/node-prosemirror-tables")
     (synopsis "ProseMirror's rowspan/colspan tables component")
     (description "ProseMirror's rowspan/colspan tables component")
@@ -12252,7 +12153,7 @@
                     (lambda _
                       (delete-dependencies '("@prosemirror/buildhelper"
                                              "prosemirror-test-builder")))))))
-    (inputs `(("node-prosemirror-model" ,node-prosemirror-model-1.19.2)))
+    (inputs (list node-prosemirror-model-1.19.2))
     (home-page "https://github.com/prosemirror/prosemirror-transform#readme")
     (synopsis "ProseMirror document transformations")
     (description "ProseMirror document transformations")
@@ -12344,9 +12245,8 @@
                     (lambda _
                       (delete-dependencies '("@prosemirror/buildhelper"
                                              "prosemirror-test-builder")))))))
-    (inputs `(("node-prosemirror-transform" ,node-prosemirror-transform-1.7.3)
-              ("node-prosemirror-state" ,node-prosemirror-state-1.4.3)
-              ("node-prosemirror-model" ,node-prosemirror-model-1.19.2)))
+    (inputs (list node-prosemirror-transform-1.7.3
+                  node-prosemirror-state-1.4.3 node-prosemirror-model-1.19.2))
     (home-page "https://github.com/prosemirror/prosemirror-view#readme")
     (synopsis "ProseMirror's view component")
     (description "ProseMirror's view component")
@@ -12381,8 +12281,7 @@
                                              "eslint-plugin-standard"
                                              "mocha"
                                              "nyc")))))))
-    (inputs `(("node-ipaddr-js" ,node-ipaddr-js-1.9.1)
-              ("node-forwarded" ,node-forwarded-0.2.0)))
+    (inputs (list node-ipaddr-js-1.9.1 node-forwarded-0.2.0))
     (home-page "https://github.com/jshttp/proxy-addr#readme")
     (synopsis "Determine address of proxied request")
     (description "Determine address of proxied request")
@@ -12504,7 +12403,7 @@
                                              "safe-publish-latest"
                                              "safer-buffer"
                                              "tape")))))))
-    (inputs `(("node-side-channel" ,node-side-channel-1.0.4)))
+    (inputs (list node-side-channel-1.0.4))
     (home-page "https://github.com/ljharb/qs")
     (synopsis
      "A querystring parser that supports nesting and arrays, with a depth limit")
@@ -12569,9 +12468,8 @@
                     (lambda _
                       (delete-dependencies '("ansi-bold" "benchmarked" "glob"
                                              "gulp-format-md" "mocha")))))))
-    (inputs `(("node-math-random" ,node-math-random-1.0.4)
-              ("node-kind-of" ,node-kind-of-6.0.3)
-              ("node-is-number" ,node-is-number-4.0.0)))
+    (inputs (list node-math-random-1.0.4 node-kind-of-6.0.3
+                  node-is-number-4.0.0))
     (home-page "https://github.com/jonschlinkert/randomatic")
     (synopsis
      "Generate randomized strings of a specified length using simple character sequences. The original generate-password.")
@@ -12639,10 +12537,8 @@
                                              "nyc"
                                              "readable-stream"
                                              "safe-buffer")))))))
-    (inputs `(("node-unpipe" ,node-unpipe-1.0.0)
-              ("node-iconv-lite" ,node-iconv-lite-0.4.24)
-              ("node-http-errors" ,node-http-errors-2.0.0)
-              ("node-bytes" ,node-bytes-3.1.2)))
+    (inputs (list node-unpipe-1.0.0 node-iconv-lite-0.4.24
+                  node-http-errors-2.0.0 node-bytes-3.1.2))
     (home-page "https://github.com/stream-utils/raw-body#readme")
     (synopsis "Get and validate the raw body of a readable stream.")
     (description "Get and validate the raw body of a readable stream.")
@@ -12663,9 +12559,8 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-prop-types" ,node-prop-types-15.8.1)
-              ("node-object-assign" ,node-object-assign-4.1.1)
-              ("node-loose-envify" ,node-loose-envify-1.4.0)))
+    (inputs (list node-prop-types-15.8.1 node-object-assign-4.1.1
+                  node-loose-envify-1.4.0))
     (home-page "https://reactjs.org/")
     (synopsis "React is a JavaScript library for building user interfaces.")
     (description "React is a JavaScript library for building user interfaces.")
@@ -12686,7 +12581,7 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-loose-envify" ,node-loose-envify-1.4.0)))
+    (inputs (list node-loose-envify-1.4.0))
     (home-page "https://reactjs.org/")
     (synopsis "React is a JavaScript library for building user interfaces.")
     (description "React is a JavaScript library for building user interfaces.")
@@ -12722,10 +12617,8 @@
                                              "eslint-plugin-flowtype"
                                              "flow-bin"
                                              "pre-commit")))))))
-    (inputs `(("node-pure-color" ,node-pure-color-1.3.0)
-              ("node-lodash-flow" ,node-lodash-flow-3.5.0)
-              ("node-lodash-curry" ,node-lodash-curry-4.1.1)
-              ("node-base16" ,node-base16-1.0.0)))
+    (inputs (list node-pure-color-1.3.0 node-lodash-flow-3.5.0
+                  node-lodash-curry-4.1.1 node-base16-1.0.0))
     (home-page "https://github.com/alexkuz/react-base16-styling#readme")
     (synopsis "React styling with base16 color scheme support")
     (description "React styling with base16 color scheme support")
@@ -12776,10 +12669,8 @@
                                              "webpack-dev-server"
                                              "babel-runtime"
                                              "react")))))))
-    (inputs `(("node-prop-types" ,node-prop-types-15.8.1)
-              ("node-lodash-debounce" ,node-lodash-debounce-3.1.1)
-              ("node-babel-runtime" ,node-babel-runtime-6.26.0)
-              ("node-react" ,node-react-18.2.0)))
+    (inputs (list node-prop-types-15.8.1 node-lodash-debounce-3.1.1
+                  node-babel-runtime-6.26.0 node-react-18.2.0))
     (home-page "https://github.com/alexkuz/react-dock")
     (synopsis "Resizable dockable react component")
     (description "Resizable dockable react component")
@@ -12804,11 +12695,9 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("react")))))))
-    (inputs `(("node-scheduler" ,node-scheduler-0.19.1)
-              ("node-prop-types" ,node-prop-types-15.8.1)
-              ("node-object-assign" ,node-object-assign-4.1.1)
-              ("node-loose-envify" ,node-loose-envify-1.4.0)
-              ("node-react" ,node-react-16.14.0)))
+    (inputs (list node-scheduler-0.19.1 node-prop-types-15.8.1
+                  node-object-assign-4.1.1 node-loose-envify-1.4.0
+                  node-react-16.14.0))
     (home-page "https://reactjs.org/")
     (synopsis "React package for working with the DOM.")
     (description "React package for working with the DOM.")
@@ -12833,9 +12722,8 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("react")))))))
-    (inputs `(("node-scheduler" ,node-scheduler-0.23.0)
-              ("node-loose-envify" ,node-loose-envify-1.4.0)
-              ("node-react" ,node-react-18.2.0)))
+    (inputs (list node-scheduler-0.23.0 node-loose-envify-1.4.0
+                  node-react-18.2.0))
     (home-page "https://reactjs.org/")
     (synopsis "React package for working with the DOM.")
     (description "React package for working with the DOM.")
@@ -12861,10 +12749,9 @@
                     (lambda _
                       (delete-dependencies '("@types/react" "dtslint"
                                              "emotion" "react")))))))
-    (inputs `(("node-create-emotion-styled" ,node-create-emotion-styled-9.2.8)
-              ("node-babel-plugin-emotion" ,node-babel-plugin-emotion-9.2.11)
-              ("node-react" ,node-react-16.14.0)
-              ("node-emotion" ,node-emotion-9.2.12)))
+    (inputs (list node-create-emotion-styled-9.2.8
+                  node-babel-plugin-emotion-9.2.11 node-react-16.14.0
+                  node-emotion-9.2.12))
     (home-page "https://emotion.sh")
     (synopsis "The Next Generation of CSS-in-JS, for React projects.")
     (description "The Next Generation of CSS-in-JS, for React projects.")
@@ -12971,11 +12858,9 @@
                                              "terser-webpack-plugin"
                                              "webpack"
                                              "webpack-cli")))))))
-    (inputs `(("node-react-base16-styling" ,node-react-base16-styling-0.5.3)
-              ("node-prop-types" ,node-prop-types-15.8.1)
-              ("node-babel-runtime" ,node-babel-runtime-6.26.0)
-              ("node-react-dom" ,node-react-dom-16.14.0)
-              ("node-react" ,node-react-16.14.0)))
+    (inputs (list node-react-base16-styling-0.5.3 node-prop-types-15.8.1
+                  node-babel-runtime-6.26.0 node-react-dom-16.14.0
+                  node-react-16.14.0))
     (home-page "https://github.com/reduxjs/redux-devtools")
     (synopsis "React JSON Viewer Component, Extracted from redux-devtools")
     (description "React JSON Viewer Component, Extracted from redux-devtools")
@@ -13032,10 +12917,8 @@
                                              "rimraf"
                                              "terser"
                                              "typescript")))))))
-    (inputs `(("node-use-latest" ,node-use-latest-1.2.1)
-              ("node-use-composed-ref" ,node-use-composed-ref-1.3.0)
-              ("node-babel-runtime" ,node-babel-runtime-7.22.5)
-              ("node-react" ,node-react-18.2.0)))
+    (inputs (list node-use-latest-1.2.1 node-use-composed-ref-1.3.0
+                  node-babel-runtime-7.22.5 node-react-18.2.0))
     (home-page "https://github.com/Andarist/react-textarea-autosize#readme")
     (synopsis "textarea component for React which grows with content")
     (description "textarea component for React which grows with content")
@@ -13097,10 +12980,8 @@
                                              "rollup-plugin-node-resolve"
                                              "rollup-plugin-replace"
                                              "rollup-plugin-terser")))))))
-    (inputs `(("node-memoize-one" ,node-memoize-one-5.2.1)
-              ("node-babel-runtime" ,node-babel-runtime-7.22.5)
-              ("node-react-dom" ,node-react-dom-18.2.0)
-              ("node-react" ,node-react-18.2.0)))
+    (inputs (list node-memoize-one-5.2.1 node-babel-runtime-7.22.5
+                  node-react-dom-18.2.0 node-react-18.2.0))
     (home-page "http://react-window.now.sh/")
     (synopsis
      "React components for efficiently rendering large, scrollable lists and tabular data")
@@ -13132,13 +13013,13 @@
                                              "nyc"
                                              "tap"
                                              "tape")))))))
-    (inputs `(("node-util-deprecate" ,node-util-deprecate-1.0.2)
-              ("node-string-decoder" ,node-string-decoder-1.1.1)
-              ("node-safe-buffer" ,node-safe-buffer-5.1.2)
-              ("node-process-nextick-args" ,node-process-nextick-args-2.0.1)
-              ("node-isarray" ,node-isarray-1.0.0)
-              ("node-inherits" ,node-inherits-2.0.4)
-              ("node-core-util-is" ,node-core-util-is-1.0.3)))
+    (inputs (list node-util-deprecate-1.0.2
+                  node-string-decoder-1.1.1
+                  node-safe-buffer-5.1.2
+                  node-process-nextick-args-2.0.1
+                  node-isarray-1.0.0
+                  node-inherits-2.0.4
+                  node-core-util-is-1.0.3))
     (home-page "https://github.com/nodejs/readable-stream#readme")
     (synopsis "Streams3, a user-land copy of the stream library from Node.js")
     (description
@@ -13182,9 +13063,8 @@
                                              "tape"
                                              "tar-fs"
                                              "util-promisify")))))))
-    (inputs `(("node-util-deprecate" ,node-util-deprecate-1.0.2)
-              ("node-string-decoder" ,node-string-decoder-1.3.0)
-              ("node-inherits" ,node-inherits-2.0.4)))
+    (inputs (list node-util-deprecate-1.0.2 node-string-decoder-1.3.0
+                  node-inherits-2.0.4))
     (home-page "https://github.com/nodejs/readable-stream#readme")
     (synopsis "Streams3, a user-land copy of the stream library from Node.js")
     (description
@@ -13210,9 +13090,8 @@
                     (lambda _
                       (delete-dependencies '("nave" "proxyquire" "tap"
                                              "through2")))))))
-    (inputs `(("node-readable-stream" ,node-readable-stream-2.3.8)
-              ("node-micromatch" ,node-micromatch-3.1.10)
-              ("node-graceful-fs" ,node-graceful-fs-4.2.11)))
+    (inputs (list node-readable-stream-2.3.8 node-micromatch-3.1.10
+                  node-graceful-fs-4.2.11))
     (home-page "https://github.com/paulmillr/readdirp")
     (synopsis "Recursive version of fs.readdir with streaming api.")
     (description "Recursive version of fs.readdir with streaming api.")
@@ -13249,8 +13128,7 @@
                                              "run-sequence"
                                              "should"
                                              "ts-universal")))))))
-    (inputs `(("node-mkdirp" ,node-mkdirp-0.5.6)
-              ("node-app-root-path" ,node-app-root-path-1.4.0)))
+    (inputs (list node-mkdirp-0.5.6 node-app-root-path-1.4.0))
     (home-page "https://github.com/realm-js/realm-utils#readme")
     (synopsis
      "Realm-js has a set of functionality that helps solving many problems or impediments related to Promises. Utilities live in this repository, apart from realm-js library. Typings included ### Install")
@@ -13310,7 +13188,7 @@
                       (delete-dependencies '("ava" "fs-extra" "jsesc"
                                              "@unicode/unicode-14.0.0"
                                              "unicode-canonical-property-names-ecmascript")))))))
-    (inputs `(("node-regenerate" ,node-regenerate-1.4.2)))
+    (inputs (list node-regenerate-1.4.2))
     (home-page
      "https://github.com/mathiasbynens/regenerate-unicode-properties")
     (synopsis "Regenerate sets for Unicode properties and values.")
@@ -13384,7 +13262,7 @@
                       (delete-dependencies '("ansi-bold" "benchmarked"
                                              "gulp-format-md" "micromatch"
                                              "should")))))))
-    (inputs `(("node-is-equal-shallow" ,node-is-equal-shallow-0.1.3)))
+    (inputs (list node-is-equal-shallow-0.1.3))
     (home-page "https://github.com/jonschlinkert/regex-cache")
     (synopsis
      "Memoize the results of a call to the RegExp constructor, avoiding repetitious runtime compilation of the same string and options, resulting in surprising performance improvements.")
@@ -13411,8 +13289,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha")))))))
-    (inputs `(("node-safe-regex" ,node-safe-regex-1.1.0)
-              ("node-extend-shallow" ,node-extend-shallow-3.0.2)))
+    (inputs (list node-safe-regex-1.1.0 node-extend-shallow-3.0.2))
     (home-page "https://github.com/jonschlinkert/regex-not")
     (synopsis
      "Create a javascript regular expression for matching everything except for the given string.")
@@ -13444,12 +13321,12 @@
                                              "mocha"
                                              "regexpu-fixtures"
                                              "@unicode/unicode-14.0.0")))))))
-    (inputs `(("node-unicode-match-property-value-ecmascript" ,node-unicode-match-property-value-ecmascript-2.1.0)
-              ("node-unicode-match-property-ecmascript" ,node-unicode-match-property-ecmascript-2.0.0)
-              ("node-regjsparser" ,node-regjsparser-0.7.0)
-              ("node-regjsgen" ,node-regjsgen-0.5.2)
-              ("node-regenerate-unicode-properties" ,node-regenerate-unicode-properties-9.0.0)
-              ("node-regenerate" ,node-regenerate-1.4.2)))
+    (inputs (list node-unicode-match-property-value-ecmascript-2.1.0
+                  node-unicode-match-property-ecmascript-2.0.0
+                  node-regjsparser-0.7.0
+                  node-regjsgen-0.5.2
+                  node-regenerate-unicode-properties-9.0.0
+                  node-regenerate-1.4.2))
     (home-page "https://mths.be/regexpu")
     (synopsis
      "regexpuâs core functionality (i.e. `rewritePattern(pattern, flag)`), capable of translating ES6 Unicode regular expressions to ES5.")
@@ -13500,7 +13377,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("regenerate" "unicode-11.0.0")))))))
-    (inputs `(("node-jsesc" ,node-jsesc-0.5.0)))
+    (inputs (list node-jsesc-0.5.0))
     (home-page "https://github.com/jviereck/regjsparser")
     (synopsis "Parsing the JavaScript's RegExp in JavaScript.")
     (description "Parsing the JavaScript's RegExp in JavaScript.")
@@ -13624,26 +13501,26 @@
                                              "standard"
                                              "tape"
                                              "taper")))))))
-    (inputs `(("node-uuid" ,node-uuid-3.4.0)
-              ("node-tunnel-agent" ,node-tunnel-agent-0.6.0)
-              ("node-tough-cookie" ,node-tough-cookie-2.5.0)
-              ("node-safe-buffer" ,node-safe-buffer-5.2.1)
-              ("node-qs" ,node-qs-6.5.3)
-              ("node-performance-now" ,node-performance-now-2.1.0)
-              ("node-oauth-sign" ,node-oauth-sign-0.9.0)
-              ("node-mime-types" ,node-mime-types-2.1.35)
-              ("node-json-stringify-safe" ,node-json-stringify-safe-5.0.1)
-              ("node-isstream" ,node-isstream-0.1.2)
-              ("node-is-typedarray" ,node-is-typedarray-1.0.0)
-              ("node-http-signature" ,node-http-signature-1.2.0)
-              ("node-har-validator" ,node-har-validator-5.1.5)
-              ("node-form-data" ,node-form-data-2.3.3)
-              ("node-forever-agent" ,node-forever-agent-0.6.1)
-              ("node-extend" ,node-extend-3.0.2)
-              ("node-combined-stream" ,node-combined-stream-1.0.8)
-              ("node-caseless" ,node-caseless-0.12.0)
-              ("node-aws4" ,node-aws4-1.12.0)
-              ("node-aws-sign2" ,node-aws-sign2-0.7.0)))
+    (inputs (list node-uuid-3.4.0
+                  node-tunnel-agent-0.6.0
+                  node-tough-cookie-2.5.0
+                  node-safe-buffer-5.2.1
+                  node-qs-6.5.3
+                  node-performance-now-2.1.0
+                  node-oauth-sign-0.9.0
+                  node-mime-types-2.1.35
+                  node-json-stringify-safe-5.0.1
+                  node-isstream-0.1.2
+                  node-is-typedarray-1.0.0
+                  node-http-signature-1.2.0
+                  node-har-validator-5.1.5
+                  node-form-data-2.3.3
+                  node-forever-agent-0.6.1
+                  node-extend-3.0.2
+                  node-combined-stream-1.0.8
+                  node-caseless-0.12.0
+                  node-aws4-1.12.0
+                  node-aws-sign2-0.7.0))
     (home-page "https://github.com/request/request#readme")
     (synopsis "Simplified HTTP request client.")
     (description "Simplified HTTP request client.")
@@ -13709,9 +13586,8 @@
                                              "tap"
                                              "tape"
                                              "tmp")))))))
-    (inputs `(("node-supports-preserve-symlinks-flag" ,node-supports-preserve-symlinks-flag-1.0.0)
-              ("node-path-parse" ,node-path-parse-1.0.7)
-              ("node-is-core-module" ,node-is-core-module-2.12.1)))
+    (inputs (list node-supports-preserve-symlinks-flag-1.0.0
+                  node-path-parse-1.0.7 node-is-core-module-2.12.1))
     (home-page "https://github.com/browserify/resolve#readme")
     (synopsis
      "resolve like require.resolve() on behalf of files asynchronously and synchronously")
@@ -13786,8 +13662,7 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-signal-exit" ,node-signal-exit-3.0.7)
-              ("node-onetime" ,node-onetime-2.0.1)))
+    (inputs (list node-signal-exit-3.0.7 node-onetime-2.0.1))
     (home-page "https://github.com/sindresorhus/restore-cursor#readme")
     (synopsis "Gracefully restore the CLI cursor on exit")
     (description "Gracefully restore the CLI cursor on exit")
@@ -13834,7 +13709,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("mkdirp" "tap")))))))
-    (inputs `(("node-glob" ,node-glob-7.2.3)))
+    (inputs (list node-glob-7.2.3))
     (home-page "https://github.com/isaacs/rimraf#readme")
     (synopsis "A deep deletion module for node (like `rm -rf`)")
     (description "A deep deletion module for node (like `rm -rf`)")
@@ -13957,7 +13832,7 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-rx-lite" ,node-rx-lite-4.0.8)))
+    (inputs (list node-rx-lite-4.0.8))
     (home-page "https://github.com/Reactive-Extensions/RxJS")
     (synopsis
      "Lightweight library with aggregate functions for composing asynchronous and event-based operations in JavaScript")
@@ -14011,7 +13886,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("tape")))))))
-    (inputs `(("node-ret" ,node-ret-0.1.15)))
+    (inputs (list node-ret-0.1.15))
     (home-page "https://github.com/substack/safe-regex")
     (synopsis
      "detect possibly catastrophic, exponential-time regular expressions")
@@ -14059,8 +13934,7 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-object-assign" ,node-object-assign-4.1.1)
-              ("node-loose-envify" ,node-loose-envify-1.4.0)))
+    (inputs (list node-object-assign-4.1.1 node-loose-envify-1.4.0))
     (home-page "https://reactjs.org/")
     (synopsis "Cooperative scheduler for the browser environment.")
     (description "Cooperative scheduler for the browser environment.")
@@ -14082,8 +13956,7 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-object-assign" ,node-object-assign-4.1.1)
-              ("node-loose-envify" ,node-loose-envify-1.4.0)))
+    (inputs (list node-object-assign-4.1.1 node-loose-envify-1.4.0))
     (home-page "https://reactjs.org/")
     (synopsis "Cooperative scheduler for the browser environment.")
     (description "Cooperative scheduler for the browser environment.")
@@ -14105,7 +13978,7 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-loose-envify" ,node-loose-envify-1.4.0)))
+    (inputs (list node-loose-envify-1.4.0))
     (home-page "https://reactjs.org/")
     (synopsis "Cooperative scheduler for the browser environment.")
     (description "Cooperative scheduler for the browser environment.")
@@ -14183,7 +14056,7 @@
                     (lambda _
                       (delete-dependencies '("@npmcli/eslint-config"
                                              "@npmcli/template-oss" "tap")))))))
-    (inputs `(("node-lru-cache" ,node-lru-cache-6.0.0)))
+    (inputs (list node-lru-cache-6.0.0))
     (home-page "https://github.com/npm/node-semver#readme")
     (synopsis "The semantic version parser used by npm.")
     (description "The semantic version parser used by npm.")
@@ -14216,19 +14089,19 @@
                                              "mocha"
                                              "nyc"
                                              "supertest")))))))
-    (inputs `(("node-statuses" ,node-statuses-2.0.1)
-              ("node-range-parser" ,node-range-parser-1.2.1)
-              ("node-on-finished" ,node-on-finished-2.4.1)
-              ("node-ms" ,node-ms-2.1.3)
-              ("node-mime" ,node-mime-1.6.0)
-              ("node-http-errors" ,node-http-errors-2.0.0)
-              ("node-fresh" ,node-fresh-0.5.2)
-              ("node-etag" ,node-etag-1.8.1)
-              ("node-escape-html" ,node-escape-html-1.0.3)
-              ("node-encodeurl" ,node-encodeurl-1.0.2)
-              ("node-destroy" ,node-destroy-1.2.0)
-              ("node-depd" ,node-depd-2.0.0)
-              ("node-debug" ,node-debug-2.6.9)))
+    (inputs (list node-statuses-2.0.1
+                  node-range-parser-1.2.1
+                  node-on-finished-2.4.1
+                  node-ms-2.1.3
+                  node-mime-1.6.0
+                  node-http-errors-2.0.0
+                  node-fresh-0.5.2
+                  node-etag-1.8.1
+                  node-escape-html-1.0.3
+                  node-encodeurl-1.0.2
+                  node-destroy-1.2.0
+                  node-depd-2.0.0
+                  node-debug-2.6.9))
     (home-page "https://github.com/pillarjs/send#readme")
     (synopsis
      "Better streaming static file server with Range and conditional-GET support")
@@ -14269,10 +14142,8 @@
                                              "ts-node-test-register"
                                              "typescript"
                                              "vite")))))))
-    (inputs `(("node-structured-source" ,node-structured-source-3.0.2)
-              ("node-object-values" ,node-object-values-0.1.2)
-              ("node-concat-stream" ,node-concat-stream-2.0.0)
-              ("node-textlint-ast-node-types" ,node-textlint-ast-node-types-4.4.3)))
+    (inputs (list node-structured-source-3.0.2 node-object-values-0.1.2
+                  node-concat-stream-2.0.0 node-textlint-ast-node-types-4.4.3))
     (home-page "https://github.com/azu/sentence-splitter")
     (synopsis "split {japanese, english} text into sentences.")
     (description "split {japanese, english} text into sentences.")
@@ -14306,10 +14177,8 @@
                                              "nyc"
                                              "safe-buffer"
                                              "supertest")))))))
-    (inputs `(("node-send" ,node-send-0.18.0)
-              ("node-parseurl" ,node-parseurl-1.3.3)
-              ("node-escape-html" ,node-escape-html-1.0.3)
-              ("node-encodeurl" ,node-encodeurl-1.0.2)))
+    (inputs (list node-send-0.18.0 node-parseurl-1.3.3 node-escape-html-1.0.3
+                  node-encodeurl-1.0.2))
     (home-page "https://github.com/expressjs/serve-static#readme")
     (synopsis "Serve static files")
     (description "Serve static files")
@@ -14361,10 +14230,8 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha")))))))
-    (inputs `(("node-split-string" ,node-split-string-3.1.0)
-              ("node-is-plain-object" ,node-is-plain-object-2.0.4)
-              ("node-is-extendable" ,node-is-extendable-0.1.1)
-              ("node-extend-shallow" ,node-extend-shallow-2.0.1)))
+    (inputs (list node-split-string-3.1.0 node-is-plain-object-2.0.4
+                  node-is-extendable-0.1.1 node-extend-shallow-2.0.1))
     (home-page "https://github.com/jonschlinkert/set-value")
     (synopsis
      "Create nested values and any intermediaries using dot notation (`'a.b.c'`) paths.")
@@ -14441,9 +14308,8 @@
                                              "nyc"
                                              "safe-publish-latest"
                                              "tape")))))))
-    (inputs `(("node-object-inspect" ,node-object-inspect-1.12.3)
-              ("node-get-intrinsic" ,node-get-intrinsic-1.2.1)
-              ("node-call-bind" ,node-call-bind-1.0.2)))
+    (inputs (list node-object-inspect-1.12.3 node-get-intrinsic-1.2.1
+                  node-call-bind-1.0.2))
     (home-page "https://github.com/ljharb/side-channel#readme")
     (synopsis
      "Store information about any JS value in a side channel. Uses WeakMap if available.")
@@ -14501,14 +14367,14 @@
                                              "gulp-mocha"
                                              "gulp-unused"
                                              "mocha")))))))
-    (inputs `(("node-use" ,node-use-3.1.1)
-              ("node-source-map-resolve" ,node-source-map-resolve-0.5.3)
-              ("node-source-map" ,node-source-map-0.5.7)
-              ("node-map-cache" ,node-map-cache-0.2.2)
-              ("node-extend-shallow" ,node-extend-shallow-2.0.1)
-              ("node-define-property" ,node-define-property-0.2.5)
-              ("node-debug" ,node-debug-2.6.9)
-              ("node-base" ,node-base-0.11.2)))
+    (inputs (list node-use-3.1.1
+                  node-source-map-resolve-0.5.3
+                  node-source-map-0.5.7
+                  node-map-cache-0.2.2
+                  node-extend-shallow-2.0.1
+                  node-define-property-0.2.5
+                  node-debug-2.6.9
+                  node-base-0.11.2))
     (home-page "https://github.com/jonschlinkert/snapdragon")
     (synopsis "Fast, pluggable and easy-to-use parser-renderer factory.")
     (description "Fast, pluggable and easy-to-use parser-renderer factory.")
@@ -14538,9 +14404,8 @@
                                              "gulp-mocha"
                                              "mocha"
                                              "snapdragon")))))))
-    (inputs `(("node-snapdragon-util" ,node-snapdragon-util-3.0.1)
-              ("node-isobject" ,node-isobject-3.0.1)
-              ("node-define-property" ,node-define-property-1.0.0)))
+    (inputs (list node-snapdragon-util-3.0.1 node-isobject-3.0.1
+                  node-define-property-1.0.0))
     (home-page "https://github.com/jonschlinkert/snapdragon-node")
     (synopsis
      "Snapdragon utility for creating a new AST node in custom code, such as plugins.")
@@ -14575,7 +14440,7 @@
                                              "mocha"
                                              "snapdragon"
                                              "snapdragon-node")))))))
-    (inputs `(("node-kind-of" ,node-kind-of-3.2.2)))
+    (inputs (list node-kind-of-3.2.2))
     (home-page "https://github.com/jonschlinkert/snapdragon-util")
     (synopsis "Utilities for the snapdragon parser/compiler.")
     (description "Utilities for the snapdragon parser/compiler.")
@@ -14679,11 +14544,9 @@
                     (lambda _
                       (delete-dependencies '("Base64" "jshint" "setimmediate"
                                              "simple-asyncify" "tape")))))))
-    (inputs `(("node-urix" ,node-urix-0.1.0)
-              ("node-source-map-url" ,node-source-map-url-0.4.1)
-              ("node-resolve-url" ,node-resolve-url-0.2.1)
-              ("node-decode-uri-component" ,node-decode-uri-component-0.2.2)
-              ("node-atob" ,node-atob-2.1.2)))
+    (inputs (list node-urix-0.1.0 node-source-map-url-0.4.1
+                  node-resolve-url-0.2.1 node-decode-uri-component-0.2.2
+                  node-atob-2.1.2))
     (home-page "https://github.com/lydell/source-map-resolve#readme")
     (synopsis "Resolve the source map and/or sources for a generated file.")
     (description "Resolve the source map and/or sources for a generated file.")
@@ -14734,7 +14597,7 @@
                       (delete-dependencies '("@types/node" "acorn" "escodegen"
                                              "fuse-box" "fuse-test-runner"
                                              "typescript")))))))
-    (inputs `(("node-source-map" ,node-source-map-0.7.4)))
+    (inputs (list node-source-map-0.7.4))
     (home-page "https://www.npmjs.com/package/node-sourcemap-blender")
     (synopsis "")
     (description "")
@@ -14759,7 +14622,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha")))))))
-    (inputs `(("node-extend-shallow" ,node-extend-shallow-3.0.2)))
+    (inputs (list node-extend-shallow-3.0.2))
     (home-page "https://github.com/jonschlinkert/split-string")
     (synopsis
      "Split a string on a character except when the character is escaped.")
@@ -14785,15 +14648,15 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("tape" "benchmark" "sinon" "temp")))))))
-    (inputs `(("node-bcrypt-pbkdf" ,node-bcrypt-pbkdf-1.0.2)
-              ("node-ecc-jsbn" ,node-ecc-jsbn-0.1.2)
-              ("node-tweetnacl" ,node-tweetnacl-0.14.5)
-              ("node-jsbn" ,node-jsbn-0.1.1)
-              ("node-safer-buffer" ,node-safer-buffer-2.1.2)
-              ("node-getpass" ,node-getpass-0.1.7)
-              ("node-dashdash" ,node-dashdash-1.14.1)
-              ("node-assert-plus" ,node-assert-plus-1.0.0)
-              ("node-asn1" ,node-asn1-0.2.6)))
+    (inputs (list node-bcrypt-pbkdf-1.0.2
+                  node-ecc-jsbn-0.1.2
+                  node-tweetnacl-0.14.5
+                  node-jsbn-0.1.1
+                  node-safer-buffer-2.1.2
+                  node-getpass-0.1.7
+                  node-dashdash-1.14.1
+                  node-assert-plus-1.0.0
+                  node-asn1-0.2.6))
     (home-page "https://github.com/arekinath/node-sshpk#readme")
     (synopsis "A library for finding and using SSH public keys")
     (description "A library for finding and using SSH public keys")
@@ -14818,8 +14681,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha")))))))
-    (inputs `(("node-object-copy" ,node-object-copy-0.1.0)
-              ("node-define-property" ,node-define-property-0.2.5)))
+    (inputs (list node-object-copy-0.1.0 node-define-property-0.2.5))
     (home-page "https://github.com/jonschlinkert/static-extend")
     (synopsis
      "Adds a static `extend` method to a class, to simplify inheritance. Extends the static properties, prototype properties, and descriptors from a `Parent` constructor onto `Child` constructors.")
@@ -14879,8 +14741,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("safe-buffer" "tape" "typedarray")))))))
-    (inputs `(("node-readable-stream" ,node-readable-stream-2.3.8)
-              ("node-inherits" ,node-inherits-2.0.4)))
+    (inputs (list node-readable-stream-2.3.8 node-inherits-2.0.4))
     (home-page "https://github.com/browserify/stream-browserify")
     (synopsis "the stream module from node core for browsers")
     (description "the stream module from node core for browsers")
@@ -14906,7 +14767,7 @@
                     (lambda _
                       (delete-dependencies '("babel-polyfill" "core-util-is"
                                              "inherits" "tap")))))))
-    (inputs `(("node-safe-buffer" ,node-safe-buffer-5.1.2)))
+    (inputs (list node-safe-buffer-5.1.2))
     (home-page "https://github.com/nodejs/string_decoder")
     (synopsis "The string_decoder module from Node core")
     (description "The string_decoder module from Node core")
@@ -14934,8 +14795,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("ava" "xo")))))))
-    (inputs `(("node-strip-ansi" ,node-strip-ansi-4.0.0)
-              ("node-is-fullwidth-code-point" ,node-is-fullwidth-code-point-2.0.0)))
+    (inputs (list node-strip-ansi-4.0.0 node-is-fullwidth-code-point-2.0.0))
     (home-page "https://github.com/sindresorhus/string-width#readme")
     (synopsis
      "Get the visual width of a string - the number of columns required to display it")
@@ -14962,9 +14822,8 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("ava" "tsd" "xo")))))))
-    (inputs `(("node-strip-ansi" ,node-strip-ansi-6.0.1)
-              ("node-is-fullwidth-code-point" ,node-is-fullwidth-code-point-3.0.0)
-              ("node-emoji-regex" ,node-emoji-regex-8.0.0)))
+    (inputs (list node-strip-ansi-6.0.1 node-is-fullwidth-code-point-3.0.0
+                  node-emoji-regex-8.0.0))
     (home-page "https://github.com/sindresorhus/string-width#readme")
     (synopsis
      "Get the visual width of a string - the number of columns required to display it")
@@ -14991,7 +14850,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("ava" "xo")))))))
-    (inputs `(("node-ansi-regex" ,node-ansi-regex-3.0.1)))
+    (inputs (list node-ansi-regex-3.0.1))
     (home-page "https://github.com/chalk/strip-ansi#readme")
     (synopsis "Strip ANSI escape codes")
     (description "Strip ANSI escape codes")
@@ -15016,7 +14875,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("ava" "tsd" "xo")))))))
-    (inputs `(("node-ansi-regex" ,node-ansi-regex-5.0.1)))
+    (inputs (list node-ansi-regex-5.0.1))
     (home-page "https://github.com/chalk/strip-ansi#readme")
     (synopsis "Strip ANSI escape codes from a string")
     (description "Strip ANSI escape codes from a string")
@@ -15049,7 +14908,7 @@
                                              "gulp-sourcemaps"
                                              "gulp-tag-version"
                                              "power-assert")))))))
-    (inputs `(("node-boundary" ,node-boundary-1.0.1)))
+    (inputs (list node-boundary-1.0.1))
     (home-page "https://github.com/Constellation/structured-source")
     (synopsis
      "Provides StructuredSource and functionality for converting range and loc vice versa.")
@@ -15207,7 +15066,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("ava" "import-fresh" "xo")))))))
-    (inputs `(("node-has-flag" ,node-has-flag-3.0.0)))
+    (inputs (list node-has-flag-3.0.0))
     (home-page "https://github.com/chalk/supports-color#readme")
     (synopsis "Detect whether a terminal supports color")
     (description "Detect whether a terminal supports color")
@@ -15272,12 +15131,12 @@
                                              "nock"
                                              "rimraf"
                                              "tap")))))))
-    (inputs `(("node-yallist" ,node-yallist-4.0.0)
-              ("node-mkdirp" ,node-mkdirp-1.0.4)
-              ("node-minizlib" ,node-minizlib-2.1.2)
-              ("node-minipass" ,node-minipass-5.0.0)
-              ("node-fs-minipass" ,node-fs-minipass-2.1.0)
-              ("node-chownr" ,node-chownr-2.0.0)))
+    (inputs (list node-yallist-4.0.0
+                  node-mkdirp-1.0.4
+                  node-minizlib-2.1.2
+                  node-minipass-5.0.0
+                  node-fs-minipass-2.1.0
+                  node-chownr-2.0.0))
     (home-page "https://github.com/isaacs/node-tar#readme")
     (synopsis "tar for node")
     (description "tar for node")
@@ -15430,7 +15289,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("vows")))))))
-    (inputs `(("node-os-tmpdir" ,node-os-tmpdir-1.0.2)))
+    (inputs (list node-os-tmpdir-1.0.2))
     (home-page "http://github.com/raszi/node-tmp")
     (synopsis "Temporary file and directory creator")
     (description "Temporary file and directory creator")
@@ -15479,7 +15338,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("base" "mocha")))))))
-    (inputs `(("node-kind-of" ,node-kind-of-3.2.2)))
+    (inputs (list node-kind-of-3.2.2))
     (home-page "https://github.com/jonschlinkert/to-object-path")
     (synopsis "Create an object path from a list or array of strings.")
     (description "Create an object path from a list or array of strings.")
@@ -15503,10 +15362,8 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha")))))))
-    (inputs `(("node-safe-regex" ,node-safe-regex-1.1.0)
-              ("node-regex-not" ,node-regex-not-1.0.2)
-              ("node-extend-shallow" ,node-extend-shallow-3.0.2)
-              ("node-define-property" ,node-define-property-2.0.2)))
+    (inputs (list node-safe-regex-1.1.0 node-regex-not-1.0.2
+                  node-extend-shallow-3.0.2 node-define-property-2.0.2))
     (home-page "https://github.com/jonschlinkert/to-regex")
     (synopsis "Generate a regex from a string or array of strings.")
     (description "Generate a regex from a string or array of strings.")
@@ -15532,8 +15389,7 @@
                     (lambda _
                       (delete-dependencies '("fill-range" "gulp-format-md"
                                              "mocha" "text-table" "time-diff")))))))
-    (inputs `(("node-repeat-string" ,node-repeat-string-1.6.1)
-              ("node-is-number" ,node-is-number-3.0.0)))
+    (inputs (list node-repeat-string-1.6.1 node-is-number-3.0.0))
     (home-page "https://github.com/micromatch/to-regex-range")
     (synopsis
      "Pass two numbers, get a regex-compatible source string for matching ranges. Validated against more than 2.78 million test assertions.")
@@ -15590,7 +15446,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("mutate-fs" "tap")))))))
-    (inputs `(("node-nopt" ,node-nopt-1.0.10)))
+    (inputs (list node-nopt-1.0.10))
     (home-page "https://github.com/isaacs/node-touch#readme")
     (synopsis "like touch(1) in node")
     (description "like touch(1) in node")
@@ -15616,8 +15472,7 @@
                     (lambda _
                       (delete-dependencies '("async" "genversion" "nyc"
                                              "string.prototype.repeat" "vows")))))))
-    (inputs `(("node-punycode" ,node-punycode-2.3.0)
-              ("node-psl" ,node-psl-1.9.0)))
+    (inputs (list node-punycode-2.3.0 node-psl-1.9.0))
     (home-page "https://github.com/salesforce/tough-cookie")
     (synopsis "RFC6265 Cookies and Cookie Jar for node.js")
     (description "RFC6265 Cookies and Cookie Jar for node.js")
@@ -15694,7 +15549,7 @@
                                              "tslint"
                                              "tslint-config-prettier"
                                              "typescript")))))))
-    (inputs `(("node-yargs" ,node-yargs-17.7.2)))
+    (inputs (list node-yargs-17.7.2))
     (home-page "https://github.com/dzcpy/transliteration#readme")
     (synopsis
      "Unicode to ACSII transliteration / slugify module for node.js, browser, Web Worker, ReactNative and CLI.")
@@ -15738,7 +15593,7 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-safe-buffer" ,node-safe-buffer-5.2.1)))
+    (inputs (list node-safe-buffer-5.2.1))
     (home-page "https://github.com/mikeal/tunnel-agent#readme")
     (synopsis
      "HTTP proxy tunneling agent. Formerly part of mikeal/request, now a standalone module.")
@@ -15796,7 +15651,7 @@
                     (lambda _
                       (delete-dependencies '("livescript" "mocha" "istanbul"
                                              "browserify")))))))
-    (inputs `(("node-prelude-ls" ,node-prelude-ls-1.1.2)))
+    (inputs (list node-prelude-ls-1.1.2))
     (home-page "https://github.com/gkz/type-check")
     (synopsis
      "type-check allows you to check the types of JavaScript values at runtime with a Haskell like type syntax.")
@@ -15829,8 +15684,7 @@
                                              "eslint-plugin-standard"
                                              "mocha"
                                              "nyc")))))))
-    (inputs `(("node-mime-types" ,node-mime-types-2.1.35)
-              ("node-media-typer" ,node-media-typer-0.3.0)))
+    (inputs (list node-mime-types-2.1.35 node-media-typer-0.3.0))
     (home-page "https://github.com/jshttp/type-is#readme")
     (synopsis "Infer the content-type of a request.")
     (description "Infer the content-type of a request.")
@@ -15876,7 +15730,7 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-types-node" ,node-types-node-20.3.1)))
+    (inputs (list node-types-node-20.3.1))
     (home-page
      "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/connect")
     (synopsis "TypeScript definitions for connect")
@@ -15962,7 +15816,7 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-types-node" ,node-types-node-20.3.1)))
+    (inputs (list node-types-node-20.3.1))
     (home-page
      "https://github.com/DefinitelyTyped/DefinitelyTyped/tree/master/types/ws")
     (synopsis "TypeScript definitions for ws")
@@ -16240,8 +16094,8 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("ava")))))))
-    (inputs `(("node-unicode-property-aliases-ecmascript" ,node-unicode-property-aliases-ecmascript-2.1.0)
-              ("node-unicode-canonical-property-names-ecmascript" ,node-unicode-canonical-property-names-ecmascript-2.0.0)))
+    (inputs (list node-unicode-property-aliases-ecmascript-2.1.0
+                  node-unicode-canonical-property-names-ecmascript-2.0.0))
     (home-page
      "https://github.com/mathiasbynens/unicode-match-property-ecmascript")
     (synopsis
@@ -16325,10 +16179,8 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha" "should")))))))
-    (inputs `(("node-set-value" ,node-set-value-2.0.1)
-              ("node-is-extendable" ,node-is-extendable-0.1.1)
-              ("node-get-value" ,node-get-value-2.0.6)
-              ("node-arr-union" ,node-arr-union-3.1.0)))
+    (inputs (list node-set-value-2.0.1 node-is-extendable-0.1.1
+                  node-get-value-2.0.6 node-arr-union-3.1.0))
     (home-page "https://github.com/jonschlinkert/union-value")
     (synopsis
      "Set an array of unique values as the property of an object. Supports setting deeply nested properties using using object-paths/dot notation.")
@@ -16406,8 +16258,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("gulp-format-md" "mocha" "should")))))))
-    (inputs `(("node-isobject" ,node-isobject-3.0.1)
-              ("node-has-value" ,node-has-value-0.3.1)))
+    (inputs (list node-isobject-3.0.1 node-has-value-0.3.1))
     (home-page "https://github.com/jonschlinkert/unset-value")
     (synopsis "Delete nested properties from an object using dot notation.")
     (description "Delete nested properties from an object using dot notation.")
@@ -16451,8 +16302,7 @@
                                              "rollup"
                                              "rollup-plugin-babel"
                                              "typescript")))))))
-    (inputs `(("node-create-react-context" ,node-create-react-context-0.1.6)
-              ("node-react" ,node-react-16.14.0)))
+    (inputs (list node-create-react-context-0.1.6 node-react-16.14.0))
     (home-page "https://github.com/thejameskyle/unstated#readme")
     (synopsis "State so simple, it goes without saying")
     (description "State so simple, it goes without saying")
@@ -16486,7 +16336,7 @@
                                              "sorcery"
                                              "typescript"
                                              "uglify-js")))))))
-    (inputs `(("node-punycode" ,node-punycode-2.3.0)))
+    (inputs (list node-punycode-2.3.0))
     (home-page "https://github.com/garycourt/uri-js")
     (synopsis
      "An RFC 3986/3987 compliant, scheme extendable URI/IRI parsing/validating/resolving library for JavaScript.")
@@ -16775,8 +16625,7 @@
                                              "prettier"
                                              "react"
                                              "typescript")))))))
-    (inputs `(("node-use-isomorphic-layout-effect" ,node-use-isomorphic-layout-effect-1.1.2)
-              ("node-react" ,node-react-18.2.0)))
+    (inputs (list node-use-isomorphic-layout-effect-1.1.2 node-react-18.2.0))
     (home-page "https://github.com/Andarist/use-latest#readme")
     (synopsis
      "A React helper hook for storing latest value in ref object (updated in useEffect's callback).")
@@ -16803,7 +16652,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("mocha" "node-gyp" "prebuildify")))))))
-    (inputs `(("node-node-gyp-build" ,node-node-gyp-build-4.6.0)))
+    (inputs (list node-node-gyp-build-4.6.0))
     (home-page "https://github.com/websockets/utf-8-validate")
     (synopsis "Check if a buffer contains valid UTF-8")
     (description "Check if a buffer contains valid UTF-8")
@@ -16829,7 +16678,7 @@
                     (lambda _
                       (delete-dependencies '("mocha" "node-gyp" "prebuildify"
                                              "prebuildify-cross")))))))
-    (inputs `(("node-node-gyp-build" ,node-node-gyp-build-4.6.0)))
+    (inputs (list node-node-gyp-build-4.6.0))
     (home-page "https://github.com/websockets/utf-8-validate")
     (synopsis "Check if a buffer contains valid UTF-8")
     (description "Check if a buffer contains valid UTF-8")
@@ -17041,9 +16890,8 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-extsprintf" ,node-extsprintf-1.4.1)
-              ("node-core-util-is" ,node-core-util-is-1.0.2)
-              ("node-assert-plus" ,node-assert-plus-1.0.0)))
+    (inputs (list node-extsprintf-1.4.1 node-core-util-is-1.0.2
+                  node-assert-plus-1.0.0))
     (home-page "https://github.com/davepacheco/node-verror")
     (synopsis "richer JavaScript errors")
     (description "richer JavaScript errors")
@@ -17139,8 +16987,7 @@
      '(#:tests? #f
        #:phases (modify-phases %standard-phases
                   (delete 'build))))
-    (inputs `(("node-minimist" ,node-minimist-1.2.8)
-              ("node-exec-sh" ,node-exec-sh-0.2.2)))
+    (inputs (list node-minimist-1.2.8 node-exec-sh-0.2.2))
     (home-page "https://github.com/mikeal/watch")
     (synopsis "Utilities for watching file trees.")
     (description "Utilities for watching file trees.")
@@ -17192,8 +17039,7 @@
                     (lambda _
                       (delete-dependencies '("eslint" "istanbul" "mocha"
                                              "recast" "request" "webidl2js")))))))
-    (inputs `(("node-webidl-conversions" ,node-webidl-conversions-3.0.1)
-              ("node-tr46" ,node-tr46-0.0.3)))
+    (inputs (list node-webidl-conversions-3.0.1 node-tr46-0.0.3))
     (home-page "https://github.com/jsdom/whatwg-url#readme")
     (synopsis
      "An implementation of the WHATWG URL Standard's URL API and parsing machinery")
@@ -17220,7 +17066,7 @@
                   (add-after 'patch-dependencies 'delete-dev-dependencies
                     (lambda _
                       (delete-dependencies '("tap")))))))
-    (inputs `(("node-string-width" ,node-string-width-4.2.3)))
+    (inputs (list node-string-width-4.2.3))
     (home-page "https://github.com/iarna/wide-align#readme")
     (synopsis
      "A wide-character aware text alignment function for use on the console or with fixed width fonts.")
@@ -17272,9 +17118,8 @@
                     (lambda _
                       (delete-dependencies '("ava" "chalk" "coveralls"
                                              "has-ansi" "nyc" "xo")))))))
-    (inputs `(("node-strip-ansi" ,node-strip-ansi-6.0.1)
-              ("node-string-width" ,node-string-width-4.2.3)
-              ("node-ansi-styles" ,node-ansi-styles-4.3.0)))
+    (inputs (list node-strip-ansi-6.0.1 node-string-width-4.2.3
+                  node-ansi-styles-4.3.0))
     (home-page "https://github.com/chalk/wrap-ansi#readme")
     (synopsis "Wordwrap a string with ANSI escape codes")
     (description "Wordwrap a string with ANSI escape codes")
@@ -17308,8 +17153,7 @@
                                              "should"
                                              "tinycolor"
                                              "utf-8-validate")))))))
-    (inputs `(("node-ultron" ,node-ultron-1.0.2)
-              ("node-options" ,node-options-0.0.6)))
+    (inputs (list node-ultron-1.0.2 node-options-0.0.6))
     (home-page "https://github.com/websockets/ws")
     (synopsis
      "Simple to use, blazing fast and thoroughly tested websocket client and server for Node.js")
@@ -17413,7 +17257,7 @@
                                              "jsesc"
                                              "nyc"
                                              "unicode-property-value-aliases")))))))
-    (inputs `(("node-babel-runtime-corejs3" ,node-babel-runtime-corejs3-7.22.5)))
+    (inputs (list node-babel-runtime-corejs3-7.22.5))
     (home-page "http://xregexp.com/")
     (synopsis "Extended regular expressions")
     (description "Extended regular expressions")
@@ -17610,13 +17454,13 @@
                                              "typescript"
                                              "which"
                                              "yargs-test-extends")))))))
-    (inputs `(("node-yargs-parser" ,node-yargs-parser-21.1.1)
-              ("node-y18n" ,node-y18n-5.0.8)
-              ("node-string-width" ,node-string-width-4.2.3)
-              ("node-require-directory" ,node-require-directory-2.1.1)
-              ("node-get-caller-file" ,node-get-caller-file-2.0.5)
-              ("node-escalade" ,node-escalade-3.1.1)
-              ("node-cliui" ,node-cliui-8.0.1)))
+    (inputs (list node-yargs-parser-21.1.1
+                  node-y18n-5.0.8
+                  node-string-width-4.2.3
+                  node-require-directory-2.1.1
+                  node-get-caller-file-2.0.5
+                  node-escalade-3.1.1
+                  node-cliui-8.0.1))
     (home-page "https://yargs.js.org/")
     (synopsis "yargs the modern, pirate-themed, successor to optimist.")
     (description "yargs the modern, pirate-themed, successor to optimist.")
