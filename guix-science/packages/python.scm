@@ -212,7 +212,20 @@ lots of nifty extra stuff on top.")
               (sha256
                (base32
                 "1wh5b1xnywzxwxkyac2wvyqwzmy1qxs341jjk820r7b825wn6yad"))
-              (file-name (git-file-name name version))))))
+              (file-name (git-file-name name version))))
+    (arguments
+     (substitute-keyword-arguments (package-arguments pybind11)
+       ((#:phases phases #~%standard-phases)
+        #~(modify-phases #$phases
+            (add-after 'unpack 'skip-failing-test
+              (lambda _
+                (substitute* "tests/test_exceptions.py"
+                  ;; This test fails with Python 3.10; skip it.
+                  (("^def test_python_alreadyset_in_destructor(.*)" _ rest)
+                   (string-append
+                    "def test_python_alreadyset_in_destructor"
+                    rest "\n"
+                    "    return\n")))))))))))
 
 (define-public python-nmslib
   (package
