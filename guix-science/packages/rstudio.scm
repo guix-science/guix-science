@@ -247,10 +247,10 @@ web browser.")
 
 (define-public rstudio-server
   ;; Latest commit of the guix-science-v<version> branch.
-  (let ((commit "a5a1fc0f64806e2e605cbf1ccd45f382d09ba5c1"))
+  (let ((commit "547dcf861cac0253a8abb52c135e44e02ba407a1"))
     (package
       (name "rstudio-server")
-      (version "2023.06.0+421")
+      (version "2023.06.1+524")
       (source (origin
         (method git-fetch)
         (uri (git-reference
@@ -259,7 +259,7 @@ web browser.")
         (file-name (git-file-name "rstudio" version))
         (sha256
          (base32
-          "1i4vicq1fdk5ddij0zlwpakm75wwn4bikijv5brmi7j7xblvdd6k"))
+          "09ndvzdql6vyr2rcm979ibq5hwwzqzsw4fijf4vwcd77lvkvhwmr"))
         (modules '((guix build utils)))
         (snippet
          '(for-each delete-file-recursively
@@ -299,6 +299,12 @@ web browser.")
                (substitute* "src/gwt/build.xml"
                  (("target name=\"panmirror\"" m)
                   (string-append m " if=\"false\"")))
+               (substitute* "src/cpp/session/CMakeLists.txt"
+                 (("\\$\\{RSTUDIO_DEPENDENCIES_DIR\\}/mathjax-27")
+                  (assoc-ref inputs "mathjax"))
+                 (("\\$\\{RSTUDIO_DEPENDENCIES_DIR\\}/pandoc/\\$\\{PANDOC_VERSION\\}")
+                  (assoc-ref inputs "pandoc")))
+
                (install-file (search-input-file inputs "/include/catch2/catch.hpp")
                              "src/cpp/tests/cpp/tests/vendor/")
                (substitute* "src/cpp/session/session-options.json"
