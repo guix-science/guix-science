@@ -294,7 +294,7 @@ web browser.")
                  (invoke "unzip" "-qd" dict-dir (assoc-ref inputs "dict-source-tarball")))))
            ;; change the default paths for mathjax and pandoc and a hardcoded call to `which`
            (add-after 'unpack 'patch-paths
-             (lambda* (#:key inputs #:allow-other-keys)
+             (lambda* (#:key inputs outputs #:allow-other-keys)
                ;; Don't build panmirror.  We already got it.
                (substitute* "src/gwt/build.xml"
                  (("target name=\"panmirror\"" m)
@@ -302,9 +302,11 @@ web browser.")
                (substitute* "src/cpp/session/CMakeLists.txt"
                  (("\\$\\{RSTUDIO_DEPENDENCIES_DIR\\}/mathjax-27")
                   (assoc-ref inputs "mathjax"))
-                 (("\\$\\{RSTUDIO_DEPENDENCIES_DIR\\}/pandoc/\\$\\{PANDOC_VERSION\\}")
-                  (assoc-ref inputs "pandoc")))
-
+                 (("set\\(RSTUDIO_DEPENDENCIES_PANDOC_DIR.*")
+                  (string-append "set(RSTUDIO_DEPENDENCIES_PANDOC_DIR "
+                                 (assoc-ref inputs "pandoc") ")\n"))
+                 (("DESTINATION \"\\$\\{RSTUDIO_INSTALL_BIN\\}/pandoc\"")
+                  (string-append "DESTINATION \""(assoc-ref outputs "out") "/share/pandoc\"")))
                (install-file (search-input-file inputs "/include/catch2/catch.hpp")
                              "src/cpp/tests/cpp/tests/vendor/")
                (substitute* "src/cpp/session/session-options.json"
