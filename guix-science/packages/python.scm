@@ -194,6 +194,10 @@ lots of nifty extra stuff on top.")
                (base32
                 "0vhklj6krl9r0kdynb4kcpwp8y1ihl2zw96byallay3k9c9zwgd5"))))
     (build-system python-build-system)
+    (native-inputs
+     (list python-numpy))                         ;for 'sanity-check' phase
+    (properties
+     '((updater-extra-native-inputs "python-numpy")))
     (home-page "https://github.com/bshillingford/python-torchfile")
     (synopsis "Torch7 binary serialized file parser")
     (description "Torch7 binary serialized file parser")
