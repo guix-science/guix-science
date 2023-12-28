@@ -932,6 +932,22 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
                         "@?(bazel_tools|embedded_jdk|local_.*)(\\.marker)?")
                         (find-files "external"
                                     "^\\.(git|svn|hg)$")))
+
+             ;; Do not keep a copy of the JDK.  The JDK files are not
+             ;; source code and they may change as the JDK package (or
+             ;; any of its inputs) changes.
+
+             ;; These are all symlinks from the "jdk" output of the
+             ;; openjdk package, except for BUILD.bazel and WORKSPACE.
+             (for-each delete-file
+                       (find-files "external/local_jdk"
+                                   (lambda (file-name stat)
+                                     (eq? (stat:type stat) 'symlink))))
+             ;; The BUILD file contains a store reference to the JDK.
+             (substitute* "external/local_jdk/BUILD.bazel"
+               (("java_home = .*,")
+                "java_home = \"@GUIX_JAVA_HOME@\","))
+
              ;; Erase markers
              (for-each (lambda (file)
                          (truncate-file file 0))
@@ -1045,7 +1061,7 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
                                                              #$static-protobuf
                                                              "/include"))
                                       #:hash
-                                      "0jzk6d5s27s2rbzrrg8cmghkfyl99wgx3rfakhj0nshx1kra3c49")))
+                                      "0k5h3yfr646m3jn80k2ls42p4xaj3hb4cvngmi0dppr7diab5awm")))
 
               ;; Rewrite dangling links to current build directory
               (for-each (lambda (file)
@@ -1061,6 +1077,8 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
                                            (string-contains (readlink file-name)
                                                             "GUIX_BUILD_TOP")))
                                     #:stat lstat))
+              (substitute* (string-append bazel-out "/external/local_jdk/BUILD.bazel")
+                (("@GUIX_JAVA_HOME@") #$(this-package-native-input "openjdk")))
               (setenv "HOME" (getenv "NIX_BUILD_TOP"))
 
               (invoke "python" "build/build.py" "--configure_only")
@@ -1225,10 +1243,12 @@ build --local_cpu_resources=HOST_CPUS*.75
            python-protobuf-for-tensorflow-2
            python-scipy))
     (native-inputs
-     (list python-pypa-build python-setuptools python-wheel
-           bazel-6
-           which
-           `(,openjdk11 "jdk")))           ;for bazel
+     (list bazel-6
+           `(,openjdk11 "jdk")   ;for bazel
+           python-pypa-build
+           python-setuptools
+           python-wheel
+           which))
     (home-page "https://github.com/google/jax")
     (synopsis "Differentiate, compile, and transform Numpy code.")
     (description "JAX is Autograd and XLA, brought together for
@@ -1446,7 +1466,7 @@ mechanism for serializing structured data.")
                                                         #$(this-package-input "python-wrapper")
                                                         "/bin/python"))
                                       #:hash
-                                      "1fm0qjsbks8xz84bzv3ivyc8ba52vj5rz31n5w87glvsxijzq6jf")))
+                                      "0ahsbf510465iyxiih7r0hmhmpi4c2kw1z7bk1x311vmnfl54irr")))
 
               ;; Rewrite dangling links to current build directory
               (for-each (lambda (file)
@@ -1462,6 +1482,8 @@ mechanism for serializing structured data.")
                                            (string-contains (readlink file-name)
                                                             "GUIX_BUILD_TOP")))
                                     #:stat lstat))
+              (substitute* (string-append bazel-out "/external/local_jdk/BUILD.bazel")
+                (("@GUIX_JAVA_HOME@") #$(this-package-native-input "openjdk")))
               (setenv "HOME" (getenv "NIX_BUILD_TOP"))
 
               ;; Bazel aborts when a source file includes a header
@@ -1792,7 +1814,7 @@ subclassing API with an imperative style for advanced research.")
                                       #:bazel-arguments
                                       '(list)
                                       #:hash
-                                      "104m99n0ah9nxa296m3ryrfyqm40ay8ck4nsggfdmci935jigvwa")))
+                                      "0w9v0g84kvfrs94gdzvbn37xf79zkpj4likwqfq41lgl2y9q8ci2")))
 
               ;; Rewrite dangling links to current build directory
               (for-each (lambda (file)
@@ -1808,6 +1830,8 @@ subclassing API with an imperative style for advanced research.")
                                            (string-contains (readlink file-name)
                                                             "GUIX_BUILD_TOP")))
                                     #:stat lstat))
+              (substitute* (string-append bazel-out "/external/local_jdk/BUILD.bazel")
+                (("@GUIX_JAVA_HOME@") #$(this-package-native-input "openjdk")))
               (setenv "HOME" (getenv "NIX_BUILD_TOP"))))
           (replace 'build
             (lambda _
