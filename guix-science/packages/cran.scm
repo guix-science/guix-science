@@ -463,6 +463,32 @@ documentation around your functions.")
 
 ;; This contains a lot of minified JavaScript with no obvious source
 ;; files.
+;; This package contains a lot of minified JavaScript:
+;; inst/assets/bootstrap-select-1.14.0-beta2/js/bootstrap-select.min.js
+;; inst/assets/bootstrap-select/js/bootstrap-select.min.js
+;; inst/assets/bootstrap-switch/bootstrap-switch-3.3.2/bootstrap-switch.min.js
+;; inst/assets/bootstrap-switch/bootstrap-switch-3.3.4/bootstrap-switch.min.js
+;; inst/assets/bootstrap-switch/bootstrap-switch-3.4/bootstrap-switch.min.js
+;; inst/assets/ion-rangeslider/jquery.initialize.min.js
+;; inst/assets/jquery-knob/jquery.knob.min.js
+;; inst/assets/multi/multi.min.js
+;; inst/assets/popper/popper.min.js
+;; inst/assets/shinyWidgets-bindings.min.js
+;; inst/assets/spectrum/spectrum.min.js
+;; --> inst/assets/spectrum/spectrum.js
+;; inst/assets/sweetalert2-11.4.8/js/sweetalert2.min.js
+;; inst/assets/sweetalert2/js/promise.min.js
+;; inst/assets/sweetalert2/js/sweetalert2.min.js
+;; inst/assets/tippy/dist/tippy-bundle.iife.min.js
+;; inst/packer/air-datepicker.js
+;; inst/packer/autonumeric.js
+;; inst/packer/buttons-group.js
+;; inst/packer/colorpickr.js
+;; inst/packer/input-icons.js
+;; inst/packer/multi.js
+;; inst/packer/nouislider.js
+;; inst/packer/tree.js
+;; inst/packer/virtual-select.js
 (define-public r-shinywidgets
   (package
     (name "r-shinywidgets")
