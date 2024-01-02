@@ -417,6 +417,34 @@ signaling paths.  This allows to predict ligand-receptor interactions
 that might drive gene expression changes in cells of interest.")
     (license license:gpl3)))
 
+(define-public r-rblast
+  (let ((commit "231981777fc23e2d189a913926aede60150a3c85")
+        (revision "1"))
+    (package
+      (name "r-rblast")
+      (version (git-version "0.99.4" revision commit))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url "https://github.com/mhahsler/rBLAST")
+               (commit commit)))
+         (file-name (git-file-name name version))
+         (sha256
+          (base32 "1dr38wa7pyh2q9m9pj3ppp1fmdykycd7z1a7r3pysmpjffsi4vfw"))))
+      (properties `((upstream-name . "rBLAST")))
+      (build-system r-build-system)
+      (inputs (list blast+))
+      (propagated-inputs (list r-biostrings))
+      (home-page "https://github.com/mhahsler/rBLAST")
+      (synopsis "R Interface for the Basic Local Alignment Search Tool")
+      (description
+       "This package provides an interface for the Basic Local
+Alignment Search Tool (BLAST) to search genetic sequence data bases.
+This includes interfaces to @code{blastn}, @code{blastp},
+@code{blastx}, and @code{makeblastdb}.")
+      (license license:gpl3))))
+
 ;; This is here because r-nichenetr is also here.
 (define-public r-scriabin
   (let ((commit "313d15e9150413e6bcad0947215da3a09c0257f5")
