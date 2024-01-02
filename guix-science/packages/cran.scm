@@ -1,6 +1,6 @@
 ;;;
 ;;; Copyright © 2020, 2021 Lars-Dominik Braun <ldb@leibniz-psychology.org>
-;;; Copyright © 2022, 2023 Ricardo Wurmus <rekado@elephly.net>
+;;; Copyright © 2022-2024, Ricardo Wurmus <rekado@elephly.net>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU General Public License as published by
@@ -17,6 +17,7 @@
 
 (define-module (guix-science packages cran)
   #:use-module ((guix licenses) #:prefix license:)
+  #:use-module (guix gexp)
   #:use-module (guix packages)
   #:use-module (guix download)
   #:use-module (guix git-download)
@@ -84,27 +85,51 @@ that dynamically generate beautiful documentation from a
     (license license:asl2.0)))
 
 ;; TODO: unbundle these minified JavaScript files
-;;
-;; d3 version 3.5.2
-;;   htmlwidgets/lib/d3/d3.min.js
-;; unknown:
-;;   htmlwidgets/lib/dagre-d3/dagre-d3.min.js
-;; unknown:
-;;   htmlwidgets/lib/mermaid/dist/mermaid.slim.min.js
 ;; Viz.js 1.8.2 (Graphviz 2.40.1, Expat 2.2.5, Emscripten 1.37.33)
 ;;   htmlwidgets/lib/viz/viz.js
 (define-public r-diagrammer
   (package
     (name "r-diagrammer")
     (version "1.0.10")
-    (source (origin
-              (method url-fetch)
-              (uri (cran-uri "DiagrammeR" version))
-              (sha256
-               (base32
-                "147q7zgwhd7vc0l134sqkkf6n6s6bznxvcmsrdx2f5df12bsixkj"))))
+    (source
+     (origin
+       (method url-fetch)
+       (uri (cran-uri "DiagrammeR" version))
+       (sha256
+        (base32
+         "147q7zgwhd7vc0l134sqkkf6n6s6bznxvcmsrdx2f5df12bsixkj"))
+       (snippet
+        '(for-each delete-file
+                   (list "inst/htmlwidgets/lib/d3/d3.min.js"
+                         "inst/htmlwidgets/lib/dagre-d3/dagre-d3.min.js"
+                         "inst/htmlwidgets/lib/mermaid/dist/mermaid.slim.min.js")))))
     (properties `((upstream-name . "DiagrammeR")))
     (build-system r-build-system)
+    (arguments
+     (list
+      #:modules
+      '((guix build r-build-system)
+        (guix build minify-build-system)
+        (guix build utils)
+        (ice-9 match))
+      #:imported-modules
+      `(,@%r-build-system-modules
+        (guix build minify-build-system))
+      #:phases
+      #~(modify-phases (@ (guix build r-build-system) %standard-phases)
+          (add-after 'unpack 'replace-bundled-minified-JavaScript
+            (lambda* (#:key inputs #:allow-other-keys)
+              (with-directory-excursion "inst/htmlwidgets/lib"
+                (for-each
+                 (match-lambda
+                   ((source . target)
+                    (minify source #:target target)))
+                 `((,(assoc-ref inputs "d3.v3.js")
+                    . "d3/d3.min.js")
+                   (,(search-input-file inputs "/dist/dagre-d3.js")
+                    . "dagre-d3/dagre-d3.min.js")
+                   (,(search-input-file inputs "/dist/mermaid.slim.js")
+                    . "mermaid/dist/mermaid.slim.min.js")))))))))
     (propagated-inputs
      (list r-downloader
            r-dplyr
@@ -124,16 +149,50 @@ that dynamically generate beautiful documentation from a
            r-tidyr
            r-viridis
            r-visnetwork))
-    (native-inputs (list esbuild))
+    (native-inputs
+     `(("esbuild" ,esbuild)
+       ("r-knitr" ,r-knitr)
+       ("d3.v3.js"
+        ,(origin
+           (method url-fetch)
+           (uri "https://d3js.org/d3.v3.js")
+           (sha256
+            (base32
+             "1arr7sr08vy7wh0nvip2mi7dpyjw4576vf3bm45rp4g5lc1k1x41"))))
+       ;; dagre-d3 was added about 10 years ago.  Version 0.3.1 was
+       ;; current at around that time.
+       ("dagre-d3"
+        ,(let ((version "0.3.1"))
+           (origin
+             (method git-fetch)
+             (uri (git-reference
+                   (url "https://github.com/dagrejs/dagre-d3/")
+                   (commit (string-append "v" version))))
+             (file-name (git-file-name "dagre-d3" version))
+             (sha256
+              (base32
+               "0ys5ryamibbazrkb82ir72qfna66ajhg4n6jh9vk9m1z5qi59ahs")))))
+       ;; DiagrammeR keeps trying to upgrade mermaid but they keep
+       ;; reverting back to version 7.0.0.
+       ("mermaid.js"
+        ,(let ((version "7.0.0"))
+           (origin
+             (method git-fetch)
+             (uri (git-reference
+                   (url "https://github.com/mermaid-js/mermaid/")
+                   (commit version)))
+             (file-name (git-file-name "mermaid" version))
+             (sha256
+              (base32
+               "0ihgmhpwy19ijngya707pcgaj83ja73ylbdx4wqf9drq8wkq7sza")))))))
     (home-page "https://github.com/rich-iannone/DiagrammeR")
-    (synopsis "Graph/Network Visualization")
+    (synopsis "Graph/network visualization")
     (description
-     "Build graph/network structures using functions for stepwise addition
-and deletion of nodes and edges.  Work with data available in tables for bulk
-addition of nodes, edges, and associated metadata.  Use graph selections and
-traversals to apply changes to specific nodes or edges.  A wide selection of
-graph algorithms allow for the analysis of graphs.  Visualize the graphs and
-take advantage of any aesthetic properties assigned to nodes and edges.")
+     "With the @code{DiagrammeR} package you can create, modify,
+analyze, and visualize network graph diagrams.  The output can be
+incorporated into @code{R Markdown} documents, integrated with Shiny
+web apps, converted to other graph formats, or exported as image
+files.")
     (license license:expat)))
 
 ;; Depends on r-diagrammer
