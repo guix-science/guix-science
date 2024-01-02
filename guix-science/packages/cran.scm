@@ -478,6 +478,37 @@ feedback graphics, some are just shorthands to make certain common
 operations in formr more palatable to R novices.")
      (license license:bsd-2))))
 
+;; Contains minified JavaScript that may be difficult to build from
+;; source: inst/reactlog/reactlogAsset/reactlog.js
+(define-public r-reactlog
+  (package
+    (name "r-reactlog")
+    (version "1.1.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (cran-uri "reactlog" version))
+       (sha256
+        (base32
+         "1njihrnq1x162nc2wk16kj1l0vpvk8xcdgjvj36arw4z8nv8wpah"))))
+    (properties `((upstream-name . "reactlog")))
+    (build-system r-build-system)
+    (propagated-inputs
+     (list r-jsonlite))
+    (native-inputs
+     (list r-knitr))
+    (home-page "https://rstudio.github.io/reactlog/")
+    (synopsis "Reactivity visualizer for Shiny")
+    (description
+     "Building interactive web applications with R is incredibly easy
+with Shiny.  Behind the scenes, Shiny builds a reactive graph that can
+quickly become intertwined and difficult to debug.  The reactlog
+package provides a visual insight into that black box of Shiny
+reactivity by constructing a directed dependency graph of the
+application's reactive state at any time point in a reactive
+recording.")
+    (license license:gpl3)))
+
 ;; Contains minified JavaScript
 (define-public r-reactr
   (package
