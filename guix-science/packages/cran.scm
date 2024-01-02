@@ -195,6 +195,28 @@ web apps, converted to other graph formats, or exported as image
 files.")
     (license license:expat)))
 
+;; This package contains minified JavaScript, very much like the
+;; r-diagrammer package: viz.js, dagre-d3, and d3.
+(define-public r-diagrammersvg
+  (package
+    (name "r-diagrammersvg")
+    (version "0.1")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (cran-uri "DiagrammeRsvg" version))
+       (sha256
+        (base32 "0j2cm1mx3zrb2k3pcrb96z2z3kws61gyyjsjjv5rqcb5lzdgi65k"))))
+    (properties `((upstream-name . "DiagrammeRsvg")))
+    (build-system r-build-system)
+    (propagated-inputs (list r-v8))
+    (home-page "https://github.com/rich-iannone/DiagrammeRsvg")
+    (synopsis "Export DiagrammeR graphviz graphs as SVG")
+    (description
+     "This package allows exporting a @code{DiagrammeR Graphviz}
+objects to @code{SVG}.")
+    (license license:expat)))
+
 ;; Depends on r-diagrammer
 (define-public r-lavaanplot
   (package
