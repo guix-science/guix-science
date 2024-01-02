@@ -1,5 +1,5 @@
 ;;; Copyright © 2016-2021 Roel Janssen <roel@gnu.org>
-;;; Copyright © 2022, 2023 Ricardo Wurmus <rekado@elephly.net>
+;;; Copyright © 2022-2024 Ricardo Wurmus <rekado@elephly.net>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU General Public License as published by
@@ -323,6 +323,38 @@ minimization functions originally developed for the CodeAxe phylogenetic
 analysis package.")
    ;; MIT license.
    (license license:expat)))
+
+(define-public r-music
+  (let ((commit "0a3e3af45d4bd018939013660a3e83e580fa3bac")
+        (revision "1"))
+    (package
+      (name "r-music")
+      (version (git-version "1.0.0" revision commit))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url "https://github.com/xuranw/MuSiC")
+               (commit commit)))
+         (file-name (git-file-name name version))
+         (sha256
+          (base32 "14i9ihd29disbjx05hfm6hj7jjj3ydjxqyzxi9i8aa96gq662gfm"))))
+      (properties `((upstream-name . "MuSiC")))
+      (build-system r-build-system)
+      (propagated-inputs (list r-biobase
+                               r-ggplot2
+                               r-matrix
+                               r-mcmcpack
+                               r-nnls
+                               r-singlecellexperiment
+                               r-toast))
+      (native-inputs (list r-knitr))
+      (home-page "https://github.com/xuranw/MuSiC")
+      (synopsis "Multi-subject single cell deconvolution")
+      (description
+       "MuSiC is a deconvolution method that utilizes cross-subject
+scRNA-seq to estimate cell type proportions in bulk RNA-seq data.")
+      (license license:gpl3+))))
 
 ;; Depends on r-diagrammer, which is not in Guix proper yet due to
 ;; minified JavaScript.
