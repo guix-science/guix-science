@@ -30,6 +30,106 @@
   #:use-module (gnu packages tex)
   #:use-module (gnu packages web))
 
+;; This package contains a number of minified JavaScript files, some
+;; without original source code.
+;;
+;; inst/assets/vendor/headroom/headroom.min.js --> ?
+;;   https://github.com/WickyNilliams/headroom.js/tree/v0.9.4
+;;
+;; inst/assets/vendor/onscreen/onscreen.min.js --> ?
+;;   https://github.com/silvestreh/onScreen (0.0.0, 2015)
+(define-public r-argonr
+  (package
+    (name "r-argonr")
+    (version "0.2.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (cran-uri "argonR" version))
+       (sha256
+        (base32
+         "15hlvansqnky9bnq4r7xza3hb1hzylmhz8117wxz9lxa1wiky2is"))
+       (snippet
+        '(for-each delete-file
+                   (list "inst/assets/js/argon.min.js"
+                         "inst/assets/vendor/bootstrap/bootstrap.min.js"
+                         "inst/assets/vendor/jquery/jquery.min.js"
+                         "inst/assets/vendor/nouislider/js/nouislider.min.js"
+                         "inst/assets/vendor/popper/popper.min.js")))))
+    (properties `((upstream-name . "argonR")))
+    (build-system r-build-system)
+    (arguments
+     (list
+      #:modules
+      '((guix build r-build-system)
+        (guix build minify-build-system)
+        (guix build utils)
+        (ice-9 match))
+      #:imported-modules
+      `(,@%r-build-system-modules
+        (guix build minify-build-system))
+      #:phases
+      #~(modify-phases (@ (guix build r-build-system) %standard-phases)
+          (add-after 'unpack 'process-javascript
+            (lambda* (#:key inputs #:allow-other-keys)
+              (with-directory-excursion "inst/assets"
+                (for-each (match-lambda
+                            ((source . target)
+                             (minify source #:target target)))
+                          `(("js/argon.js"
+                             . "js/argon.min.js")
+                            (,(search-input-file inputs "/dist/js/bootstrap.bundle.js")
+                             . "vendor/bootstrap/bootstrap.min.js")
+                            (,(search-input-file inputs "/dist/umd/popper.js")
+                             . "vendor/popper/popper.min.js")
+                            (,(assoc-ref inputs "js-jquery-3.2.1")
+                             . "vendor/jquery/jquery.min.js")
+                            ("vendor/nouislider/js/nouislider.js"
+                             . "vendor/nouislider/js/nouislider.min.js")))))))))
+    (propagated-inputs
+     (list r-htmltools r-rstudioapi))
+    (native-inputs
+     `(("esbuild" ,esbuild)
+       ("r-knitr" ,r-knitr)
+       ;; inst/assets/vendor/popper/popper.min.js
+       ;;   The last commit touching the source file is
+       ;;   323d6bfbc4dc72b8542e0d1fc34bf9e1f6f5162b.  At that
+       ;;   time version 1.12.5 was used.
+       ("popper.js"
+        ,(let ((version "1.12.5"))
+           (origin
+             (method git-fetch)
+             (uri (git-reference
+                   (url "https://github.com/vusion/popper.js")
+                   (commit (string-append "v" version))))
+             (file-name (git-file-name "popper.js" version))
+             (sha256
+              (base32
+               "1x0ybd2jz5q66bp7456bj38jssfbkk7kprm0jfd3zq3hffh3swaw")))))
+       ("js-bootstrap4-bundle"
+        ,(let ((version "4.1.3"))
+           (origin
+             (method git-fetch)
+             (uri (git-reference
+                   (url "https://github.com/twbs/bootstrap")
+                   (commit (string-append "v" version))))
+             (file-name (git-file-name "bootstrap" version))
+             (sha256
+              (base32
+               "0sa9daabsfjf2dk7gs40l3khd5h1g90x5hxpq7ikzhwzyvz890g3")))))
+       ("js-jquery-3.2.1"
+        ,(origin
+           (method url-fetch)
+           (uri "https://code.jquery.com/jquery-3.2.1.js")
+           (sha256
+            (base32
+             "08dv528xy8ksrg5qqw73bvpjrzxv66xq41sfidn9ypgskwl2g40d"))))))
+    (home-page "https://github.com/RinteRface/argonR")
+    (synopsis "R interface to Argon HTML design")
+    (description
+     "This package provides an R wrapper around the argon library.")
+    (license license:gpl2)))
+
 ;; This contains minified JavaScript
 (define-public r-bs4dash
   (package
