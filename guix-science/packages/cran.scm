@@ -130,6 +130,49 @@
      "This package provides an R wrapper around the argon library.")
     (license license:gpl2)))
 
+;; This depends on r-argonr.
+(define-public r-argondash
+  (package
+    (name "r-argondash")
+    (version "0.2.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (cran-uri "argonDash" version))
+       (sha256
+        (base32
+         "1wykr7y5375g1nb18ynybccxmd948xrr0gdwxxqsfjf782vlgd2d"))
+       (snippet
+        '(delete-file "inst/argon-1.0.0/argon.min.js"))))
+    (properties `((upstream-name . "argonDash")))
+    (build-system r-build-system)
+    (arguments
+     (list
+      #:modules
+      '((guix build r-build-system)
+        (guix build minify-build-system)
+        (guix build utils)
+        (ice-9 match))
+      #:imported-modules
+      `(,@%r-build-system-modules
+        (guix build minify-build-system))
+      #:phases
+      #~(modify-phases (@ (guix build r-build-system) %standard-phases)
+          (add-after 'unpack 'replace-bundled-minified-JavaScript
+            (lambda* (#:key inputs #:allow-other-keys)
+              (with-directory-excursion "inst/argon-1.0.0"
+                (minify "argon.js" #:target "argon.min.js")))))))
+    (propagated-inputs
+     (list r-argonr r-htmltools r-shiny))
+    (native-inputs
+     (list esbuild))
+    (home-page "https://github.com/RinteRface/argonDash")
+    (synopsis "Argon Shiny dashboard template")
+    (description
+     "This package lets you create Bootstrap 4 dashboards powered by
+Argon.")
+    (license license:gpl2)))
+
 ;; This contains minified JavaScript
 (define-public r-bs4dash
   (package
