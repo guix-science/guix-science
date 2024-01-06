@@ -559,39 +559,41 @@ bioinformatics file formats, sequence alignment, and more.")
              (list (search-patch "strelka2-unbundle-dependencies.patch")))))
    (build-system cmake-build-system)
    (arguments
-    `(#:tests? #f
-      #:phases
-      (modify-phases %standard-phases
-        (add-after 'unpack 'unbundle-dependencies
-          (lambda* (#:key inputs outputs #:allow-other-keys)
-            (substitute* "redist/CMakeLists.txt"
-              ;; HTSlib
-              (("superset\\(HTSLIB_DIR \"\\$\\{CMAKE_CURRENT_BINARY_DIR\\}/\\$\\{HTSLIB_PREFIX\\}\"\\)")
-               (format #f "superset(HTSLIB_DIR \"~a/bin\")" (assoc-ref inputs "htslib")))
-              (("superset\\(HTSLIB_LIBRARY \"\\$\\{HTSLIB_DIR\\}/libhts.a\"\\)")
-               (format #f "superset(HTSLIB_LIBRARY \"~a/lib/libhts.so\")"
-                       (assoc-ref inputs "htslib")))
-              ;; SAMtools
-              (("set\\(SAMTOOLS_DIR \"\\$\\{CMAKE_CURRENT_BINARY_DIR}/\\$\\{SAMTOOLS_PREFIX\\}\"\\)")
-               (format #f "set(SAMTOOLS_DIR \"~a/bin\")"
-                       (assoc-ref inputs "samtools")))
-              (("set\\(SAMTOOLS_LIBRARY \"\\$\\{SAMTOOLS_DIR\\}/libbam.a\"\\)")
-               (format #f "set(SAMTOOLS_LIBRARY \"~a/lib/libbam.a\")"
-                       (assoc-ref inputs "samtools"))))))
-        (add-after 'install 'install-shared-libraries
-          (lambda* (#:key inputs outputs  #:allow-other-keys)
-            (let ((libdir (string-append (assoc-ref outputs "out") "/lib")))
-              (mkdir-p libdir)
-              (map (lambda (file)
-                     (copy-file file (string-append libdir "/" (basename file))))
-                   (find-files "." "\\.so")))))
-        (add-after 'install 'patch-python-bin
-          (lambda* (#:key inputs outputs  #:allow-other-keys)
-            (let ((patch-path (string-append (assoc-ref outputs "out") "/lib/python")))
-              (substitute* (list (string-append patch-path "/makeRunScript.py")
-                                 (string-append patch-path "/pyflow/pyflow.py"))
-                (("/usr/bin/env python")
-                 (string-append (assoc-ref inputs "python") "/bin/python")))))))))
+    (list
+     #:tests? #f
+     #:phases
+     #~(modify-phases %standard-phases
+         (add-after 'unpack 'unbundle-dependencies
+           (lambda* (#:key inputs #:allow-other-keys)
+             (substitute* "redist/CMakeLists.txt"
+               ;; HTSlib
+               (("superset\\(HTSLIB_DIR \"\\$\\{CMAKE_CURRENT_BINARY_DIR\\}/\\$\\{HTSLIB_PREFIX\\}\"\\)")
+                (format #f "superset(HTSLIB_DIR \"~a/bin\")"
+                        #$(this-package-input "htslib")))
+               (("superset\\(HTSLIB_LIBRARY \"\\$\\{HTSLIB_DIR\\}/libhts.a\"\\)")
+                (format #f "superset(HTSLIB_LIBRARY \"~a\")"
+                        (search-input-file inputs "/lib/libhts.so")))
+               ;; SAMtools
+               (("set\\(SAMTOOLS_DIR \"\\$\\{CMAKE_CURRENT_BINARY_DIR}/\\$\\{SAMTOOLS_PREFIX\\}\"\\)")
+                (format #f "set(SAMTOOLS_DIR \"~a/bin\")"
+                        #$(this-package-input "samtools")))
+               (("set\\(SAMTOOLS_LIBRARY \"\\$\\{SAMTOOLS_DIR\\}/libbam.a\"\\)")
+                (format #f "set(SAMTOOLS_LIBRARY \"~a\")"
+                        (search-input-file inputs "/lib/libbam.a"))))))
+         (add-after 'install 'install-shared-libraries
+           (lambda _
+             (let ((libdir (string-append #$output "/lib")))
+               (mkdir-p libdir)
+               (map (lambda (file)
+                      (copy-file file (string-append libdir "/" (basename file))))
+                    (find-files "." "\\.so")))))
+         (add-after 'install 'patch-python-bin
+           (lambda* (#:key inputs #:allow-other-keys)
+             (let ((patch-path (string-append #$output "/lib/python")))
+               (substitute* (list (string-append patch-path "/makeRunScript.py")
+                                  (string-append patch-path "/pyflow/pyflow.py"))
+                 (("/usr/bin/env python")
+                  (search-input-file inputs "/bin/python")))))))))
    (inputs
     (list boost
           perl
@@ -603,14 +605,14 @@ bioinformatics file formats, sequence alignment, and more.")
           curl
           xz
           openssl
-          samtools
+          samtools-0.1
           zlib
           python))
    (native-inputs
-    `(("bash" ,bash)
-      ("python" ,python-2)
-      ("doxygen" ,doxygen)
-      ("graphviz" ,graphviz)))
+    (list bash
+          doxygen
+          graphviz
+          python-2))
    (propagated-inputs
     (list vcftools htslib))
    (native-search-paths (package-native-search-paths perl))
