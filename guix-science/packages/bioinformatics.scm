@@ -1382,13 +1382,14 @@ Pan-Cancer Analysis Project")
              (base32 "009vpq2l1pxqfsvckapzxav5xr6kcjvg3krrfdx40qammcr4q1ak"))))
    (build-system gnu-build-system)
    (arguments
-    `(#:tests? #f
-      #:phases
-      (modify-phases %standard-phases
-        (replace 'configure
-          (lambda* (#:key outputs #:allow-other-keys)
-            (system* "perl" "Makefile.PL"
-                     (string-append "PREFIX=" (assoc-ref outputs "out"))))))))
+    (list
+     #:tests? #f
+     #:phases
+     #~(modify-phases %standard-phases
+         (replace 'configure
+           (lambda _
+             (invoke "perl" "Makefile.PL"
+                     (string-append "PREFIX=" #$output)))))))
    (propagated-inputs
     (list perl-bio-pipeline-comparison perl-const-fast perl-data-uuid
           perl-datetime))
