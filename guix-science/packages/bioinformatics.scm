@@ -652,39 +652,37 @@ added to both callers to further improve precision.")
                   ;; Remove pre-built binaries and bundled htslib sources.
                   (delete-file-recursively "bin/MacOSX_x86_64")
                   (delete-file-recursively "bin/Linux_x86_64")
-                  (delete-file-recursively "source/htslib")
-                  #t))))
+                  (delete-file-recursively "source/htslib")))))
     (build-system gnu-build-system)
     (arguments
-     '(#:tests? #f ;no check target
-       #:make-flags '("STAR")
-       #:phases
-       (modify-phases %standard-phases
-         (add-after 'unpack 'enter-source-dir
-           (lambda _ (chdir "source") #t))
-         (add-after 'enter-source-dir 'do-not-use-bundled-htslib
-           (lambda _
-             (substitute* "Makefile"
-               (("(Depend.list: \\$\\(SOURCES\\) parametersDefault\\.xxd) htslib"
-                 _ prefix) prefix))
-             (substitute* '("BAMfunctions.cpp"
-                            "signalFromBAM.h"
-                            ;"bam_cat.h"
-                            "bam_cat.c"
-                            "STAR.cpp"
-                            "bamRemoveDuplicates.cpp")
-               (("#include \"htslib/([^\"]+\\.h)\"" _ header)
-                (string-append "#include <" header ">")))
-             (substitute* "IncludeDefine.h"
-               (("\"htslib/(htslib/[^\"]+.h)\"" _ header)
-                (string-append "<" header ">")))
-             #t))
-         (replace 'install
-           (lambda* (#:key outputs #:allow-other-keys)
-             (let ((bin (string-append (assoc-ref outputs "out") "/bin/")))
-               (install-file "STAR" bin))
-             #t))
-         (delete 'configure))))
+     (list
+      #:tests? #f ;no check target
+      #:make-flags '(list "STAR")
+      #:phases
+      #~(modify-phases %standard-phases
+          (add-after 'unpack 'enter-source-dir
+            (lambda _ (chdir "source")))
+          (add-after 'enter-source-dir 'do-not-use-bundled-htslib
+            (lambda _
+              (substitute* "Makefile"
+                (("(Depend.list: \\$\\(SOURCES\\) parametersDefault\\.xxd) htslib"
+                  _ prefix) prefix))
+              (substitute* '("BAMfunctions.cpp"
+                             "signalFromBAM.h"
+                                        ;"bam_cat.h"
+                             "bam_cat.c"
+                             "STAR.cpp"
+                             "bamRemoveDuplicates.cpp")
+                (("#include \"htslib/([^\"]+\\.h)\"" _ header)
+                 (string-append "#include <" header ">")))
+              (substitute* "IncludeDefine.h"
+                (("\"htslib/(htslib/[^\"]+.h)\"" _ header)
+                 (string-append "<" header ">")))))
+          (replace 'install
+            (lambda _
+              (let ((bin (string-append #$output "/bin/")))
+                (install-file "STAR" bin))))
+          (delete 'configure))))
     (native-inputs
      (list vim)) ; for xxd
     (inputs
