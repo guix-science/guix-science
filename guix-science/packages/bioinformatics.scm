@@ -1314,35 +1314,36 @@ bammarkduplicates, bammaskflags, bamrecompress, bamsort, bamtofastq.")
 
 (define-public pcap-core
   (package
-   (name "pcap-core")
-   (version "3.5.0")
-   (source (origin
-            (method url-fetch)
-            (uri (string-append
-                  "https://github.com/ICGC-TCGA-PanCancer/PCAP-core/archive/v"
-                  version ".tar.gz"))
-            (file-name (string-append name "-" version ".tar.gz"))
-            (sha256
-             (base32 "06im5lf00jyghwmqjzb3dpglgjx7pi5ysda75fw8ygmj1fi5q8kj"))))
-   (build-system gnu-build-system)
-   (arguments
-    `(#:tests? #f
+    (name "pcap-core")
+    (version "3.5.0")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://github.com/ICGC-TCGA-PanCancer/PCAP-core/archive/v"
+                    version ".tar.gz"))
+              (file-name (string-append name "-" version ".tar.gz"))
+              (sha256
+               (base32 "06im5lf00jyghwmqjzb3dpglgjx7pi5ysda75fw8ygmj1fi5q8kj"))))
+    (build-system gnu-build-system)
+    (arguments
+     (list
+      #:tests? #f
       #:phases
-      (modify-phases %standard-phases
-        (replace 'configure
-          (lambda* (#:key outputs #:allow-other-keys)
-            (system* "perl" "Makefile.PL"
-                     (string-append "PREFIX=" (assoc-ref outputs "out"))))))))
-   (propagated-inputs
-    (list bwa samtools biobambam))
-   (native-inputs
-    (list perl-module-install perl-module-build perl-file-sharedir-install
-          perl perltidy))
-   (home-page "https://github.com/ICGC-TCGA-PanCancer/PCAP-core")
-   (synopsis "NGS reference implementations and helper code for the ICGC/TCGA
+      #~(modify-phases %standard-phases
+          (replace 'configure
+            (lambda _
+              (invoke "perl" "Makefile.PL"
+                      (string-append "PREFIX=" #$output)))))))
+    (propagated-inputs
+     (list bwa samtools biobambam))
+    (native-inputs
+     (list perl-module-install perl-module-build perl-file-sharedir-install
+           perl perltidy))
+    (home-page "https://github.com/ICGC-TCGA-PanCancer/PCAP-core")
+    (synopsis "NGS reference implementations and helper code for the ICGC/TCGA
 Pan-Cancer Analysis Project")
-   (description "")
-   (license license:gpl2+)))
+    (description "")
+    (license license:gpl2+)))
 
 (define-public perl-bio-pipeline-comparison
   (package
