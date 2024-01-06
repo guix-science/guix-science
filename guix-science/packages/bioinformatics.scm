@@ -941,238 +941,234 @@ capabilities.")
               "05121h8nrrsd4j9xk0dg92p1js6m849x8p2vj5mss1fzf50cdyv7"))))
    (build-system gnu-build-system)
    (arguments
-    `(#:tests? #f ; There are no tests
-      #:phases
-      (modify-phases %standard-phases
-                     (delete 'configure)
-                     (delete 'build)
-                     (add-after 'unpack 'patch-external-programs
-                      (lambda* (#:key inputs outputs #:allow-other-keys)
-                        (let* ((out        (assoc-ref outputs "out"))
-                               (share      (string-append out "/share/sharc"))
-                               (venvdir    (string-append share "/venv/bin"))
-                               (scriptsdir (string-append share "/scripts"))
-                               (primerdir  (string-append scriptsdir "/primers"))
-                               (stepsdir   (string-append share "/steps"))
-                               (filesdir   (string-append share "/files")))
-                          (substitute* "sharc.sh"
-                           (("/hpc/cog_bioinf/cuppen/personal_data/jvalleinclan/tools_kloosterman/minimap2_v2.12/minimap2")
-                            (string-append (assoc-ref inputs "minimap2") "/bin/minimap2"))
-                           (("SHARCDIR=\\$\\(dirname \\$\\{BASH_SOURCE\\[0\\]\\}\\)")
-                            (string-append "SHARCDIR='" out "'"))
-                           (("VENV=\\$SHARCDIR/venv/bin/activate")
-                            (string-append "VENV=" venvdir "/activate"))
-                           (("STEPSDIR=\\$SHARCDIR/steps")
-                            (string-append "STEPSDIR=" stepsdir))
-                           (("SCRIPTSDIR=\\$SHARCDIR/scripts")
-                            (string-append "SCRIPTSDIR=" scriptsdir))
-                           (("FILESDIR=\\$SHARCDIR/files")
-                            (string-append "FILESDIR=" filesdir))
-                           (("python \\$PON_SCRIPT") "PY2 $PON_SCRIPT")
-                           (("\\$PRIMER_DESIGN_DIR/primer3/src/primer3_core")
-                            (string-append (assoc-ref inputs "primer3") "/bin/primer3_core"))
-                           (("\\$\\{FILESDIR\\}/gnomad_v2.1_sv.sites.vcf")
-                            (string-append (assoc-ref inputs "gnomad-sv-sites")
-                                           "/share/gnomad/gnomad_v2.1_sv.sites.vcf")))
+    (list
+     #:tests? #f ; There are no tests
+     #:phases
+     #~(modify-phases %standard-phases
+         (delete 'configure)
+         (delete 'build)
+         (add-after 'unpack 'patch-external-programs
+           (lambda* (#:key inputs outputs #:allow-other-keys)
+             (let* ((share      (string-append #$output "/share/sharc"))
+                    (venvdir    (string-append share "/venv/bin"))
+                    (scriptsdir (string-append share "/scripts"))
+                    (primerdir  (string-append scriptsdir "/primers"))
+                    (stepsdir   (string-append share "/steps"))
+                    (filesdir   (string-append share "/files")))
+               (substitute* "sharc.sh"
+                 (("/hpc/cog_bioinf/cuppen/personal_data/jvalleinclan/tools_kloosterman/minimap2_v2.12/minimap2")
+                  (string-append #$(this-package-input "minimap2") "/bin/minimap2"))
+                 (("SHARCDIR=\\$\\(dirname \\$\\{BASH_SOURCE\\[0\\]\\}\\)")
+                  (string-append "SHARCDIR='" #$output "'"))
+                 (("VENV=\\$SHARCDIR/venv/bin/activate")
+                  (string-append "VENV=" venvdir "/activate"))
+                 (("STEPSDIR=\\$SHARCDIR/steps")
+                  (string-append "STEPSDIR=" stepsdir))
+                 (("SCRIPTSDIR=\\$SHARCDIR/scripts")
+                  (string-append "SCRIPTSDIR=" scriptsdir))
+                 (("FILESDIR=\\$SHARCDIR/files")
+                  (string-append "FILESDIR=" filesdir))
+                 (("python \\$PON_SCRIPT") "PY2 $PON_SCRIPT")
+                 (("\\$PRIMER_DESIGN_DIR/primer3/src/primer3_core")
+                  (string-append #$(this-package-input "primer3") "/bin/primer3_core"))
+                 (("\\$\\{FILESDIR\\}/gnomad_v2.1_sv.sites.vcf")
+                  (search-input-file inputs
+                                     "/share/gnomad/gnomad_v2.1_sv.sites.vcf")))
 
-                          (substitute* '("steps/vcf_fasta.sh"
-                                         "steps/vcf_primer_filter.sh"
-                                         "steps/somatic_ranking.sh"
-                                         "steps/top20_report.sh"
-                                         "steps/somatic_feature_selection.sh"
-                                         "steps/randomForest.sh"
-                                         "steps/randomForest.sh"
-                                         "steps/randomForest.sh"
-                                         "steps/bed_annotation.sh")
-                           (("/hpc/cog_bioinf/cuppen/project_data/Jose_SHARC/sharc/scripts")
-                            scriptsdir))
+               (substitute* '("steps/vcf_fasta.sh"
+                              "steps/vcf_primer_filter.sh"
+                              "steps/somatic_ranking.sh"
+                              "steps/top20_report.sh"
+                              "steps/somatic_feature_selection.sh"
+                              "steps/randomForest.sh"
+                              "steps/randomForest.sh"
+                              "steps/randomForest.sh"
+                              "steps/bed_annotation.sh")
+                 (("/hpc/cog_bioinf/cuppen/project_data/Jose_SHARC/sharc/scripts")
+                  scriptsdir))
 
-                          (substitute* '("steps/vcf_fasta.sh"
-                                         "steps/nanosv.sh"
-                                         "steps/vcf_primer_filter.sh"
-                                         "steps/somatic_ranking.sh"
-                                         "steps/top20_report.sh"
-                                         "steps/somatic_feature_selection.sh"
-                                         "steps/randomForest.sh"
-                                         "steps/bed_annotation.sh")
-                           (("VENV='/hpc/cog_bioinf/cuppen/project_data/Jose_SHARC/sharc/venv/bin/activate'")
-                            (string-append venvdir "/activate")))
+               (substitute* '("steps/vcf_fasta.sh"
+                              "steps/nanosv.sh"
+                              "steps/vcf_primer_filter.sh"
+                              "steps/somatic_ranking.sh"
+                              "steps/top20_report.sh"
+                              "steps/somatic_feature_selection.sh"
+                              "steps/randomForest.sh"
+                              "steps/bed_annotation.sh")
+                 (("VENV='/hpc/cog_bioinf/cuppen/project_data/Jose_SHARC/sharc/venv/bin/activate'")
+                  (string-append venvdir "/activate")))
 
-                          (substitute* '("steps/calculate_coverage.sh"
-                                         "steps/nanosv.sh"
-                                         "steps/somatic_feature_selection.sh")
-                           (("/hpc/cog_bioinf/cuppen/project_data/Jose_SHARC/sharc/files")
-                            filesdir))
+               (substitute* '("steps/calculate_coverage.sh"
+                              "steps/nanosv.sh"
+                              "steps/somatic_feature_selection.sh")
+                 (("/hpc/cog_bioinf/cuppen/project_data/Jose_SHARC/sharc/files")
+                  filesdir))
 
-                           (substitute* "steps/minimap2.sh"
-                            (("/hpc/cog_bioinf/cuppen/personal_data/jvalleinclan/tools_kloosterman/minimap2_v2.12/minimap2")
-                             (string-append (assoc-ref inputs "minimap2") "/bin/minimap2")))
+               (substitute* "steps/minimap2.sh"
+                 (("/hpc/cog_bioinf/cuppen/personal_data/jvalleinclan/tools_kloosterman/minimap2_v2.12/minimap2")
+                  (string-append #$(this-package-input "minimap2") "/bin/minimap2")))
 
-                           (substitute* '("steps/bed_annotation.sh"
-                                          "steps/calculate_coverage.sh"
-                                          "steps/create_bed_annotation_jobs.sh"
-                                          "steps/minimap2.sh"
-                                          "steps/nanosv.sh"
-                                          "steps/primer_design.sh"
-                                          "steps/primer_ranking.sh"
-                                          "steps/randomForest.sh"
-                                          "steps/sharc_filter.sh"
-                                          "steps/somatic_feature_selection.sh"
-                                          "steps/somatic_ranking.sh"
-                                          "steps/top20_report.sh"
-                                          "steps/vcf_fasta.sh"
-                                          "steps/vcf_filter.sh"
-                                          "steps/vcf_primer_filter.sh"
-                                          "steps/vcf_split.sh"
-                                          "sharc.sh")
-                            (("/hpc/local/CentOS7/cog_bioinf/sambamba_v0.6.5/sambamba")
-                             (string-append (assoc-ref inputs "sambamba") "/bin/sambamba"))
-                            (("#!/bin/bash")
-                             (format #f "#!~a/bin/bash~%~%~{export ~:a~%~}"
-                                     (assoc-ref inputs "bash")
-                                     `(,(let ((python-inputs
-                                               (delete #f
-                                                (map (lambda (pair)
-                                                       (if (string-prefix? "python-" (car pair))
-                                                           (format #f "~a/lib/python~a/site-packages"
-                                                                   (cdr pair) "3.8")
-                                                           #f))
-                                                     inputs))))
-                                          (format #f "PYTHONPATH=\"~a~{:~a~}\""
-                                                  (car python-inputs)
-                                                  (cdr python-inputs)))
-                                       ,(format #f "R_LIBS_SITE=~s" (getenv "R_LIBS_SITE")))))
-                            (("Rscript")
-                             (string-append (assoc-ref inputs "r") "/bin/Rscript"))
-                            (("qsub")
-                             (string-append (assoc-ref inputs "grid-engine-core") "/bin/qsub -V"))
-                            (("python ")
-                             (string-append (assoc-ref inputs "python") "/bin/python3 "))
-                            (("PY2")
-                             (string-append (assoc-ref inputs "python-2") "/bin/python"))
-                            (("NanoSV ")
-                             (string-append (assoc-ref inputs "nanosv") "/bin/NanoSV "))
-                            (("module load R") ""))
+               (substitute* '("steps/bed_annotation.sh"
+                              "steps/calculate_coverage.sh"
+                              "steps/create_bed_annotation_jobs.sh"
+                              "steps/minimap2.sh"
+                              "steps/nanosv.sh"
+                              "steps/primer_design.sh"
+                              "steps/primer_ranking.sh"
+                              "steps/randomForest.sh"
+                              "steps/sharc_filter.sh"
+                              "steps/somatic_feature_selection.sh"
+                              "steps/somatic_ranking.sh"
+                              "steps/top20_report.sh"
+                              "steps/vcf_fasta.sh"
+                              "steps/vcf_filter.sh"
+                              "steps/vcf_primer_filter.sh"
+                              "steps/vcf_split.sh"
+                              "sharc.sh")
+                 (("/hpc/local/CentOS7/cog_bioinf/sambamba_v0.6.5/sambamba")
+                  (string-append #$(this-package-input "sambamba") "/bin/sambamba"))
+                 (("#!/bin/bash")
+                  (format #f "#!~a/bin/bash~%~%~{export ~:a~%~}"
+                          #$(this-package-input "bash")
+                          `(,(let ((python-inputs
+                                    (delete #f
+                                            (map (lambda (pair)
+                                                   (if (string-prefix? "python-" (car pair))
+                                                       (format #f "~a/lib/python~a/site-packages"
+                                                               (cdr pair) "3.10")
+                                                       #f))
+                                                 inputs))))
+                               (format #f "GUIX_PYTHONPATH=\"~a~{:~a~}\""
+                                       (car python-inputs)
+                                       (cdr python-inputs)))
+                            ,(format #f "R_LIBS_SITE=~s" (getenv "R_LIBS_SITE")))))
+                 (("Rscript")
+                  (string-append #$(this-package-input "r-minimal") "/bin/Rscript"))
+                 (("qsub")
+                  (string-append (search-input-file inputs "/bin/qsub") " -V"))
+                 (("python ")
+                  (string-append #$(this-package-input "python") "/bin/python3 "))
+                 (("PY2")
+                  (string-append #$(this-package-input "python2") "/bin/python"))
+                 (("NanoSV ")
+                  (string-append #$(this-package-input "nanosv") "/bin/NanoSV "))
+                 (("module load R") ""))
 
-                           (substitute* "steps/create_bed_annotation_jobs.sh"
-                            (("bash \\$STEPSDIR")
-                             (string-append (assoc-ref inputs "bash") "/bin/bash $STEPSDIR")))
+               (substitute* "steps/create_bed_annotation_jobs.sh"
+                 (("bash \\$STEPSDIR")
+                  (string-append #$(this-package-input "bash") "/bin/bash $STEPSDIR")))
 
-                           (substitute* "scripts/run_randomForest.R"
-                            (("/hpc/cog_bioinf/kloosterman/common_scripts/sharc/scripts")
-                             scriptsdir)
-                            (("randomforest_vl_v3_3overlap_p96_r99.5_pc0.39.Rdata")
-                             "randomforest_v3_3overlap_p96_r99.5_pc0.39.Rdata"))
+               (substitute* "scripts/run_randomForest.R"
+                 (("/hpc/cog_bioinf/kloosterman/common_scripts/sharc/scripts")
+                  scriptsdir)
+                 (("randomforest_vl_v3_3overlap_p96_r99.5_pc0.39.Rdata")
+                  "randomforest_v3_3overlap_p96_r99.5_pc0.39.Rdata"))
 
-                           ;; Use Guix's Python.
-                           (substitute* '("scripts/add_predict_annotation.py"
-                                          "scripts/create_features_table.py"
-                                          "scripts/get_closest_feature.py"
-                                          "scripts/primer_ranking.py"
-                                          "scripts/somatic_feature_selection.py"
-                                          "scripts/somatic_ranking.py"
-                                          "scripts/top20_report.py"
-                                          "scripts/vcf_primer_filter.py"
-                                          "scripts/vcf_to_fasta.py")
-                            (("/usr/bin/python") (string-append
-                                                  (assoc-ref inputs "python")
-                                                  "/bin/python3")))
+               ;; Use Guix's Python.
+               (substitute* '("scripts/add_predict_annotation.py"
+                              "scripts/create_features_table.py"
+                              "scripts/get_closest_feature.py"
+                              "scripts/primer_ranking.py"
+                              "scripts/somatic_feature_selection.py"
+                              "scripts/somatic_ranking.py"
+                              "scripts/top20_report.py"
+                              "scripts/vcf_primer_filter.py"
+                              "scripts/vcf_to_fasta.py")
+                 (("/usr/bin/python") (string-append
+                                       #$(this-package-input "python")
+                                       "/bin/python3")))
 
-                           (substitute* '("scripts/primers/primerBATCH1"
-                                          "scripts/primers/amplicons3.pl"
-                                          "scripts/primers/format_primers1.pl")
-                            (("/usr/bin/perl")
-                             (string-append (assoc-ref inputs "perl") "/bin/perl")))
+               (substitute* '("scripts/primers/primerBATCH1"
+                              "scripts/primers/amplicons3.pl"
+                              "scripts/primers/format_primers1.pl")
+                 (("/usr/bin/perl")
+                  (string-append #$(this-package-input "perl") "/bin/perl")))
 
-                           (substitute* "scripts/annotate_sv_vcf_file.py"
-                            (("/usr/bin/python")
-                             (string-append
-                              (assoc-ref inputs "python-2")
-                              "/bin/python")))
+               (substitute* "scripts/annotate_sv_vcf_file.py"
+                 (("/usr/bin/python")
+                  (string-append
+                   #$(this-package-input "python2")
+                   "/bin/python")))
 
-                           (substitute* "scripts/primers/primerBATCH1"
-                            (("/hpc/cuppen/projects/TP0001_General/COLO/analysis/jvalleinclan/bin/tools_kloosterman/primer3/primers")
-                             primerdir))
+               (substitute* "scripts/primers/primerBATCH1"
+                 (("/hpc/cuppen/projects/TP0001_General/COLO/analysis/jvalleinclan/bin/tools_kloosterman/primer3/primers")
+                  primerdir))
 
-                           (substitute* "scripts/primers/amplicons3.pl"
-                            (("eprimer3 ")
-                             (string-append (assoc-ref inputs "emboss")
-                                            "/bin/eprimer3 ")))
+               (substitute* "scripts/primers/amplicons3.pl"
+                 (("eprimer3 ")
+                  (string-append #$(this-package-input "emboss")
+                                 "/bin/eprimer3 "))))))
+         (replace 'install
+           (lambda _
+             (let* ((bin        (string-append #$output "/bin"))
+                    (share      (string-append #$output "/share/sharc"))
+                    (venvdir    (string-append share "/venv/bin"))
+                    (scriptsdir (string-append share "/scripts"))
+                    (stepsdir   (string-append share "/steps"))
+                    (filesdir   (string-append share "/files")))
+               (mkdir-p bin)
+               (mkdir-p venvdir)
+               (mkdir-p scriptsdir)
+               (mkdir-p stepsdir)
+               (mkdir-p filesdir)
+               (copy-recursively "scripts" scriptsdir)
+               (copy-recursively "steps" stepsdir)
+               (copy-recursively "files" filesdir)
 
-                           #t)))
-
-                     (replace 'install
-                      (lambda* (#:key inputs outputs #:allow-other-keys)
-                        (let* ((out        (assoc-ref outputs "out"))
-                               (bin        (string-append out "/bin"))
-                               (share      (string-append out "/share/sharc"))
-                               (venvdir    (string-append share "/venv/bin"))
-                               (scriptsdir (string-append share "/scripts"))
-                               (stepsdir   (string-append share "/steps"))
-                               (filesdir   (string-append share "/files")))
-                          (mkdir-p bin)
-                          (mkdir-p venvdir)
-                          (mkdir-p scriptsdir)
-                          (mkdir-p stepsdir)
-                          (mkdir-p filesdir)
-                          (copy-recursively "scripts" scriptsdir)
-                          (copy-recursively "steps" stepsdir)
-                          (copy-recursively "files" filesdir)
-
-                          ;; Create an empty virtual environment
-                          (call-with-output-file (string-append venvdir "/activate")
-                            (lambda (port)
-                              (format port "export DEACTIVATE_PATH=$PATH~%")
-                              (format port "export PATH=$PATH:~s~%" venvdir)
-                              (format port "printf \"Environment activated.\\n\";~%")))
-                          (let ((deactivate (string-append venvdir "/deactivate")))
-                            (call-with-output-file deactivate
-                              (lambda (port)
-                                (format port "#!~a/bin/bash~%" (assoc-ref inputs "bash"))
-                                (format port "export PATH=${DEACTIVATE_PATH}~%")
-                                (format port "printf \"Environment deactivated.\\n\";~%exit 0;~%")))
-                            (chmod deactivate #o555))
-                          (install-file "sharc.sh" bin)
-                          (with-directory-excursion bin
-                                                    (symlink "sharc.sh" "sharc"))))))))
+               ;; Create an empty virtual environment
+               (call-with-output-file (string-append venvdir "/activate")
+                 (lambda (port)
+                   (format port "export DEACTIVATE_PATH=$PATH~%")
+                   (format port "export PATH=$PATH:~s~%" venvdir)
+                   (format port "printf \"Environment activated.\\n\";~%")))
+               (let ((deactivate (string-append venvdir "/deactivate")))
+                 (call-with-output-file deactivate
+                   (lambda (port)
+                     (format port "#!~a/bin/bash~%" #$(this-package-input "bash"))
+                     (format port "export PATH=${DEACTIVATE_PATH}~%")
+                     (format port "printf \"Environment deactivated.\\n\";~%exit 0;~%")))
+                 (chmod deactivate #o555))
+               (install-file "sharc.sh" bin)
+               (with-directory-excursion bin
+                 (symlink "sharc.sh" "sharc"))))))))
    (inputs
-    `(("awk" ,gawk)
-      ("bash" ,bash)
-      ("coreutils" ,coreutils)
-      ("emboss" ,emboss)
-      ("grep" ,grep)
-      ("grid-engine-core" ,qsub-slurm)
-      ("minimap2" ,minimap2)
-      ("primer3" ,primer3-1.1.4)
-      ("perl" ,perl)
-      ("python" ,python)
-      ("python-aniso8601" ,python-aniso8601)
-      ("python-certifi" ,python-certifi)
-      ("python-chardet" ,python-chardet)
-      ("python-configparser" ,python-configparser)
-      ("python-flask" ,python-flask)
-      ("python-flask-restful" ,python-flask-restful)
-      ("python-idna" ,python-idna)
-      ("python-itsdangerous" ,python-itsdangerous)
-      ("python-jinja2" ,python-jinja2)
-      ("python-markupsafe" ,python-markupsafe)
-      ("nanosv" ,nanosv)
-      ("python-pymongo" ,python-pymongo)
-      ("python-pysam" ,python-pysam)
-      ("python-pytz" ,python-pytz)
-      ("python-pyvcf" ,python-pyvcf)
-      ("python-requests" ,python-requests)
-      ("python-six" ,python-six)
-      ("python-urllib3" ,python-urllib3)
-      ("python-werkzeug" ,python-werkzeug)
-      ("python-2" ,python-2)
-      ("r" ,r-minimal)
-      ("r-ggplot2" ,r-ggplot2)
-      ("r-randomforest", r-randomforest)
-      ("r-rocr" ,r-rocr)
-      ("sambamba" ,sambamba)
-      ("sed" ,sed)
-      ("gnomad-sv-sites" ,gnomad-sv-sites-2.1)))
+    (list gawk
+          bash
+          coreutils
+          emboss
+          grep
+          qsub-slurm
+          minimap2
+          primer3-1.1.4
+          perl
+          python
+          python-aniso8601
+          python-certifi
+          python-chardet
+          python-configparser
+          python-flask
+          python-flask-restful
+          python-idna
+          python-itsdangerous
+          python-jinja2
+          python-markupsafe
+          nanosv
+          python-pymongo
+          python-pysam
+          python-pytz
+          python-pyvcf
+          python-requests
+          python-six
+          python-urllib3
+          python-werkzeug
+          python-2
+          r-minimal
+          r-ggplot2
+          r-randomforest
+          r-rocr
+          sambamba
+          sed
+          gnomad-sv-sites-2.1))
    (native-search-paths
     (append (package-native-search-paths bash)
             (package-native-search-paths python)
@@ -1194,86 +1190,16 @@ biopsies.")
      (name "sharc")
      (version "1.0-local")
      (inputs
-      `(("awk" ,gawk)
-        ("bash" ,bash)
-        ("coreutils" ,coreutils)
-        ("emboss" ,emboss)
-        ("grep" ,grep)
-        ("grid-engine-core" ,qsub-local)
-        ("minimap2" ,minimap2)
-        ("primer3" ,primer3-1.1.4)
-        ("perl" ,perl)
-        ("python" ,python)
-        ("python-aniso8601" ,python-aniso8601)
-        ("python-certifi" ,python-certifi)
-        ("python-chardet" ,python-chardet)
-        ("python-configparser" ,python-configparser)
-        ("python-flask" ,python-flask)
-        ("python-flask-restful" ,python-flask-restful)
-        ("python-idna" ,python-idna)
-        ("python-itsdangerous" ,python-itsdangerous)
-        ("python-jinja2" ,python-jinja2)
-        ("python-markupsafe" ,python-markupsafe)
-        ("nanosv" ,nanosv)
-        ("python-pymongo" ,python-pymongo)
-        ("python-pysam" ,python-pysam)
-        ("python-pytz" ,python-pytz)
-        ("python-pyvcf" ,python-pyvcf)
-        ("python-requests" ,python-requests)
-        ("python-six" ,python-six)
-        ("python-urllib3" ,python-urllib3)
-        ("python-werkzeug" ,python-werkzeug)
-        ("python-2" ,python-2)
-        ("r" ,r-minimal)
-        ("r-ggplot2" ,r-ggplot2)
-        ("r-randomforest", r-randomforest)
-        ("r-rocr" ,r-rocr)
-        ("sambamba" ,sambamba)
-        ("sed" ,sed)
-        ("gnomad-sv-sites" ,gnomad-sv-sites-2.1)))))
+      (modify-inputs (package-inputs sharc)
+        (replace "qsub-slurm" qsub-local)))))
 
 (define-public sharc-sge
   (package (inherit sharc)
      (name "sharc")
      (version "1.0-sge")
      (inputs
-      `(("awk" ,gawk)
-        ("bash" ,bash)
-        ("coreutils" ,coreutils)
-        ("emboss" ,emboss)
-        ("grep" ,grep)
-        ("grid-engine-core" ,grid-engine-core)
-        ("minimap2" ,minimap2)
-        ("primer3" ,primer3-1.1.4)
-        ("perl" ,perl)
-        ("python" ,python)
-        ("python-aniso8601" ,python-aniso8601)
-        ("python-certifi" ,python-certifi)
-        ("python-chardet" ,python-chardet)
-        ("python-configparser" ,python-configparser)
-        ("python-flask" ,python-flask)
-        ("python-flask-restful" ,python-flask-restful)
-        ("python-idna" ,python-idna)
-        ("python-itsdangerous" ,python-itsdangerous)
-        ("python-jinja2" ,python-jinja2)
-        ("python-markupsafe" ,python-markupsafe)
-        ("nanosv" ,nanosv)
-        ("python-pymongo" ,python-pymongo)
-        ("python-pysam" ,python-pysam)
-        ("python-pytz" ,python-pytz)
-        ("python-pyvcf" ,python-pyvcf)
-        ("python-requests" ,python-requests)
-        ("python-six" ,python-six)
-        ("python-urllib3" ,python-urllib3)
-        ("python-werkzeug" ,python-werkzeug)
-        ("python-2" ,python-2)
-        ("r" ,r-minimal)
-        ("r-ggplot2" ,r-ggplot2)
-        ("r-randomforest", r-randomforest)
-        ("r-rocr" ,r-rocr)
-        ("sambamba" ,sambamba)
-        ("sed" ,sed)
-        ("gnomad-sv-sites" ,gnomad-sv-sites-2.1)))))
+      (modify-inputs (package-inputs sharc)
+        (replace "qsub-slurm" grid-engine-core)))))
 
 (define-public allelecount
   (package
