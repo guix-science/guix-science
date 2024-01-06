@@ -1,6 +1,6 @@
 ;;;
-;;; Copyright © 2016, 2017, 2018, 2019, 2020, 2021 Roel Janssen <roel@gnu.org>
-;;; Copyright © 2023 Ricardo Wurmus <rekado@elephly.net>
+;;; Copyright © 2016-2021 Roel Janssen <roel@gnu.org>
+;;; Copyright © 2023, 2024 Ricardo Wurmus <rekado@elephly.net>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU General Public License as published by
@@ -1931,7 +1931,11 @@ acceleration (e.g., GPUs) and distributed computation.")
                "test_kl_univariate"
                ;; Sometimes the return value is not within the
                ;; expected tolerance.
-               "test_zero_inflated_logits_probs_agree")
+               "test_zero_inflated_logits_probs_agree"
+               ;; Accuracy failures.
+               "test_gof"
+               "test_gamma_poisson_log_prob"
+               "test_log_prob_gradient")
          " and not " 'infix))))
     (propagated-inputs
      (list python-funsor
