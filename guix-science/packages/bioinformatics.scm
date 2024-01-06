@@ -1532,31 +1532,31 @@ requirements.")
                 "01h2vd8vz8vd4sdgjh13sy2kb98w2lgrqamqpw65ivvhb96yg3qf"))))
     (build-system gnu-build-system)
     (arguments
-     `(#:tests? #f
-       #:phases
-       (modify-phases %standard-phases
-         (delete 'configure)
-         (delete 'install)
-         ;; The Perl in Guix does not support threads.
-         ;; The forks module is a drop-in replacement for it, so it
-         ;; is easier to use that instead of recompiling Perl.
-         (add-after 'unpack 'enable-threads
-           (lambda _
-             (substitute* "bin/cgpFlagCaVEMan.pl"
-               (("use strict;") "use forks;\nuse strict;"))))
-         (replace 'build
-           (lambda* (#:key inputs outputs #:allow-other-keys)
-             (let ((bin-dir (string-append (assoc-ref outputs "out") "/bin"))
-                   (lib-dir (string-append (assoc-ref outputs "out")
-                            "/lib/perl5/site_perl/5.28.0"))
-                   (config-dir (string-append (assoc-ref outputs "out") "/config")))
-               (mkdir-p bin-dir)
-               (mkdir-p lib-dir)
-               (mkdir-p config-dir)
-               (install-file "bin/cgpFlagCaVEMan.pl" bin-dir)
-               (copy-recursively "lib" lib-dir)
-               (copy-recursively "config" config-dir)
-               #t))))))
+     (list
+      #:tests? #f
+      #:phases
+      #~(modify-phases %standard-phases
+          (delete 'configure)
+          (delete 'install)
+          ;; The Perl in Guix does not support threads.
+          ;; The forks module is a drop-in replacement for it, so it
+          ;; is easier to use that instead of recompiling Perl.
+          (add-after 'unpack 'enable-threads
+            (lambda _
+              (substitute* "bin/cgpFlagCaVEMan.pl"
+                (("use strict;") "use forks;\nuse strict;"))))
+          (replace 'build
+            (lambda* (#:key outputs #:allow-other-keys)
+              (let ((bin-dir (string-append #$output "/bin"))
+                    (lib-dir (string-append #$output
+                                            "/lib/perl5/site_perl/5.36.0"))
+                    (config-dir (string-append #$output "/config")))
+                (mkdir-p bin-dir)
+                (mkdir-p lib-dir)
+                (mkdir-p config-dir)
+                (install-file "bin/cgpFlagCaVEMan.pl" bin-dir)
+                (copy-recursively "lib" lib-dir)
+                (copy-recursively "config" config-dir)))))))
     (propagated-inputs
      (list perl-file-path
            perl-file-which
