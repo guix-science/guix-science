@@ -110,27 +110,35 @@ pipelines.")
 
 (define-public assembly-stats
   (package
-   (name "assembly-stats")
-   (version "1.0.1")
-   (source (origin
-            (method url-fetch)
-            (uri (string-append
-                  "https://github.com/sanger-pathogens/assembly-stats/archive/v"
-                  version ".tar.gz"))
-            (file-name (string-append name "-" version ".tar.gz"))
-            (sha256
-             (base32 "0xc5ppmcs09d16f062nbb0mdb0cnfhbnkp0arlxnfi6jli6n3gh2"))))
-   (build-system cmake-build-system)
-   (arguments
-    `(#:configure-flags (list (string-append
-                               "-DINSTALL_DIR:PATH="
-                               %output
-                               "/bin"))))
-   (home-page "https://github.com/sanger-pathogens")
-   (synopsis "Tool to extract assembly statistics from FASTA and FASTQ files")
-   (description "This package provides a tool to extract assembly statistics
+    (name "assembly-stats")
+    (version "1.0.1")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/sanger-pathogens/assembly-stats")
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "0ziyv1qi0d495lrc6001s06jd3avvnzfj4fn5ap0rvzsv3xincg8"))
+              (modules '((guix build utils)))
+              ;; See commit 5d831e93a030c7ab6d4d913ba0d7973de77c121a
+              (snippet
+               '(substitute* '("fasta_unittest.cpp"
+                               "fastq_unittest.cpp")
+                  (("string expectedName = static_cast.*")
+                   "string expectedName = static_cast\
+<ostringstream>( (ostringstream() << counter) ).str();")))))
+    (build-system cmake-build-system)
+    (arguments
+     (list
+      #:configure-flags
+      #~(list (string-append "-DINSTALL_DIR:PATH=" #$output "/bin"))))
+    (home-page "https://github.com/sanger-pathogens")
+    (synopsis "Tool to extract assembly statistics from FASTA and FASTQ files")
+    (description "This package provides a tool to extract assembly statistics
 from FASTA and FASTQ files.")
-   (license license:gpl3)))
+    (license license:gpl3)))
 
 (define-public fastq-tools
   (package
