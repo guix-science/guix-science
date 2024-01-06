@@ -895,37 +895,38 @@ capabilities.")
 
 (define-public gnomad-sv-sites-2.1
   (package
-   (name "gnomad-sv-sites")
-   (version "2.1")
-   (source (origin
-            (method url-fetch)
-            (uri (string-append
-                  "https://storage.googleapis.com/gnomad-public/"
-                  "papers/2019-sv/gnomad_v" version "_sv.sites.vcf.gz"))
-            (sha256
-             (base32
-              "18gxfnar8n5r06mj0ykyq4fkw3q3qqbrfnprgi18db0xzf6lh94k"))))
-   (build-system trivial-build-system)
-   (arguments
-     `(#:modules ((guix build utils))
-       #:builder
-       (begin
-         (use-modules (guix build utils))
-         (let ((gzip     (string-append (assoc-ref %build-inputs "gzip") "/bin/gzip"))
-               (sv-sites (assoc-ref %build-inputs "source"))
-               (out      (string-append %output "/share/gnomad")))
-           (mkdir-p out)
-           (with-directory-excursion out
-             (zero? (system
-                     (string-append
-                      gzip " -d " sv-sites
-                      " -c > gnomad_v2.1_sv.sites.vcf"))))))))
-   (inputs (list gzip))
-   (home-page "https://gnomad.broadinstitute.org")
-   (synopsis "gnomAD structural variant sites")
-   (description "This package provides in uncompressed version of the gnomAD
+    (name "gnomad-sv-sites")
+    (version "2.1")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://storage.googleapis.com/gcp-public-data--gnomad/"
+                    "papers/2019-sv/gnomad_v" version "_sv.sites.vcf.gz"))
+              (sha256
+               (base32
+                "18gxfnar8n5r06mj0ykyq4fkw3q3qqbrfnprgi18db0xzf6lh94k"))))
+    (build-system trivial-build-system)
+    (arguments
+     (list
+      #:modules '((guix build utils))
+      #:builder
+      #~(begin
+          (use-modules (guix build utils))
+          (let ((gzip     (string-append #$(this-package-input "gzip") "/bin/gzip"))
+                (sv-sites #$source)
+                (out      (string-append #$output "/share/gnomad")))
+            (mkdir-p out)
+            (with-directory-excursion out
+              (zero? (system
+                      (string-append
+                       gzip " -d " sv-sites
+                       " -c > gnomad_v2.1_sv.sites.vcf"))))))))
+    (inputs (list gzip))
+    (home-page "https://gnomad.broadinstitute.org")
+    (synopsis "gnomAD structural variant sites")
+    (description "This package provides in uncompressed version of the gnomAD
  structural variant sites.")
-   (license license:cc0)))
+    (license license:cc0)))
 
 (define-public sharc
   (package
