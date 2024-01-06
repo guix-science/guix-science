@@ -637,13 +637,14 @@ added to both callers to further improve precision.")
     (name "star")
     (version "2.4.2a")
     (source (origin
-              (method url-fetch)
-              (uri (string-append "https://github.com/alexdobin/STAR/archive/"
-                                  "STAR_" version ".tar.gz"))
-              (file-name (string-append name "-" version ".tar.gz"))
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/alexdobin/STAR")
+                    (commit (string-append "STAR_" version))))
+              (file-name (git-file-name name version))
               (sha256
                (base32
-                "1c3rnm7r5l0kl3d04gl1g7938xqf1c2l0mla87rlplqg1hcns5mc"))
+                "0dwqrb3knd8ay6shxwfs8ibh0pv730aa5nn9rd6zxd5fds458v6n"))
               (modules '((guix build utils)))
               (snippet
                '(begin
@@ -656,7 +657,7 @@ added to both callers to further improve precision.")
     (build-system gnu-build-system)
     (arguments
      (list
-      #:tests? #f ;no check target
+      #:tests? #f                       ;no check target
       #:make-flags '(list "STAR")
       #:phases
       #~(modify-phases %standard-phases
@@ -684,7 +685,7 @@ added to both callers to further improve precision.")
                 (install-file "STAR" bin))))
           (delete 'configure))))
     (native-inputs
-     (list vim)) ; for xxd
+     (list vim))                        ; for xxd
     (inputs
      (list htslib zlib))
     (home-page "https://github.com/alexdobin/STAR")
