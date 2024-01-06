@@ -723,72 +723,73 @@ sequences.")
 
 (define-public star-fusion
   (package
-   (name "star-fusion")
-   (version "1.0.0")
-   (source (origin
-            (method url-fetch)
-            (uri (string-append
-                  "https://github.com/STAR-Fusion/STAR-Fusion/releases/"
-                  "download/v" version "/STAR-Fusion-v" version
-                  ".FULL.tar.gz"))
-            (sha256
-             (base32 "19p5lwq2f95hgii7fdidz03845nkhf3pjfvp8v3midrsb0s6p7df"))))
-   (build-system gnu-build-system)
-   (arguments
-    `(#:tests? #f ; There is no test phase.
+    (name "star-fusion")
+    (version "1.0.0")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://github.com/STAR-Fusion/STAR-Fusion/releases/"
+                    "download/v" version "/STAR-Fusion-v" version
+                    ".FULL.tar.gz"))
+              (sha256
+               (base32 "19p5lwq2f95hgii7fdidz03845nkhf3pjfvp8v3midrsb0s6p7df"))))
+    (build-system gnu-build-system)
+    (arguments
+     (list
+      #:tests? #f                       ;There is no test phase.
       #:phases
-      (modify-phases %standard-phases
-        (delete 'configure) ; There is nothing to configure.
-        (delete 'build) ; There is nothing to compile/build.
-        (add-before 'install 'patch-external-tools
-          (lambda* (#:key inputs outputs #:allow-other-keys)
-            (let ((samtools (string-append (assoc-ref inputs "samtools") "/bin/samtools"))
-                  (gunzip (string-append (assoc-ref inputs "gzip") "/bin/gunzip"))
-                  (zcat (string-append (assoc-ref inputs "gzip") "/bin/zcat"))
-                  (cat (string-append (assoc-ref inputs "coreutils") "/bin/cat"))
-                  (wc (string-append (assoc-ref inputs "coreutils") "/bin/wc"))
-                  (sort (string-append (assoc-ref inputs "coreutils") "/bin/sort"))
-                  (mkdir (string-append (assoc-ref inputs "coreutils") "/bin/mkdir")))
-              (substitute* "util/append_breakpoint_junction_info.pl"
-                (("samtools") samtools))
-              (substitute* "util/incorporate_FFPM_into_final_report.pl"
-                (("gunzip") gunzip))
-              (substitute* "util/STAR-Fusion.predict" (("gunzip") gunzip))
-              (substitute* "util/incorporate_FFPM_into_final_report.pl" (("wc") wc))
-              (substitute* "util/convert_to_FFPM.pl" (("wc") wc))
-              (substitute* "util/incorporate_FFPM_into_final_report.pl"
-                (("cat \\$fq_file") (string-append cat " $fq_file")))
-              (substitute* "util/partition_FUSION_EVIDENCE_fastqs_by_fusion.pl"
-                (("sort \\$tmp_paired") (string-append sort " $tmp_paired")))
-              (substitute* "util/convert_to_FFPM.pl"
-                (("\"cat \\$fq_filename") (string-append "\"" cat " $fq_filename")))
-              (substitute* "util/convert_to_FFPM.pl"
-                (("zcat \\$fq_filename") (string-append zcat " $fq_filename")))
-              (substitute* "util/partition_FUSION_EVIDENCE_fastqs_by_fusion.pl"
-                (("mkdir") mkdir))
-              (substitute* "util/STAR-Fusion.filter" (("mkdir") mkdir))
-              (substitute* "util/STAR-Fusion.predict" (("mkdir") mkdir)))))
-        (replace 'install
-          (lambda* (#:key inputs outputs #:allow-other-keys)
-            (let ((bin (string-append (assoc-ref outputs "out") "/bin")))
-              (mkdir-p bin)
-              (install-file "STAR-Fusion" bin)
-              (copy-recursively "PerlLib" (string-append bin "/PerlLib"))
-              (copy-recursively "util" (string-append bin "/util"))
-              (copy-recursively "FusionFilter"
-                                (string-append bin "/FusionFilter"))))))))
-   (inputs
-    (list perl samtools coreutils gzip))
-   (propagated-inputs
-    (list perl-carp perl-pathtools perl-db-file perl-uri perl-set-intervaltree))
-   (home-page "https://github.com/STAR-Fusion/STAR-Fusion/")
-   (synopsis "Fusion detection based on STAR")
-   (description "This package provides a component of the Trinity Cancer
+      #~(modify-phases %standard-phases
+          (delete 'configure)           ;There is nothing to configure.
+          (delete 'build)               ;There is nothing to compile/build.
+          (add-before 'install 'patch-external-tools
+            (lambda* (#:key inputs #:allow-other-keys)
+              (let ((samtools (search-input-file inputs "/bin/samtools"))
+                    (gunzip (search-input-file inputs "/bin/gunzip"))
+                    (zcat (search-input-file inputs "/bin/zcat"))
+                    (cat (search-input-file inputs "/bin/cat"))
+                    (wc (search-input-file inputs "/bin/wc"))
+                    (sort (search-input-file inputs "/bin/sort"))
+                    (mkdir (search-input-file inputs "/bin/mkdir")))
+                (substitute* "util/append_breakpoint_junction_info.pl"
+                  (("samtools") samtools))
+                (substitute* "util/incorporate_FFPM_into_final_report.pl"
+                  (("gunzip") gunzip))
+                (substitute* "util/STAR-Fusion.predict" (("gunzip") gunzip))
+                (substitute* "util/incorporate_FFPM_into_final_report.pl" (("wc") wc))
+                (substitute* "util/convert_to_FFPM.pl" (("wc") wc))
+                (substitute* "util/incorporate_FFPM_into_final_report.pl"
+                  (("cat \\$fq_file") (string-append cat " $fq_file")))
+                (substitute* "util/partition_FUSION_EVIDENCE_fastqs_by_fusion.pl"
+                  (("sort \\$tmp_paired") (string-append sort " $tmp_paired")))
+                (substitute* "util/convert_to_FFPM.pl"
+                  (("\"cat \\$fq_filename") (string-append "\"" cat " $fq_filename")))
+                (substitute* "util/convert_to_FFPM.pl"
+                  (("zcat \\$fq_filename") (string-append zcat " $fq_filename")))
+                (substitute* "util/partition_FUSION_EVIDENCE_fastqs_by_fusion.pl"
+                  (("mkdir") mkdir))
+                (substitute* "util/STAR-Fusion.filter" (("mkdir") mkdir))
+                (substitute* "util/STAR-Fusion.predict" (("mkdir") mkdir)))))
+          (replace 'install
+            (lambda* (#:key inputs #:allow-other-keys)
+              (let ((bin (string-append #$output "/bin")))
+                (mkdir-p bin)
+                (install-file "STAR-Fusion" bin)
+                (copy-recursively "PerlLib" (string-append bin "/PerlLib"))
+                (copy-recursively "util" (string-append bin "/util"))
+                (copy-recursively "FusionFilter"
+                                  (string-append bin "/FusionFilter"))))))))
+    (inputs
+     (list perl samtools coreutils gzip))
+    (propagated-inputs
+     (list perl-carp perl-pathtools perl-db-file perl-uri perl-set-intervaltree))
+    (home-page "https://github.com/STAR-Fusion/STAR-Fusion/")
+    (synopsis "Fusion detection based on STAR")
+    (description "This package provides a component of the Trinity Cancer
 Transcriptome Analysis Toolkit (CTAT).  It uses the STAR aligner to identify
 candidate fusion transcripts supported by Illumina reads.  It further
 processes the output generated by the STAR aligner to map junction reads and
 spanning reads to a reference annotation set.")
-   (license license:bsd-3)))
+    (license license:bsd-3)))
 
 (define-public primer3-1.1.4
   (package
