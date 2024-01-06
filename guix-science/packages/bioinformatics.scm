@@ -1873,39 +1873,45 @@ the cloud environments of ICGC.")
     (license license:gpl3)))
 
 (define-public metamaps
-  (let ((commit "e23f8a8688159ff0d092557a40305dbc7acc2342"))
+  (let ((commit "e23f8a8688159ff0d092557a40305dbc7acc2342")
+        (revision "1"))
     (package
-     (name "metamaps")
-     (version (string-append "0.0-" (string-take commit 7)))
-     (source (origin
-              (method git-fetch)
-              (uri (git-reference
-                    (url "https://github.com/DiltheyLab/MetaMaps.git")
-                    (commit commit)))
-              (sha256
-               (base32
-                "0h9ahkv7axw4qzgbvhsz4r699swiv64hlwjy6h8s11vjls2dslrp"))))
-     (build-system gnu-build-system)
-     (arguments
-      `(#:configure-flags (list (string-append
-                                 "--with-boost="
-                                 (assoc-ref %build-inputs "boost")))
+      (name "metamaps")
+      (version (git-version "0.0" revision commit))
+      (source (origin
+                (method git-fetch)
+                (uri (git-reference
+                      (url "https://github.com/DiltheyLab/MetaMaps.git")
+                      (commit commit)))
+                (file-name (git-file-name name version))
+                (sha256
+                 (base32
+                  "0h9ahkv7axw4qzgbvhsz4r699swiv64hlwjy6h8s11vjls2dslrp"))))
+      (build-system gnu-build-system)
+      (arguments
+       (list
+        #:configure-flags
+        #~(list (string-append
+                 "--with-boost=" #$(this-package-input "boost")))
         #:tests? #f
         #:phases
-        (modify-phases %standard-phases
-          (add-after 'unpack 'shared-boost
-            (lambda _
-              (substitute* "configure.ac"
-               (("libboost_math_c99.a") "libboost_math_c99.so")))))))
-     (native-inputs
-      (list autoconf))
-     (inputs
-      (list boost zlib gsl))
-     (home-page "https://github.com/DiltheyLab/MetaMaps")
-     (synopsis "Long-read metagenomic analysis")
-     (description "MetaMaps is tool specifically developed for the analysis
+        '(modify-phases %standard-phases
+           (replace 'bootstrap
+             (lambda _
+               (invoke "autoreconf" "-vif")))
+           (add-after 'unpack 'shared-boost
+             (lambda _
+               (substitute* "configure.ac"
+                 (("libboost_math_c99.a") "libboost_math_c99.so")))))))
+      (native-inputs
+       (list autoconf automake))
+      (inputs
+       (list boost gsl zlib))
+      (home-page "https://github.com/DiltheyLab/MetaMaps")
+      (synopsis "Long-read metagenomic analysis")
+      (description "MetaMaps is tool specifically developed for the analysis
 of long-read (PacBio/Oxford Nanopore) metagenomic datasets.")
-     (license license:public-domain))))
+      (license license:public-domain))))
 
 (define-public igv
   (package
