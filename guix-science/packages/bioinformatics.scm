@@ -315,17 +315,17 @@ mappability data (files created by GEM).")
              (base32 "1y8wsli1q626i80p3dmrc65p77ch164hj2sbxv497i9y89kvk35s"))))
    (build-system gnu-build-system)
    (arguments
-    `(#:tests? #f ; There are no tests.
-      #:phases
-      (modify-phases %standard-phases
-        (delete 'configure)
-        (delete 'build)
-        (replace 'install
-          (lambda* (#:key outputs #:allow-other-keys)
-            (let ((include-dir (string-append
-                                (assoc-ref outputs "out") "/include")))
-              (mkdir-p include-dir)
-              (copy-recursively "include" include-dir)))))))
+    (list
+     #:tests? #f                        ;There are no tests.
+     #:phases
+     #~(modify-phases %standard-phases
+         (delete 'configure)
+         (delete 'build)
+         (replace 'install
+           (lambda _
+             (let ((include-dir (string-append #$output "/include")))
+               (mkdir-p include-dir)
+               (copy-recursively "include" include-dir)))))))
    (home-page "https://github.com/Illumina/strelka/tree/master/redist")
    (synopsis "Set of lightweight minimization functions.")
    (description "The CodeMin minimization library provides a set of lightweight
