@@ -1810,67 +1810,67 @@ coverage.")
 ;; Cannot be upstreamed: Binary package.
 (define-public score-client
   (package
-   (name "score-client")
-   (version "5.0.0")
-   (source (origin
-            (method url-fetch)
-            (uri (string-append
-                  "https://artifacts.oicr.on.ca/artifactory/dcc-release/bio/"
-                  "overture/score-client/" version "/score-client-" version
-                  "-dist.tar.gz"))
-            (sha256
-             (base32 "05pvffd43aqdh92g1p37p9p00wciqxp45n5gyybxvpgs1cfdqsfm"))))
-   ;; We use the GNU build system mainly for its patch-shebang phases.
-   (build-system gnu-build-system)
-   (arguments
-    `(#:tests? #f ; This is just copying a binary, so no tests to perform.
+    (name "score-client")
+    (version "5.0.0")
+    (source (origin
+              (method url-fetch)
+              (uri (string-append
+                    "https://artifacts.oicr.on.ca/artifactory/dcc-release/bio/"
+                    "overture/score-client/" version "/score-client-" version
+                    "-dist.tar.gz"))
+              (sha256
+               (base32 "05pvffd43aqdh92g1p37p9p00wciqxp45n5gyybxvpgs1cfdqsfm"))))
+    ;; We use the GNU build system mainly for its patch-shebang phases.
+    (build-system gnu-build-system)
+    (arguments
+     (list
+      #:tests? #f     ; This is just copying a binary, so no tests to perform.
       #:phases
-      (modify-phases %standard-phases
-        (delete 'configure) ; No configuration, just copying.
-        (delete 'build)     ; No building, just copying.
-        (replace 'install
-          (lambda* (#:key inputs outputs #:allow-other-keys)
-            (let* ((out (assoc-ref outputs "out"))
-                   (etc (string-append out "/etc/score-client"))
-                   (bin (string-append out "/bin"))
-                   (lib (string-append out "/lib")))
+      #~(modify-phases %standard-phases
+          (delete 'configure)           ; No configuration, just copying.
+          (delete 'build)               ; No building, just copying.
+          (replace 'install
+            (lambda* (#:key inputs #:allow-other-keys)
+              (let* ((etc (string-append #$output "/etc/score-client"))
+                     (bin (string-append #$output "/bin"))
+                     (lib (string-append #$output "/lib")))
 
-              (for-each mkdir-p (list out etc bin lib))
+                (for-each mkdir-p (list #$output etc bin lib))
 
-              (substitute* "bin/score-client"
-               (("`dirname \\$0`/..") out)
-               (("\\$\\(cd \\$\\{BASE_DIR\\} && pwd -P\\)") out)
-               (("exec java") (string-append
-                               "exec " (assoc-ref inputs "openjdk")
-                               "/bin/java"))
-               (("-Dlogging.path=\\$\\{BASE_DIR\\}/logs")
-                "-Dlogging.path=${HOME}")
-               (("type -p java")
-                (string-append "type -p "
-                               (assoc-ref inputs "openjdk")
-                               "/bin/java"))
-               (("_java=java")
-                (string-append "_java="
-                               (assoc-ref inputs "openjdk")
-                               "/bin/java"))
-               (("\\$\\{CLIENT_DIR\\}/conf") etc))
+                (substitute* "bin/score-client"
+                  (("`dirname \\$0`/..") #$output)
+                  (("\\$\\(cd \\$\\{BASE_DIR\\} && pwd -P\\)") #$output)
+                  (("exec java") (string-append
+                                  "exec " #$(this-package-input "openjdk")
+                                  "/bin/java"))
+                  (("-Dlogging.path=\\$\\{BASE_DIR\\}/logs")
+                   "-Dlogging.path=${HOME}")
+                  (("type -p java")
+                   (string-append "type -p "
+                                  #$(this-package-input "openjdk")
+                                  "/bin/java"))
+                  (("_java=java")
+                   (string-append "_java="
+                                  #$(this-package-input "openjdk")
+                                  "/bin/java"))
+                  (("\\$\\{CLIENT_DIR\\}/conf") etc))
 
-              (copy-recursively "bin" bin)
-              (copy-recursively "conf" etc)
-              (copy-recursively "lib" lib)
+                (copy-recursively "bin" bin)
+                (copy-recursively "conf" etc)
+                (copy-recursively "lib" lib)
 
-              (wrap-program (string-append out "/bin/score-client")
-                `("_JAVA_OPTIONS" ":" = (,(string-append
-                                           "-Djavax.net.ssl.trustStore="
-                                           (assoc-ref inputs "openjdk")
-                                           "/lib/security/cacerts"))))))))))
-   (inputs
-    (list openjdk11))
-   (home-page "https://docs.icgc.org/software/download/#score-client")
-   (synopsis "Tool to view ICGC data")
-   (description "This package provides a tool to download or view data in
+                (wrap-program (string-append #$output "/bin/score-client")
+                  `("_JAVA_OPTIONS" ":" = (,(string-append
+                                             "-Djavax.net.ssl.trustStore="
+                                             #$(this-package-input "openjdk")
+                                             "/lib/security/cacerts"))))))))))
+    (inputs
+     (list openjdk11))
+    (home-page "https://docs.icgc.org/software/download/#score-client")
+    (synopsis "Tool to view ICGC data")
+    (description "This package provides a tool to download or view data in
 the cloud environments of ICGC.")
-   (license license:gpl3)))
+    (license license:gpl3)))
 
 (define-public metamaps
   (let ((commit "e23f8a8688159ff0d092557a40305dbc7acc2342"))
