@@ -803,21 +803,19 @@ spanning reads to a reference annotation set.")
                 "1nkxyw811xbb7gid0dbcw4k7yg3q1mw6hv96076xx0j10ishmh1w"))))
     (build-system gnu-build-system)
     (arguments
-     `(#:tests? #f
-       #:phases
-       (modify-phases %standard-phases
-         (delete 'configure)
-         (add-before 'build 'change-directory
-           (lambda _ (chdir "src")))
-         (replace 'install
-           (lambda* (#:key outputs #:allow-other-keys)
-             (let* ((out (assoc-ref outputs "out"))
-                    (bin (string-append out "/bin")))
-               (mkdir-p bin)
-               (for-each (lambda (file) (install-file file bin))
-                         '("primer3_core" "oligotm" "ntdpal"))))))))
-    (inputs
-     (list perl))
+     (list
+      #:tests? #f
+      #:phases
+      #~(modify-phases %standard-phases
+          (delete 'configure)
+          (add-before 'build 'change-directory
+            (lambda _ (chdir "src")))
+          (replace 'install
+            (lambda _
+              (let ((bin (string-append #$output "/bin")))
+                (for-each (lambda (file) (install-file file bin))
+                          '("primer3_core" "oligotm" "ntdpal"))))))))
+    (inputs (list perl))
     (home-page "https://github.com/primer3-org/primer3")
     (synopsis "Tool to design PCR primers")
     (description "Design PCR primers from DNA sequence.  From mispriming
