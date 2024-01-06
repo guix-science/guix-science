@@ -135,24 +135,26 @@ from FASTA and FASTQ files.")
 (define-public fastq-tools
   (package
    (name "fastq-tools")
-   (version "0.8")
+   (version "0.8.3")
    (source (origin
-            (method url-fetch)
-            (uri (string-append
-                  "http://homes.cs.washington.edu/~dcjones/fastq-tools/"
-                  name "-" version ".tar.gz"))
+            (method git-fetch)
+            (uri (git-reference
+                  (url "https://github.com/dcjones/fastq-tools")
+                  (commit (string-append "v" version))))
+            (file-name (git-file-name name version))
             (sha256
              (base32
-              "0jz1y40fs3x31bw10097a1nhm0vhbsyxmd4n7dwdsl275sc9l1nz"))))
+              "0c91d3yypg8nffd5wazsfp89rkm5aqfirpxwfl3z5661205cs798"))))
    (build-system gnu-build-system)
-   (arguments `(#:tests? #f))
    (inputs
     (list `(,pcre "bin") zlib))
+   (native-inputs
+    (list autoconf automake libtool))
    (home-page "https://homes.cs.washington.edu/~dcjones/fastq-tools/")
    (synopsis "Tools to work with FASTQ files")
    (description "This packages provides a collection of small and efficient
 programs for performing some common and uncommon tasks with FASTQ files.")
-   (license license:gpl3)))
+   (license license:expat)))
 
 (define-public fast5
   (package
