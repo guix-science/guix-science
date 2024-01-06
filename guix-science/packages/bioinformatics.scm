@@ -1769,18 +1769,19 @@ coverage.")
                 "1vadlyffabqj696k9nnzqprxn5avf0a5iykpqjxmw8n2180lppvw"))))
     (build-system gnu-build-system)
     (arguments
-     `(#:tests? #f
-       #:phases
-       (modify-phases %standard-phases
-         (delete 'configure)
-         (add-before 'build 'move-to-subdirectory
-           (lambda _
-             (chdir "perl")))
-         (replace 'build
-           (lambda* (#:key outputs #:allow-other-keys)
-             (system* "perl" "Makefile.PL"
-                      (string-append "PREFIX=" (assoc-ref outputs "out")))
-             (system* "make"))))))
+     (list
+      #:tests? #f
+      #:phases
+      #~(modify-phases %standard-phases
+          (delete 'configure)
+          (add-before 'build 'move-to-subdirectory
+            (lambda _
+              (chdir "perl")))
+          (replace 'build
+            (lambda* (#:key outputs #:allow-other-keys)
+              (invoke "perl" "Makefile.PL"
+                      (string-append "PREFIX=" #$output))
+              (invoke "make"))))))
     (propagated-inputs
      (list perl
            pcap-core
