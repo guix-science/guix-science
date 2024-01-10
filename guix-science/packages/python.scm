@@ -331,49 +331,6 @@ audience is the natural language processing and information retrieval
 community.")
     (license license:lgpl2.1)))
 
-(define-public python-parabam
-  (package
-    (name "python-parabam")
-    (version "2.3.1")
-    (source (origin
-              (method url-fetch)
-              (uri (pypi-uri "parabam" version))
-              (sha256
-               (base32
-                "1iacm5vdk5xhra6xv4hzf9p9rjxc0w1mxw3ffi4g30n9wkfl6dkn"))))
-    (build-system python-build-system)
-    ;; Tests need 'argparse', but that's in the standard library.
-    (arguments
-     `(#:tests? #f))
-    (propagated-inputs
-     (list python-numpy python-pysam))
-    (home-page "")
-    (synopsis "Parallel BAM File Analysis")
-    (description "Parallel BAM File Analysis")
-    (license license:gpl3)))
-
-(define-public python-telomerecat
-  (package
-    (name "python-telomerecat")
-    (version "3.4.0")
-    (source (origin
-              (method url-fetch)
-              (uri (pypi-uri "telomerecat" version))
-              (sha256
-               (base32
-                "1i59jdflc0m5kyq4b1brvvcyq6iid39pv3yw39w264i007yqgg0d"))))
-    (build-system python-build-system)
-    ;; Tests need 'argparse', but that's in the standard library.
-    (arguments
-     `(#:tests? #f))
-    (propagated-inputs
-     (list python-numpy python-pandas python-parabam python-pysam))
-    (home-page "https://pypi.org/project/telomerecat/")
-    (synopsis "Telomere Computational Analysis Tool")
-    (description "Telomerecat is a tool for estimating the average
-telomere length for a paired end, whole genome sequencing sample.")
-    (license license:gpl3)))
-
 (define-public python-nanomath
   (package
     (name "python-nanomath")
