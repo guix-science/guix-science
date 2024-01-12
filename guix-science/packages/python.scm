@@ -1101,7 +1101,6 @@ build --local_cpu_resources=HOST_CPUS*.75
                      (string-append "--output_base=" %bazel-out)
                      (string-append "--output_user_root=" %bazel-user-root)
                      "run"
-                     "--nofetch"
                      "--verbose_explanations"
                      "--curses=no"
                      "--verbose_failures"
@@ -1448,7 +1447,6 @@ mechanism for serializing structured data.")
                      (string-append "--output_base=" %bazel-out)
                      (string-append "--output_user_root=" %bazel-user-root)
                      "build"
-                     "--nofetch"
                      "--distinct_host_configuration=false"
                      "--curses=no"
                      "--verbose_failures"
@@ -1751,7 +1749,6 @@ subclassing API with an imperative style for advanced research.")
                      (string-append "--output_base=" %bazel-out)
                      (string-append "--output_user_root=" %bazel-user-root)
                      "build"
-                     "--nofetch"
                      "--distinct_host_configuration=false"
                      "--curses=no"
                      "--verbose_failures"
