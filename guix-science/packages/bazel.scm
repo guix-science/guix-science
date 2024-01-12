@@ -1,4 +1,4 @@
-;;; Copyright © 2023 Ricardo Wurmus <rekado@elephly.net>
+;;; Copyright © 2023, 2024 Ricardo Wurmus <rekado@elephly.net>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU General Public License as published by
@@ -88,7 +88,8 @@
                 "0j190j7vjknlw1cgynb3r8vlv0j6i9lac6s5payf4fqrb2ngxmwc"))
               (patches
                (search-patches "patches/bazel-mock-repos.patch"
-                               "patches/bazel-workspace.patch"))
+                               "patches/bazel-workspace.patch"
+                               "patches/bazel-recreate-markers.patch"))
               ;; This is just a start.  There are so many more jars.
               (snippet
                '(for-each delete-file
