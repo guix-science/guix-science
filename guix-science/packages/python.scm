@@ -821,6 +821,7 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
                                                      (guix build gnu-build-system)))
        #~(begin
            (use-modules (guix build utils)
+                        (ice-9 ftw)
                         (ice-9 match)
                         (ice-9 string-fun))
            (define input-directories '#$(map cadr inputs))
@@ -882,33 +883,49 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
                           (list #$@bazel-targets)))
 
            (with-directory-excursion %bazel-out
+             (for-each (lambda (file)
+                         (delete-file (string-append "external/" file)))
+                       (scandir "external"
+                                (lambda (file)
+                                  (or (member file '("@bazel_tools.marker"
+                                                     "@embedded_jdk.marker"))
+                                      (and (string-prefix? "@local_" file)
+                                           (string-suffix? ".marker" file))))))
              (for-each delete-file-recursively
                        (append
-                        #;
-                        (find-files "external" ;
-                        "@?(bazel_tools|embedded_jdk|local_.*)(\\.marker)?")
+                        (list "external/bazel_tools")
+                        (map (lambda (file)
+                               (string-append "external/" file))
+                             (scandir "external"
+                                      (lambda (file)
+                                        (and (string-prefix? "local_" file)
+                                             (eq? 'directory
+                                                  (stat:type
+                                                   (stat (string-append "external/" file))))))))
                         (find-files "external"
-                                    "^\\.(git|svn|hg)$")))
+                                    "^\\.(git|svn|hg)$"
+                                    #:directories? #true)))
 
-             ;; Do not keep a copy of the JDK.  The JDK files are not
-             ;; source code and they may change as the JDK package (or
-             ;; any of its inputs) changes.
-
-             ;; These are all symlinks from the "jdk" output of the
-             ;; openjdk package, except for BUILD.bazel and WORKSPACE.
-             (for-each delete-file
-                       (find-files "external/local_jdk"
-                                   (lambda (file-name stat)
-                                     (eq? (stat:type stat) 'symlink))))
-             ;; The BUILD file contains a store reference to the JDK.
-             (substitute* "external/local_jdk/BUILD.bazel"
-               (("java_home = .*,")
-                "java_home = \"@GUIX_JAVA_HOME@\","))
-
-             ;; Erase markers
+             ;; Clear markers
              (for-each (lambda (file)
                          (truncate-file file 0))
                        (find-files "external" "@.*\\.marker"))
+
+             ;; Remove top-level symlinks along with their markers.
+             ;; This is needed because they sometimes point to
+             ;; temporary locations.
+             (for-each (lambda (file)
+                         (delete-file (string-append "external/" file))
+                         (let ((marker
+                                (format #false "external/@~a.marker" (basename file))))
+                           (false-if-exception
+                            (delete-file marker))))
+                       (scandir "external"
+                                (lambda (file)
+                                  (eq? 'symlink
+                                       (stat:type
+                                        (lstat (string-append "external/" file)))))))
+
              ;; Remove symlink references to the build directory.  These
              ;; will be rewritten to the current build directory by
              ;; users of this archive.
@@ -1034,44 +1051,9 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
                                            (string-contains (readlink file-name)
                                                             "GUIX_BUILD_TOP")))
                                     #:stat lstat))
-              (substitute* (string-append bazel-out "/external/local_jdk/BUILD.bazel")
-                (("@GUIX_JAVA_HOME@") #$(this-package-native-input "openjdk")))
               (setenv "HOME" (getenv "NIX_BUILD_TOP"))
 
               (invoke "python" "build/build.py" "--configure_only")
-
-              ;; Bazel aborts when a source file includes a header
-              ;; that isn't declared.  It prints something like this:
-              ;;
-              ;;    "this rule is missing dependency declarations for
-              ;;    the following files included by..."
-              ;;
-              ;; Since we pass through C_INCLUDE_PATH and
-              ;; CPLUS_INCLUDE_PATH there are many headers that are
-              ;; visible to the toolchain, but that Bazel refuses to
-              ;; allow.
-              ;;
-              ;; The biggest problem is that the kernel headers are
-              ;; never declared as dependencies anywhere, so we need
-              ;; to modify the toolchain declaration to allow headers
-              ;; from this location.
-              ;;
-              ;; There are other headers that cause trouble, though,
-              ;; such as those for zlib in the
-              ;; @com_google_protobuf//:protobuf target.  There must
-              ;; be some other mechanism to fix this (e.g. in the
-              ;; protobuf target itself), but I find it easier to just
-              ;; allow all locations that appear on these INCLUDE_PATH
-              ;; variables.
-              (substitute* (string-append bazel-out "/external/local_config_cc/BUILD")
-                (("cxx_builtin_include_directories = \\[" m)
-                 (string-append m
-                                (string-join
-                                 (map
-                                  (lambda (dir) (string-append "\"" dir "\""))
-                                  (append (parse-path (getenv "C_INCLUDE_PATH") '())
-                                          (parse-path (getenv "CPLUS_INCLUDE_PATH") '())))
-                                 "," 'suffix))))
 
               ;; XXX: Our version of protobuf leads to "File already
               ;; exists in database" when loading jax in Python.
@@ -1439,42 +1421,9 @@ mechanism for serializing structured data.")
                                            (string-contains (readlink file-name)
                                                             "GUIX_BUILD_TOP")))
                                     #:stat lstat))
-              (substitute* (string-append bazel-out "/external/local_jdk/BUILD.bazel")
-                (("@GUIX_JAVA_HOME@") #$(this-package-native-input "openjdk")))
+
               (setenv "HOME" (getenv "NIX_BUILD_TOP"))
 
-              ;; Bazel aborts when a source file includes a header
-              ;; that isn't declared.  It prints something like this:
-              ;;
-              ;;    "this rule is missing dependency declarations for
-              ;;    the following files included by..."
-              ;;
-              ;; Since we pass through C_INCLUDE_PATH and
-              ;; CPLUS_INCLUDE_PATH there are many headers that are
-              ;; visible to the toolchain, but that Bazel refuses to
-              ;; allow.
-              ;;
-              ;; The biggest problem is that the kernel headers are
-              ;; never declared as dependencies anywhere, so we need
-              ;; to modify the toolchain declaration to allow headers
-              ;; from this location.
-              ;;
-              ;; There are other headers that cause trouble, though,
-              ;; such as those for zlib in the
-              ;; @com_google_protobuf//:protobuf target.  There must
-              ;; be some other mechanism to fix this (e.g. in the
-              ;; protobuf target itself), but I find it easier to just
-              ;; allow all locations that appear on these INCLUDE_PATH
-              ;; variables.
-              (substitute* (string-append bazel-out "/external/local_config_cc/BUILD")
-                (("cxx_builtin_include_directories = \\[" m)
-                 (string-append m
-                                (string-join
-                                 (map
-                                  (lambda (dir) (string-append "\"" dir "\""))
-                                  (append (parse-path (getenv "C_INCLUDE_PATH") '())
-                                          (parse-path (getenv "CPLUS_INCLUDE_PATH") '())))
-                                 "," 'suffix))))
               ;; XXX: Our version of protobuf leads to "File already
               ;; exists in database" when loading in Python.
               (substitute* (string-append bazel-out "/external/tf_runtime/third_party/systemlibs/protobuf.BUILD")
@@ -1787,8 +1736,6 @@ subclassing API with an imperative style for advanced research.")
                                            (string-contains (readlink file-name)
                                                             "GUIX_BUILD_TOP")))
                                     #:stat lstat))
-              (substitute* (string-append bazel-out "/external/local_jdk/BUILD.bazel")
-                (("@GUIX_JAVA_HOME@") #$(this-package-native-input "openjdk")))
               (setenv "HOME" (getenv "NIX_BUILD_TOP"))))
           (replace 'build
             (lambda _
