@@ -87,24 +87,6 @@
 to eliminate flaky failures.")
     (license license:mpl2.0)))
 
-(define-public python-parameterizedtestcase
-  (package
-    (name "python-parameterizedtestcase")
-    (version "0.1.0")
-    (source (origin
-              (method url-fetch)
-              (uri (pypi-uri "parameterizedtestcase" version))
-              (sha256
-               (base32
-                "0zhjmsd16xacg4vd7zb75kw8q9khn52wvad634v1bvz7swaivk2c"))))
-    (build-system python-build-system)
-    (home-page
-     "https://github.com/msabramo/python_unittest_parameterized_test_case")
-    (synopsis "Parameterized tests for Python's unittest module")
-    (description
-     "Parameterized tests for Python's unittest module")
-    (license license:expat)))
-
 (define-public python-morfessor
   (package
     (name "python-morfessor")
