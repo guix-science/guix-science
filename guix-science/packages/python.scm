@@ -126,47 +126,6 @@ and can be used to distribute large data objects to users via direct
 download.")
     (license license:asl2.0)))
 
-;; We might be missing a few Azure dependencies.
-(define-public python-smart-open
-  (package
-   (name "python-smart-open")
-   (version "5.1.0")
-   (source (origin
-            (method url-fetch)
-            (uri (pypi-uri "smart_open" version))
-            (sha256
-             (base32
-              "0bp9a832903zx5k9hqdjgd3ybm5zc7ry5r23wdchgvs0n9817p74"))))
-   (build-system python-build-system)
-   (arguments
-    `(#:tests? #f
-      #:phases
-      (modify-phases %standard-phases
-        (add-before 'check 'relax-moto-requirement
-          (lambda* (#:key outputs inputs #:allow-other-keys)
-            (substitute* (list "setup.py" "smart_open.egg-info/requires.txt")
-              (("moto\\[server\\]==1.3.14") "moto")))))))
-   (inputs
-    (list python-boto3
-          python-google-cloud-storage
-          python-moto
-          python-parameterizedtestcase
-          python-paramiko
-          python-pathlib2
-          python-pytest
-          python-pytest-rerunfailures
-          python-requests
-          python-responses))
-   (home-page "https://github.com/piskvorky/smart_open")
-   (synopsis "Utilities for streaming large files")
-   (description "This package provides a library for efficient streaming of
-very large files from/to storages such as S3, GCS, HDFS, WebHDFS, HTTP, HTTPS,
-SFTP, or local filesystem. It supports transparent, on-the-fly (de-)compression
-for a variety of different formats.  This package is a drop-in replacement for
- Python's built-in @code{open()}: it can do anything @code{open()} can plus
-lots of nifty extra stuff on top.")
-   (license license:expat)))
-
 (define-public python-morfessor
   (package
     (name "python-morfessor")
