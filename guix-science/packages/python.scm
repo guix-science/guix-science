@@ -1519,97 +1519,46 @@ subclassing API with an imperative style for advanced research.")
               (sha256
                (base32
                 "04qva7cwplh0vj9k15nl7lr1m0jfa49j2cl6z2iaz8rnsm2kfz3k"))))
-    (build-system pyproject-build-system)
+    (build-system bazel-build-system)
     (arguments
      (list
       #:modules
-      '((guix build pyproject-build-system)
-        (guix build utils)
-        (srfi srfi-1)
-        (ice-9 string-fun))
+      '((guix-science build bazel-build-system)
+        ((guix build pyproject-build-system) #:prefix pyproject:)
+        (guix build utils))
+      #:imported-modules
+      `(,@%bazel-build-system-modules
+        ,@%pyproject-build-system-modules)
       #:tests? #false                   ;there are none
+      #:fetch-targets
+      '(list "//tensorflow_probability")
+      #:build-targets
+      '(list "//tensorflow_probability/python"
+             "//tensorflow_probability/python/internal/backend/jax:rewrite"
+             "//tensorflow_probability/substrates"
+             "//tensorflow_probability/substrates:jax"
+             "//tensorflow_probability/substrates:numpy"
+             ":pip_pkg")
+      #:bazel-arguments '(list)
+      #:vendored-inputs-hash
+      "1pf6sws009bjg6gwkll9nl3v4b1j6ff5fphwdxb2pgsfwisr9mhw"
       #:phases
-      #~(modify-phases %standard-phases
-          (add-after 'unpack 'prepare-bazel-inputs
-            (lambda* (#:key inputs #:allow-other-keys)
-              (define bazel-out
-                (string-append (getenv "NIX_BUILD_TOP") "/output"))
-              (mkdir-p bazel-out)
-              (with-directory-excursion bazel-out
-                (invoke "tar" "xf" #$(bazel-vendored-inputs
-                                      #:source (package-source this-package)
-                                      #:name "tensorflow-probability"
-                                      #:version version
-                                      #:inputs
-                                      (append (standard-packages)
-                                              (package-inputs this-package)
-                                              (package-propagated-inputs this-package)
-                                              (package-native-inputs this-package))
-                                      #:search-paths
-                                      (map search-path-specification->sexp
-                                           (package-transitive-native-search-paths
-                                            this-package))
-                                      #:bazel-targets
-                                      (list "//tensorflow_probability")
-                                      #:bazel-arguments
-                                      '(list)
-                                      #:hash
-                                      "0w9v0g84kvfrs94gdzvbn37xf79zkpj4likwqfq41lgl2y9q8ci2")))
-
-              ;; Rewrite dangling links to current build directory
-              (for-each (lambda (file)
-                          (let ((new-target
-                                 (string-replace-substring
-                                  (readlink file)
-                                  "GUIX_BUILD_TOP" (getenv "NIX_BUILD_TOP"))))
-                            (delete-file file)
-                            (symlink new-target file)))
-                        (find-files bazel-out
-                                    (lambda (file-name stat)
-                                      (and (eq? (stat:type stat) 'symlink)
-                                           (string-contains (readlink file-name)
-                                                            "GUIX_BUILD_TOP")))
-                                    #:stat lstat))
-              (setenv "HOME" (getenv "NIX_BUILD_TOP"))))
-          (replace 'build
+      #~(modify-phases (@ (guix-science build bazel-build-system) %standard-phases)
+          (add-before 'build 'configure
             (lambda _
-              (define %build-directory (getenv "NIX_BUILD_TOP"))
-              (define %bazel-out
-                (string-append %build-directory "/output"))
-              (define %bazel-user-root
-                (string-append %build-directory "/tmp"))
               (setenv "BAZEL_USE_CPP_ONLY_TOOLCHAIN" "1")
-              (setenv "USER" "homeless-shelter")
-              (apply invoke "bazel"
-                     "--batch"
-                     (string-append "--output_base=" %bazel-out)
-                     (string-append "--output_user_root=" %bazel-user-root)
-                     "build"
-                     "--distinct_host_configuration=false"
-                     "--curses=no"
-                     "--verbose_failures"
-                     "--subcommands"
-                     "--strategy=Genrule=standalone"
-                     "--toolchain_resolution_debug=\".*\""
-                     "--local_ram_resources=HOST_RAM*.5"
-                     "--local_cpu_resources=HOST_CPUS*.75"
-                     "--action_env=PATH"
-                     "--action_env=GUIX_PYTHONPATH"
-                     "--action_env=PYTHONPATH"
-                     "--action_env=GUIX_LOCPATH"
-                     "--host_action_env=PATH"
-                     "--host_action_env=GUIX_PYTHONPATH"
-                     "--host_action_env=PYTHONPATH"
-                     "--host_action_env=GUIX_LOCPATH"
-                     (list "//tensorflow_probability/python"
-                           "//tensorflow_probability/python/internal/backend/jax:rewrite"
-                           "//tensorflow_probability/substrates"
-                           "//tensorflow_probability/substrates:jax"
-                           "//tensorflow_probability/substrates:numpy"
-                           ":pip_pkg"))
+              (setenv "USER" "homeless-shelter")))
+          (add-after 'build 'generate-python-package
+            (lambda _
               (substitute* "bazel-bin/pip_pkg"
                 (("\\$\\(date --utc \\+%Y%m%d\\)") "redacted"))
-              (invoke "bazel-bin/pip_pkg" "dist" "--release"))))))
+              (invoke "bazel-bin/pip_pkg" "dist" "--release")))
+          (add-after 'generate-python-package 'install-python
+            (assoc-ref pyproject:%standard-phases 'install))
+          (add-after 'install-python 'create-entrypoints
+            (assoc-ref pyproject:%standard-phases 'create-entrypoints))
+          (add-after 'create-entrypoints 'compile-bytecode
+            (assoc-ref pyproject:%standard-phases 'compile-bytecode)))))
     (propagated-inputs
      (list python-absl-py
            python-cloudpickle
@@ -1624,10 +1573,7 @@ subclassing API with an imperative style for advanced research.")
            python-tensorflow
            ;;python-tensorflow-datasets ;TODO
            ))
-    (native-inputs
-     (list bazel-6
-           `(,openjdk11 "jdk") ;for bazel
-           which))
+    (inputs (list python-wrapper))
     (home-page "https://github.com/tensorflow/probability")
     (synopsis "Probabilistic reasoning and statistical analysis in TensorFlow")
     (description "TensorFlow Probability is a library for
