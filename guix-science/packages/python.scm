@@ -105,27 +105,6 @@ to eliminate flaky failures.")
      "Parameterized tests for Python's unittest module")
     (license license:expat)))
 
-(define-public python-google-cloud-storage
-  (package
-    (name "python-google-cloud-storage")
-    (version "1.38.0")
-    (source (origin
-              (method url-fetch)
-              (uri (pypi-uri "google-cloud-storage" version))
-              (sha256
-               (base32
-                "1i26jiasa9n10bm6lm1i299cqrh0mxfrlq1ng5fxrf34dzb1280n"))))
-    (build-system python-build-system)
-    (arguments
-     `(#:tests? #f))
-    (home-page "https://github.com/googleapis/python-storage")
-    (synopsis "Google Cloud Storage API client library")
-    (description "Google Cloud Storage allows you to store data on Google
-infrastructure with very high reliability, performance and availability,
-and can be used to distribute large data objects to users via direct
-download.")
-    (license license:asl2.0)))
-
 (define-public python-morfessor
   (package
     (name "python-morfessor")
