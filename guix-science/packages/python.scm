@@ -1012,9 +1012,7 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
                                       #:version version
                                       #:inputs
                                       (append (standard-packages)
-                                              (package-inputs this-package)
-                                              (package-propagated-inputs this-package)
-                                              (package-native-inputs this-package))
+                                              (package-direct-inputs this-package))
                                       #:search-paths
                                       (map search-path-specification->sexp
                                            (package-transitive-native-search-paths
