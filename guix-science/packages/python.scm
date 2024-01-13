@@ -1025,7 +1025,6 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
                                             "@mkl_dnn_v1//:mkl_dnn")
                                       #:bazel-arguments
                                       #~(list "-c" "opt"
-                                              "--config=avx_posix"
                                               "--config=mkl_open_source_only"
                                               (string-append "--define="
                                                              "PROTOBUF_INCLUDE_PATH="
