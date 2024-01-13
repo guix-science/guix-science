@@ -248,11 +248,11 @@
                       #:key
                       guile source
                       (tests? #t)
-                      (fetch-targets '())
-                      (build-targets '())
-                      (bazel-arguments '())
-                      (bazel-configuration '())
-                      (run-command '())
+                      (fetch-targets ''())
+                      (build-targets ''())
+                      (bazel-arguments ''())
+                      (bazel-configuration ''())
+                      (run-command ''())
                       vendored-inputs-hash
                       (parallel-build? #t)
                       (phases '%standard-phases)
