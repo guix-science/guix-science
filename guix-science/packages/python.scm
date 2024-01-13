@@ -1366,9 +1366,9 @@ mechanism for serializing structured data.")
                                                                                       (guix build gnu-build-system)))
                                         #~(begin
                                             (use-modules (guix build union))
-                                            (union-build (string-append (getenv "NIX_BUILD_TOP") "/site-library")
+                                            (union-build (string-append (getenv "NIX_BUILD_TOP") "/site-packages")
                                                          (parse-path (getenv "GUIX_PYTHONPATH")))
-                                            (setenv "PYTHON_LIB_PATH" (string-append (getenv "NIX_BUILD_TOP") "/site-library"))
+                                            (setenv "PYTHON_LIB_PATH" (string-append (getenv "NIX_BUILD_TOP") "/site-packages"))
                                             (setenv "PYTHON_BIN_PATH"
                                                     (string-append
                                                      #$(this-package-input "python-wrapper")
