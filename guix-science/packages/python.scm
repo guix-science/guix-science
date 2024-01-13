@@ -1094,7 +1094,6 @@ build --local_cpu_resources=HOST_CPUS*.75
                      (string-append "--output_base=" %bazel-out)
                      (string-append "--output_user_root=" %bazel-user-root)
                      "run"
-                     "--verbose_explanations"
                      "--curses=no"
                      "--verbose_failures"
                      "--subcommands"
