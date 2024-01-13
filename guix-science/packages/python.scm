@@ -65,6 +65,7 @@
   #:use-module (guix search-paths)
   #:use-module (guix utils)
   #:use-module (guix-science packages bazel)
+  #:use-module (guix-science build-system bazel)
   #:use-module (ice-9 match))
 
 (define-public python-pytest-rerunfailures
@@ -989,90 +990,66 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
        (file-name (git-file-name name version))
        (sha256
         (base32 "1pfk7z3kkair6xi92yn0pvs3zlaxajhmk6r2yq020q13mwfxcfxc"))))
-    (build-system gnu-build-system)
+    (build-system bazel-build-system)
     (arguments
      (list
-      #:modules
-      '((guix build gnu-build-system)
-        (guix build utils)
-        (srfi srfi-1)
-        (ice-9 string-fun))
       #:tests? #false                   ;there are none
+      #:bazel-configuration
+      #~(setenv "TF_SYSTEM_LIBS"
+                (string-join '#$jaxlib-system-libs ","))
+      #:fetch-targets
+      '(list "//jaxlib/tools:build_wheel"
+             "@mkl_dnn_v1//:mkl_dnn")
+      #:build-targets
+      '(list "//jaxlib/tools:build_wheel")
+      #:run-command
+      #~(list
+         (string-append "--output_path=" #$output)
+         (string-append "--cpu="
+                        #$(match (or (%current-target-system)
+                                     (%current-system))
+                            ("x86_64-linux"   "x86_64")
+                            ("i686-linux"     "i686")
+                            ("mips64el-linux" "mips64")
+                            ("aarch64-linux"  "aarch64")
+                            ;; Prevent errors when querying this
+                            ;; package on unsupported platforms,
+                            ;; e.g. when running "guix package
+                            ;; --search="
+                            (_                "UNSUPPORTED"))))
+      #:bazel-arguments
+      #~(list "-c" "opt"
+              "--config=mkl_open_source_only"
+              (string-append "--define="
+                             "PROTOBUF_INCLUDE_PATH="
+                             #$static-protobuf
+                             "/include"))
+      #:vendored-inputs-hash
+      "1k9zwarax0654dr4swb394n47ia22ixdpl4214jys5jg6xzpivxq"
       #:phases
       #~(modify-phases %standard-phases
-          (replace 'configure
-            (lambda* (#:key inputs #:allow-other-keys)
-              (define bazel-out
-                (string-append (getenv "NIX_BUILD_TOP") "/output"))
-              (mkdir-p bazel-out)
-              (with-directory-excursion bazel-out
-                (invoke "tar" "xf" #$(bazel-vendored-inputs
-                                      #:source (package-source this-package)
-                                      #:name "jaxlib"
-                                      #:version version
-                                      #:inputs
-                                      (append (standard-packages)
-                                              (package-direct-inputs this-package))
-                                      #:search-paths
-                                      (map search-path-specification->sexp
-                                           (package-transitive-native-search-paths
-                                            this-package))
-                                      #:extra-configuration
-                                      #~(setenv "TF_SYSTEM_LIBS"
-                                                (string-join '#$jaxlib-system-libs ","))
-                                      #:bazel-targets
-                                      (list "//jaxlib/tools:build_wheel"
-                                            "@mkl_dnn_v1//:mkl_dnn")
-                                      #:bazel-arguments
-                                      #~(list "-c" "opt"
-                                              "--config=mkl_open_source_only"
-                                              (string-append "--define="
-                                                             "PROTOBUF_INCLUDE_PATH="
-                                                             #$static-protobuf
-                                                             "/include"))
-                                      #:hash
-                                      "1k9zwarax0654dr4swb394n47ia22ixdpl4214jys5jg6xzpivxq")))
-
-              ;; Rewrite dangling links to current build directory
-              (for-each (lambda (file)
-                          (let ((new-target
-                                 (string-replace-substring
-                                  (readlink file)
-                                  "GUIX_BUILD_TOP" (getenv "NIX_BUILD_TOP"))))
-                            (delete-file file)
-                            (symlink new-target file)))
-                        (find-files bazel-out
-                                    (lambda (file-name stat)
-                                      (and (eq? (stat:type stat) 'symlink)
-                                           (string-contains (readlink file-name)
-                                                            "GUIX_BUILD_TOP")))
-                                    #:stat lstat))
-              (setenv "HOME" (getenv "NIX_BUILD_TOP"))
-
+          (add-after 'unpack-vendored-inputs 'configure
+            (lambda _
               ;; XXX: Our version of protobuf leads to "File already
               ;; exists in database" when loading jax in Python.
               ;; Using the static library is what Nix does, but it
               ;; doesn't help us.
-              (substitute* (string-append bazel-out "/external/xla/third_party/systemlibs/protobuf.BUILD")
-                (("-lprotobuf") "-l:libprotobuf.a")
-                (("-lprotoc") "-l:libprotoc.a"))))
-          (replace 'build
-            (lambda* (#:key parallel-build? #:allow-other-keys)
-              (define %build-directory (getenv "NIX_BUILD_TOP"))
-              (define %bazel-out
-                (string-append %build-directory "/output"))
-              (define %bazel-user-root
-                (string-append %build-directory "/tmp"))
-              ;; The version is automatically set to ".dev" if this
-              ;; variable is not set.  See
-              ;; https://github.com/google/jax/commit/e01f2617b85c5bdffc5ffb60b3d8d8ca9519a1f3
-              (setenv "JAXLIB_RELEASE" "1")
-              (setenv "BAZEL_USE_CPP_ONLY_TOOLCHAIN" "1")
-
-              (call-with-output-file ".jax_configure.bazelrc"
-                (lambda (port)
-;; build --define PROTOBUF_INCLUDE_PATH=" #$(this-package-input "protobuf") "/include
-                  (display (string-append "
+              (let ((bazel-out
+                     (string-append (getenv "NIX_BUILD_TOP") "/output")))
+                (substitute* (string-append bazel-out "/external/xla/third_party/systemlibs/protobuf.BUILD")
+                  (("-lprotobuf") "-l:libprotobuf.a")
+                  (("-lprotoc") "-l:libprotoc.a"))
+                ;; The version is automatically set to ".dev" if this
+                ;; variable is not set.  See
+                ;; https://github.com/google/jax/commit/e01f2617b85c5bdffc5ffb60b3d8d8ca9519a1f3
+                (setenv "JAXLIB_RELEASE" "1")
+                (setenv "BAZEL_USE_CPP_ONLY_TOOLCHAIN" "1")
+                (setenv "TF_SYSTEM_LIBS"
+                        (string-join '#$jaxlib-system-libs ","))
+                (call-with-output-file ".jax_configure.bazelrc"
+                  (lambda (port)
+                    ;; build --define PROTOBUF_INCLUDE_PATH=" #$(this-package-input "protobuf") "/include
+                    (display (string-append "
 build --strategy=Genrule=standalone
 build --repo_env PYTHON_BIN_PATH=" #$(this-package-input "python-wrapper") "/bin/python
 build --python_path=" #$(this-package-input "python-wrapper") "/bin/python
@@ -1085,52 +1062,7 @@ build --toolchain_resolution_debug=\".*\"
 build --local_ram_resources=HOST_RAM*.5
 build --local_cpu_resources=HOST_CPUS*.75
 ")
-                           port)))
-              (setenv "USER" "homeless-shelter")
-              (setenv "TF_SYSTEM_LIBS"
-                      (string-join '#$jaxlib-system-libs ","))
-              (apply invoke "bazel"
-                     "--batch"
-                     (string-append "--output_base=" %bazel-out)
-                     (string-append "--output_user_root=" %bazel-user-root)
-                     "run"
-                     "--curses=no"
-                     "--verbose_failures"
-                     "--subcommands"
-                     "--action_env=PATH"
-                     "--action_env=LIBRARY_PATH"
-                     "--action_env=C_INCLUDE_PATH"
-                     "--action_env=CPLUS_INCLUDE_PATH"
-                     "--action_env=GUIX_LOCPATH"
-                     "--action_env=TF_SYSTEM_LIBS"
-                     "--host_action_env=TF_SYSTEM_LIBS"
-                     "--host_action_env=PATH"
-                     "--host_action_env=LIBRARY_PATH"
-                     "--host_action_env=C_INCLUDE_PATH"
-                     "--host_action_env=CPLUS_INCLUDE_PATH"
-                     "--host_action_env=GUIX_LOCPATH"
-                     "-c" "opt"
-                     "--jobs"
-                     (if parallel-build?
-                         (number->string (parallel-job-count))
-                         "1")
-                     (list
-                      "//jaxlib/tools:build_wheel"
-                      "--"
-                      (string-append "--output_path=" #$output)
-                      (string-append "--cpu="
-                                     #$(match (or (%current-target-system)
-                                                  (%current-system))
-                                         ("x86_64-linux"   "x86_64")
-                                         ("i686-linux"     "i686")
-                                         ("mips64el-linux" "mips64")
-                                         ("aarch64-linux"  "aarch64")
-                                         ;; Prevent errors when querying
-                                         ;; this package on unsupported
-                                         ;; platforms, e.g. when running
-                                         ;; "guix package --search="
-                                         (_                "UNSUPPORTED")))))))
-          (delete 'install))))
+                             port)))))))))
     (inputs
      (list curl
            double-conversion
@@ -1173,12 +1105,9 @@ build --local_cpu_resources=HOST_CPUS*.75
            python-protobuf-for-tensorflow-2
            python-scipy))
     (native-inputs
-     (list bazel-6
-           `(,openjdk11 "jdk")   ;for bazel
-           python-pypa-build
+     (list python-pypa-build
            python-setuptools
-           python-wheel
-           which))
+           python-wheel))
     (home-page "https://github.com/google/jax")
     (synopsis "Differentiate, compile, and transform Numpy code.")
     (description "JAX is Autograd and XLA, brought together for
