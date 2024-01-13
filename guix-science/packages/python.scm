@@ -1049,8 +1049,6 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
                                     #:stat lstat))
               (setenv "HOME" (getenv "NIX_BUILD_TOP"))
 
-              (invoke "python" "build/build.py" "--configure_only")
-
               ;; XXX: Our version of protobuf leads to "File already
               ;; exists in database" when loading jax in Python.
               ;; Using the static library is what Nix does, but it
