@@ -1396,7 +1396,7 @@ mechanism for serializing structured data.")
                                                         #$(this-package-input "python-wrapper")
                                                         "/bin/python"))
                                       #:hash
-                                      "0ahsbf510465iyxiih7r0hmhmpi4c2kw1z7bk1x311vmnfl54irr")))
+                                      "0bqlwf9br68mrm5ambnm3dg31gnpsa12wfm2q2gqszknhmk1nyj8")))
 
               ;; Rewrite dangling links to current build directory
               (for-each (lambda (file)
