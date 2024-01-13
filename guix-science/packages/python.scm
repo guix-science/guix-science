@@ -67,26 +67,6 @@
   #:use-module (guix-science build-system bazel)
   #:use-module (ice-9 match))
 
-(define-public python-pytest-rerunfailures
-  (package
-    (name "python-pytest-rerunfailures")
-    (version "10.0")
-    (source (origin
-              (method url-fetch)
-              (uri (pypi-uri "pytest-rerunfailures" version))
-              (sha256
-               (base32
-                "14dksvc8mxmci3m3083xzwz70anis95a5s01apqvvqv2z48yc1ir"))))
-    (build-system python-build-system)
-    (propagated-inputs
-     (list python-pytest python-setuptools))
-    (home-page
-     "https://github.com/pytest-dev/pytest-rerunfailures")
-    (synopsis "Plugin for pytest to re-run tests to eliminate flaky failures")
-    (description "This package provides a @code{pytest} plugin to re-run tests
-to eliminate flaky failures.")
-    (license license:mpl2.0)))
-
 (define-public python-morfessor
   (package
     (name "python-morfessor")
