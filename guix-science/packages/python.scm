@@ -1258,92 +1258,53 @@ mechanism for serializing structured data.")
        (file-name (git-file-name name version))
        (sha256
         (base32 "09mfskmpvpbq919wibnw3bnhi1y3hkx3qrzm72gdr0gsivn1yb3w"))))
-    (build-system gnu-build-system)
+    (build-system bazel-build-system)
     (arguments
      (list
-      #:modules
-      '((guix build gnu-build-system)
-        (guix build utils)
-        (srfi srfi-1)
-        (ice-9 string-fun))
       #:tests? #false                   ;there are none
+      #:bazel-configuration
+      ;; TODO: is the union build *really* necessary?
+      (with-imported-modules (source-module-closure '((guix build utils)
+                                                      (guix build union)
+                                                      (guix build gnu-build-system)))
+        #~(begin
+            (use-modules (guix build union))
+            (union-build (string-append (getenv "NIX_BUILD_TOP") "/site-packages")
+                         (parse-path (getenv "GUIX_PYTHONPATH")))
+            (setenv "PYTHON_LIB_PATH" (string-append (getenv "NIX_BUILD_TOP") "/site-packages"))
+            (setenv "PYTHON_BIN_PATH"
+                    (string-append
+                     #$(this-package-input "python-wrapper")
+                     "/bin/python"))
+            (setenv "TF_PYTHON_VERSION"
+                    #$(version-major+minor
+                       (package-version (this-package-input "python-wrapper"))))
+            (setenv "TF_SYSTEM_LIBS"
+                    (string-join '#$tensorflow-system-libs ","))))
+      #:fetch-targets
+      '(list "//tensorflow/tools/pip_package:build_pip_package"
+             "//tensorflow/tools/lib_package:libtensorflow")
+      #:build-targets
+      '(list "//tensorflow/tools/pip_package:build_pip_package"
+             "//tensorflow/tools/lib_package:libtensorflow")
+      #:bazel-arguments
+      #~(list
+         "--extra_toolchains=@bazel_tools//tools/python:autodetecting_toolchain_nonstrict"
+         "--action_env=PYTHON_LIB_PATH"
+         "--host_action_env=PYTHON_LIB_PATH"
+         "--action_env=PYTHON_BIN_PATH"
+         "--host_action_env=PYTHON_BIN_PATH"
+         (string-append "--python_path="
+                        #$(this-package-input "python-wrapper")
+                        "/bin/python"))
+      #:vendored-inputs-hash
+      "0bqlwf9br68mrm5ambnm3dg31gnpsa12wfm2q2gqszknhmk1nyj8"
       #:phases
       #~(modify-phases %standard-phases
-          (replace 'configure
-            (lambda* (#:key inputs #:allow-other-keys)
+          (add-after 'unpack-vendored-inputs 'configure
+            (lambda _
               (define bazel-out
                 (string-append (getenv "NIX_BUILD_TOP") "/output"))
-              (mkdir-p bazel-out)
-              (with-directory-excursion bazel-out
-                (invoke "tar" "xf" #$(bazel-vendored-inputs
-                                      #:source (package-source this-package)
-                                      #:name "tensorflow"
-                                      #:version version
-                                      #:inputs
-                                      (append (standard-packages)
-                                              (package-inputs this-package)
-                                              (package-propagated-inputs this-package)
-                                              (package-native-inputs this-package))
-                                      #:search-paths
-                                      (map search-path-specification->sexp
-                                           (package-transitive-native-search-paths
-                                            this-package))
-                                      #:extra-configuration
-                                      ;; TODO: is the union build *really* necessary?
-                                      (with-imported-modules (source-module-closure '((guix build utils)
-                                                                                      (guix build union)
-                                                                                      (guix build gnu-build-system)))
-                                        #~(begin
-                                            (use-modules (guix build union))
-                                            (union-build (string-append (getenv "NIX_BUILD_TOP") "/site-packages")
-                                                         (parse-path (getenv "GUIX_PYTHONPATH")))
-                                            (setenv "PYTHON_LIB_PATH" (string-append (getenv "NIX_BUILD_TOP") "/site-packages"))
-                                            (setenv "PYTHON_BIN_PATH"
-                                                    (string-append
-                                                     #$(this-package-input "python-wrapper")
-                                                     "/bin/python"))
-                                            (setenv "TF_PYTHON_VERSION"
-                                                    #$(version-major+minor
-                                                       (package-version (this-package-input "python-wrapper"))))
-                                            (setenv "TF_SYSTEM_LIBS"
-                                                    (string-join '#$tensorflow-system-libs ","))))
-                                      #:bazel-targets
-                                      (list "//tensorflow/tools/pip_package:build_pip_package"
-                                            "//tensorflow/tools/lib_package:libtensorflow")
-                                      #:bazel-arguments
-                                      #~(list
-                                         "--extra_toolchains=@bazel_tools//tools/python:autodetecting_toolchain_nonstrict"
-                                         "--action_env=PYTHON_LIB_PATH"
-                                         "--host_action_env=PYTHON_LIB_PATH"
-                                         "--action_env=PYTHON_BIN_PATH"
-                                         "--host_action_env=PYTHON_BIN_PATH"
-                                         ;; "--action_env=GUIX_PYTHONPATH"
-                                         ;; "--action_env=PYTHONPATH"
-                                         ;; "--host_action_env=GUIX_PYTHONPATH"
-                                         ;; "--host_action_env=PYTHONPATH"
-                                         (string-append "--python_path="
-                                                        #$(this-package-input "python-wrapper")
-                                                        "/bin/python"))
-                                      #:hash
-                                      "0bqlwf9br68mrm5ambnm3dg31gnpsa12wfm2q2gqszknhmk1nyj8")))
-
-              ;; Rewrite dangling links to current build directory
-              (for-each (lambda (file)
-                          (let ((new-target
-                                 (string-replace-substring
-                                  (readlink file)
-                                  "GUIX_BUILD_TOP" (getenv "NIX_BUILD_TOP"))))
-                            (delete-file file)
-                            (symlink new-target file)))
-                        (find-files bazel-out
-                                    (lambda (file-name stat)
-                                      (and (eq? (stat:type stat) 'symlink)
-                                           (string-contains (readlink file-name)
-                                                            "GUIX_BUILD_TOP")))
-                                    #:stat lstat))
-
-              (setenv "HOME" (getenv "NIX_BUILD_TOP"))
-
               ;; XXX: Our version of protobuf leads to "File already
               ;; exists in database" when loading in Python.
               (substitute* (string-append bazel-out "/external/tf_runtime/third_party/systemlibs/protobuf.BUILD")
@@ -1351,55 +1312,12 @@ mechanism for serializing structured data.")
                 (("-lprotoc") "-l:libprotoc.a"))
               ;; Do not mess with RUNPATH
               (substitute* "tensorflow/tools/pip_package/build_pip_package.sh"
-                (("patchelf ") "echo -- "))))
-          (replace 'build
-            (lambda* (#:key parallel-build? #:allow-other-keys)
-              (define %build-directory (getenv "NIX_BUILD_TOP"))
-              (define %bazel-out
-                (string-append %build-directory "/output"))
-              (define %bazel-user-root
-                (string-append %build-directory "/tmp"))
+                (("patchelf ") "echo -- "))
               (setenv "BAZEL_USE_CPP_ONLY_TOOLCHAIN" "1")
               (setenv "USER" "homeless-shelter")
               (setenv "TF_SYSTEM_LIBS"
-                      (string-join '#$tensorflow-system-libs ","))
-              (apply invoke "bazel"
-                     "--batch"
-                     (string-append "--output_base=" %bazel-out)
-                     (string-append "--output_user_root=" %bazel-user-root)
-                     "build"
-                     "--distinct_host_configuration=false"
-                     "--curses=no"
-                     "--verbose_failures"
-                     "--subcommands"
-                     "--strategy=Genrule=standalone"
-                     "--toolchain_resolution_debug=\".*\""
-                     "--local_ram_resources=HOST_RAM*.5"
-                     "--local_cpu_resources=HOST_CPUS*.75"
-                     "--action_env=PATH"
-                     "--action_env=GUIX_PYTHONPATH"
-                     "--action_env=PYTHONPATH"
-                     "--action_env=LIBRARY_PATH"
-                     "--action_env=C_INCLUDE_PATH"
-                     "--action_env=CPLUS_INCLUDE_PATH"
-                     "--action_env=GUIX_LOCPATH"
-                     "--action_env=TF_SYSTEM_LIBS"
-                     "--host_action_env=TF_SYSTEM_LIBS"
-                     "--host_action_env=PATH"
-                     "--host_action_env=GUIX_PYTHONPATH"
-                     "--host_action_env=PYTHONPATH"
-                     "--host_action_env=LIBRARY_PATH"
-                     "--host_action_env=C_INCLUDE_PATH"
-                     "--host_action_env=CPLUS_INCLUDE_PATH"
-                     "--host_action_env=GUIX_LOCPATH"
-                     "-c" "opt"
-                     "--jobs"
-                     (if parallel-build?
-                         (number->string (parallel-job-count))
-                         "1")
-                     (list "//tensorflow/tools/pip_package:build_pip_package"
-                           "//tensorflow/tools/lib_package:libtensorflow"))))
-          (replace 'install
+                      (string-join '#$tensorflow-system-libs ","))))
+          (add-after 'build 'install
             (lambda _
               ;; Install library
               (mkdir-p #$output)
@@ -1495,10 +1413,7 @@ Cflags: -I~a/include/tensorflow
            python-wrapt))
     (native-inputs
      (list perl
-           python-lit python-pypa-build python-setuptools python-wheel
-           bazel-6
-           which
-           `(,openjdk11 "jdk")))           ;for bazel
+           python-lit python-pypa-build python-setuptools python-wheel))
     (home-page "https://tensorflow.org")
     (synopsis "Machine learning framework")
     (description "TensorFlow is a flexible platform for building and
