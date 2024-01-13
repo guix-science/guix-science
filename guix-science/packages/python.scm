@@ -1073,7 +1073,7 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
                 (lambda (port)
 ;; build --define PROTOBUF_INCLUDE_PATH=" #$(this-package-input "protobuf") "/include
                   (display (string-append "
-build --strategy=Genrule=local
+build --strategy=Genrule=standalone
 build --repo_env PYTHON_BIN_PATH=" #$(this-package-input "python-wrapper") "/bin/python
 build --python_path=" #$(this-package-input "python-wrapper") "/bin/python
 build --distinct_host_configuration=false
@@ -1444,7 +1444,7 @@ mechanism for serializing structured data.")
                      "--curses=no"
                      "--verbose_failures"
                      "--subcommands"
-                     "--strategy=Genrule=local"
+                     "--strategy=Genrule=standalone"
                      "--toolchain_resolution_debug=\".*\""
                      "--local_ram_resources=HOST_RAM*.5"
                      "--local_cpu_resources=HOST_CPUS*.75"
@@ -1746,7 +1746,7 @@ subclassing API with an imperative style for advanced research.")
                      "--curses=no"
                      "--verbose_failures"
                      "--subcommands"
-                     "--strategy=Genrule=local"
+                     "--strategy=Genrule=standalone"
                      "--toolchain_resolution_debug=\".*\""
                      "--local_ram_resources=HOST_RAM*.5"
                      "--local_cpu_resources=HOST_CPUS*.75"
