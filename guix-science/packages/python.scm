@@ -1077,7 +1077,6 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
                   (display (string-append "
 build --strategy=Genrule=local
 build --repo_env PYTHON_BIN_PATH=" #$(this-package-input "python-wrapper") "/bin/python
-build --action_env=PYENV_ROOT
 build --python_path=" #$(this-package-input "python-wrapper") "/bin/python
 build --distinct_host_configuration=false
 build --features=-layering_check
