@@ -1628,7 +1628,7 @@ subclassing API with an imperative style for advanced research.")
      (list bazel-6
            `(,openjdk11 "jdk") ;for bazel
            which))
-    (home-page "https://github.com/pyro-ppl/numpyro")
+    (home-page "https://github.com/tensorflow/probability")
     (synopsis "Probabilistic reasoning and statistical analysis in TensorFlow")
     (description "TensorFlow Probability is a library for
 probabilistic reasoning and statistical analysis in TensorFlow.  As
