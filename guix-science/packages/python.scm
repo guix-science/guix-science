@@ -1018,9 +1018,8 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
                                            (package-transitive-native-search-paths
                                             this-package))
                                       #:extra-configuration
-                                      #~(begin
-                                          (setenv "TF_SYSTEM_LIBS"
-                                                  (string-join '#$jaxlib-system-libs ",")))
+                                      #~(setenv "TF_SYSTEM_LIBS"
+                                                (string-join '#$jaxlib-system-libs ","))
                                       #:bazel-targets
                                       (list "//jaxlib/tools:build_wheel"
                                             "@mkl_dnn_v1//:mkl_dnn")
