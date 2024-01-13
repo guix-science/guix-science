@@ -142,26 +142,6 @@ download.")
     (description "Morfessor")
     (license license:bsd-3)))
 
-(define-public python-torchfile
-  (package
-    (name "python-torchfile")
-    (version "0.1.0")
-    (source (origin
-              (method url-fetch)
-              (uri (pypi-uri "torchfile" version))
-              (sha256
-               (base32
-                "0vhklj6krl9r0kdynb4kcpwp8y1ihl2zw96byallay3k9c9zwgd5"))))
-    (build-system python-build-system)
-    (native-inputs
-     (list python-numpy))                         ;for 'sanity-check' phase
-    (properties
-     '((updater-extra-native-inputs "python-numpy")))
-    (home-page "https://github.com/bshillingford/python-torchfile")
-    (synopsis "Torch7 binary serialized file parser")
-    (description "Torch7 binary serialized file parser")
-    (license license:bsd-3)))
-
 (define-public pybind11-2.6.1
   (package (inherit pybind11)
     (name "pybind11")
