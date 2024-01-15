@@ -405,25 +405,7 @@ Python objects and reverse.")
    (license license:expat)))
 
 (define-public python-nr.stream
-  (package
-   (name "python-nr.stream")
-   (version "0.1.1")
-   (source (origin
-            (method url-fetch)
-            (uri (pypi-uri "nr.stream" version))
-            (sha256
-             (base32
-              "11wzmp8rpsl0vfvg6w6syfy50393zlmj13dhnbzzh1fhszdcjjaw"))))
-   (build-system python-build-system)
-   (native-inputs
-    (list python-pytest))
-   (propagated-inputs
-    (list python-nr.collections python-nr.pylang.utils python-six))
-   (home-page "https://git.niklasrosenstein.com/NiklasRosenstein/nr")
-   (synopsis "Use iterators like Java streams")
-   (description "This package provides a module to use iterators like
-Java streams.")
-   (license license:expat)))
+  (deprecated-package "python-nr.stream" python-nr-stream))
 
 (define-public python-nr.pylang.utils
   (package
