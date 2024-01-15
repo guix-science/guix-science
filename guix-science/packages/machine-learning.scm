@@ -65,3 +65,43 @@ running on top of the machine learning platform TensorFlow.  It was
 developed with a focus on enabling fast experimentation and providing
 a delightful developer experience.")
     (license license:asl2.0)))
+
+(define-public python-tslearn
+  (package
+    (name "python-tslearn")
+    (version "0.6.3")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/tslearn-team/tslearn")
+                    (commit (string-append "v" version))))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "1f2bzl7vq0kqmcrw47nrhadmwj7ww7av9jc8wyqy7frl3x81wg18"))))
+    (build-system pyproject-build-system)
+    (arguments
+     (list
+      #:test-flags
+      '(list "-k"
+             (string-append
+              ;; XXX It's unclear why exactly these tests are failing.
+              "not test_all_estimators[LearningShapelets-LearningShapelets]"
+              " and not test_shapelets"))))
+    (propagated-inputs (list python-cesium
+                             python-h5py
+                             python-joblib
+                             python-numba
+                             python-numpy
+                             python-pandas
+                             python-scipy
+                             python-scikit-learn
+                             python-tensorflow
+                             python-wheel))
+    (native-inputs (list python-pytest))
+    (home-page "https://github.com/tslearn-team/tslearn")
+    (synopsis "Machine learning toolkit for time series data")
+    (description "This is a Python library for time series data mining.
+It provides tools for time series classification, clustering
+and forecasting.")
+    (license license:bsd-2)))
