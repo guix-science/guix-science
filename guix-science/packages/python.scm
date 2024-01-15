@@ -65,6 +65,7 @@
   #:use-module (guix search-paths)
   #:use-module (guix utils)
   #:use-module (guix-science build-system bazel)
+  #:use-module (guix-science packages machine-learning)
   #:use-module (ice-9 match))
 
 (define-public python-morfessor
@@ -968,6 +969,8 @@ arbitrarily to any order.")
 mechanism for serializing structured data.")
     (license license:bsd-3)))
 
+;; Remember to update python-keras-for-tensorflow when upgrading this
+;; package.  The versions must match.
 (define-public tensorflow
   (package
     (name "tensorflow")
@@ -1180,8 +1183,8 @@ subclassing API with an imperative style for advanced research.")
                 ;; Versions above 0.4 break tests, but that's okay
                 ;; because we aren't running them.
                 (("gast >= 0.2.1, <= 0.4.0") "gast >= 0.2.1")
-                ;; Drop all of tensorboard, keras, and tensorflow_estimator
-                (("'(keras|tensorboard|tensorflow_estimator) >.*',") " None,")
+                ;; Drop all of tensorboard and tensorflow_estimator
+                (("'(tensorboard|tensorflow_estimator) >.*',") " None,")
                 ;; Our clang bindings have a different name.
                 (("libclang") "clang")
                 ;; No tensorboard, sorry.
@@ -1222,7 +1225,7 @@ subclassing API with an imperative style for advanced research.")
     (outputs '("out"))
     (propagated-inputs
      (modify-inputs (package-propagated-inputs tensorflow)
-       (append python-clang-13)))
+       (append python-clang-13 python-keras-for-tensorflow)))
     (inputs (list tensorflow))
     (native-inputs
      (list eigen-for-python-ml-dtypes
