@@ -1,5 +1,6 @@
 ;;;
 ;;; Copyright © 2021 Lars-Dominik Braun <ldb@leibniz-psychology.org>
+;;; Copyright © 2024 Ricardo Wurmus <rekado@elephly.net>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU General Public License as published by
@@ -36,7 +37,8 @@
   #:use-module (guix download)
   #:use-module (guix utils)
   #:use-module (guix build-system node)
-  #:use-module (gnu packages node-xyz))
+  #:use-module (gnu packages node-xyz)
+  #:use-module (gnu packages python))
 
 (define-public node-abbrev-1.1.1
   (package
@@ -16668,7 +16670,10 @@
                "https://registry.npmjs.org/utf-8-validate/-/utf-8-validate-6.0.3.tgz")
               (sha256
                (base32
-                "14m4gs53fb420cx4jixcliz3agwnjiivzmzp2l5j08cc6hzgxv32"))))
+                "14m4gs53fb420cx4jixcliz3agwnjiivzmzp2l5j08cc6hzgxv32"))
+              (modules '((guix build utils)))
+              (snippet
+               '(delete-file-recursively "prebuilds"))))
     (build-system node-build-system)
     (arguments
      '(#:tests? #f
@@ -16678,7 +16683,7 @@
                     (lambda _
                       (delete-dependencies '("mocha" "node-gyp" "prebuildify"
                                              "prebuildify-cross")))))))
-    (inputs (list node-node-gyp-build-4.6.0))
+    (inputs (list python node-node-gyp-build-4.6.0))
     (home-page "https://github.com/websockets/utf-8-validate")
     (synopsis "Check if a buffer contains valid UTF-8")
     (description "Check if a buffer contains valid UTF-8")
