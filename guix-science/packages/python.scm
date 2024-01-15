@@ -153,30 +153,49 @@ implementation of the Earth Mover's Distance.")
 (define-public python-gensim
   (package
     (name "python-gensim")
-    (version "4.0.1")
-    (source (origin
-              (method url-fetch)
-              (uri (pypi-uri "gensim" version))
-              (sha256
-               (base32
-                "1r5617m58xv6s5zha69pngzkkzvs1xg661lf0a28d5ln4xbbkl5l"))))
-    (build-system python-build-system)
+    (version "4.2.0")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "gensim" version))
+       (sha256
+        (base32 "1wgf6kzm3jc3i39kcrdhw89bzqj75whi1b5a030lf7d3f0lvsplr"))))
+    (build-system pyproject-build-system)
     (arguments
-     `(#:tests? #f)) ; Tests need an outdated version of Morfessor.
+     (list
+      #:test-flags
+      ;; This fails for unknown reasons when trying to launch
+      ;; visdom.server.
+      '(list "-k" "not test_callback_update_graph"
+             ;; This needs access to the internet
+             "--ignore=gensim/test/test_api.py")
+      #:phases
+      '(modify-phases %standard-phases
+         (add-after 'unpack 'patch-build-system
+           (lambda _
+             (substitute* "setup.py"
+               (("__builtins__.__NUMPY_SETUP__.*") ""))))
+         (add-before 'check 'build-extensions
+           (lambda _
+             ;; Cython extensions have to be built before running the tests.
+             (invoke "python" "setup.py" "build_ext" "--inplace")
+             ;; Needed for some of the tests
+             (setenv "HOME" "/tmp"))))))
     (propagated-inputs
-     (list python-numpy python-scipy python-smart-open))
+     (list python-pyemd
+           python-numpy
+           python-nmslib
+           python-scipy
+           python-smart-open))
     (native-inputs
      (list python-cython
-           python-levenshtein
            python-mock
-           ;("python-morfessor" ,python-morfessor)
-           python-nmslib
-           python-pyemd
            python-pytest
+           python-pytest-cov
            python-testfixtures
            python-visdom))
     (home-page "https://radimrehurek.com/gensim/")
-    (synopsis "Topic modelling for humans")
+    (synopsis "Python framework for fast vector space modelling")
     (description "This package provides a Python library for topic modelling,
 document indexing and similarity retrieval with large corpora.  The target
 audience is the natural language processing and information retrieval
