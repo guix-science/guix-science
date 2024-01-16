@@ -512,28 +512,6 @@ Python 2 and 3.")
 directly to typed objects.")
     (license license:expat)))
 
-(define-public python-docspec
-  (package
-   (name "python-docspec")
-   (version "0.2.1")
-   (source
-    (origin
-     (method url-fetch)
-     (uri (pypi-uri "docspec" version))
-     (sha256
-      (base32
-       "0afdl37yda2xsp2d1xaw2k9ki7hj57b4iir57s69b6pnrni4vwcg"))))
-   (build-system python-build-system)
-    (arguments
-     `(#:tests? #f)) ; Needs old version of nr.pylang.utils
-   (propagated-inputs
-    (list python-nr.databind.core python-nr.databind.json))
-   (home-page "")
-   (synopsis "Specification for representing API documentation")
-   (description "This package provides a JSON object specification for
-representing API documentation of programming languages.")
-   (license license:expat)))
-
 (define-public python-pydoc-markdown
   (package
    (name "python-pydoc-markdown")
