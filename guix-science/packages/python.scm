@@ -322,27 +322,6 @@ technologies basecaller.")
     (description "Filesystem and path manipulation tools.")
     (license license:expat)))
 
-(define-public python-docspec-python
-  (package
-   (name "python-docspec-python")
-   (version "0.2.0")
-   (source (origin
-            (method url-fetch)
-            (uri (pypi-uri "docspec-python" version))
-            (sha256
-             (base32
-              "0s04yn9hff5f68jbwxl2mrpcvghlir2jgqfjdr6wrl76np663cb1"))))
-   (build-system python-build-system)
-    (arguments
-     `(#:tests? #f)) ; Needs old version of nr.pylang.utils
-   (propagated-inputs
-    (list python-dataclasses python-docspec))
-   (home-page "")
-   (synopsis "Parser based on lib2to3 producing docspec data from Python code")
-   (description "This package provides a parser based on lib2to3 producing
-docspec data from Python source code.")
-   (license license:expat)))
-
 (define-public python-nr.utils.re
   (package
    (name "python-nr.utils.re")
