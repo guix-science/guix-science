@@ -492,13 +492,13 @@ documentation around your functions.")
 (define-public r-shinywidgets
   (package
     (name "r-shinywidgets")
-    (version "0.8.0")
+    (version "0.8.1")
     (source
      (origin
        (method url-fetch)
        (uri (cran-uri "shinyWidgets" version))
        (sha256
-        (base32 "1c5667ndrav8rfcd5cm2bwp21hy7msgnc3s5n4kzyijgdacfbs0s"))))
+        (base32 "09bj2z9gzkdhbpiwdzw0pkcw4zrj0nrvvppfqqi9hynwl64f4bim"))))
     (properties `((upstream-name . "shinyWidgets")))
     (build-system r-build-system)
     (propagated-inputs
