@@ -682,13 +682,13 @@ recording.")
 (define-public r-reactr
   (package
     (name "r-reactr")
-    (version "0.4.4")
+    (version "0.5.0")
     (source
      (origin
        (method url-fetch)
        (uri (cran-uri "reactR" version))
        (sha256
-        (base32 "15c0ij3xglsdavkpzgnkbyl5yb39jrn6zhlrdjiwp1m9cnrqzf2w"))))
+        (base32 "14pi2wc25qa9q0hp8jby07798l53phyj1zifj46fg2pjq8vkz7p7"))))
     (properties `((upstream-name . "reactR")))
     (build-system r-build-system)
     (propagated-inputs (list r-htmltools))
