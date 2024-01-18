@@ -325,3 +325,31 @@ supports projects in multiple languages and builds outputs for
 multiple platforms.  Bazel supports large codebases across multiple
 repositories, and large numbers of users.")
     (license license:asl2.0)))
+
+(define-public bazel-6.4
+  (package
+    (inherit bazel-6)
+    (name "bazel")
+    (version "6.4.0")
+    (source (origin
+              (method url-fetch/zipbomb)
+              (uri (string-append "https://github.com/bazelbuild/bazel/"
+                                  "releases/download/" version
+                                  "/bazel-" version "-dist.zip"))
+              (sha256
+               (base32
+                "07p5yj7y864gcbwpfrcccvn52b89ml96namshbp2kfwb5ihgz25x"))
+              (patches
+               (search-patches "patches/bazel-mock-repos.patch"
+                               "patches/bazel-workspace.patch"
+                               "patches/bazel-recreate-markers.patch"))
+              ;; This is just a start.  There are so many more jars.
+              (snippet
+               '(for-each delete-file
+                          '("third_party/apache_commons_collections/commons-collections-3.2.2.jar"
+                            "third_party/apache_commons_compress/apache-commons-compress-1.19.jar"
+                            "third_party/apache_commons_io/commons-io-2.4.jar"
+                            "third_party/apache_commons_lang/commons-lang-2.6.jar"
+                            "third_party/hamcrest/hamcrest-core-1.3.jar"
+                            "third_party/jsr305/jsr-305.jar"
+                            "third_party/xz/xz-1.9.jar")))))))
