@@ -59,6 +59,7 @@
 (define* (build #:key
                 parallel-build?
                 build-targets
+                bazel-arguments
                 (run-command '()) #:allow-other-keys)
   (define %build-directory (getenv "NIX_BUILD_TOP"))
   (define %bazel-out
@@ -87,14 +88,15 @@
          "--host_action_env=CPLUS_INCLUDE_PATH"
          "--host_action_env=GUIX_LOCPATH"
          "-c" "opt"
-         "--jobs"
-         (if parallel-build?
-             (number->string (parallel-job-count))
-             "1")
-         (match run-command
-           (() build-targets)
-           (_
-            `(,@build-targets "--" ,@run-command)))))
+         (append bazel-arguments
+                 (list "--jobs"
+                       (if parallel-build?
+                           (number->string (parallel-job-count))
+                           "1"))
+                 (match run-command
+                   (() build-targets)
+                   (_
+                    `(,@build-targets "--" ,@run-command))))))
 
 (define %standard-phases
   (modify-phases gnu:%standard-phases

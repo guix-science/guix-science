@@ -284,6 +284,7 @@
                                 #:fetch-targets fetch-targets
                                 #:bazel-arguments bazel-arguments
                                 #:bazel-configuration bazel-configuration)
+                             #:bazel-arguments #$bazel-arguments
                              #:system #$system
                              #:tests? #$tests?
                              #:parallel-build? #$parallel-build?
