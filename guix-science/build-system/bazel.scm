@@ -217,15 +217,15 @@
                 #:rest arguments)
   "Return a bag for NAME."
   (define private-keywords
-    `(#:inputs #:native-inputs #:outputs
+    `(#:inputs #:bazel #:jdk #:native-inputs #:outputs
       ,@(if target '() '(#:target))))
 
   (bag
     (name name)
     (system system) (target target)
     (build-inputs `(,@(if source
-                         `(("source" ,source))
-                         '())
+                          `(("source" ,source))
+                          '())
                     ("jdk" ,jdk "jdk")
                     ("bazel" ,bazel)
                     ("which" ,(canonical-package which))
