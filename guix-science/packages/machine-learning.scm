@@ -226,6 +226,13 @@ a delightful developer experience.")
     (build-system bazel-build-system)
     (arguments
      (list
+      #:modules
+      '((guix-science build bazel-build-system)
+        ((guix build pyproject-build-system) #:prefix pyproject:)
+        (guix build utils))
+      #:imported-modules
+      `(,@%bazel-build-system-modules
+        ,@%pyproject-build-system-modules)
       #:tests? #false                   ;there are none
       #:bazel bazel-6.4
       #:fetch-targets
@@ -292,7 +299,32 @@ a delightful developer experience.")
                         #$(this-package-input "python-wrapper")
                         "/bin/python"))
       #:vendored-inputs-hash
-      "02z84x7az26wp45k3mrk2cxgx0j3a2k7hfj08zv3mhkysck6jxfr"))
+      "02z84x7az26wp45k3mrk2cxgx0j3a2k7hfj08zv3mhkysck6jxfr"
+      #:phases
+      #~(modify-phases (@ (guix-science build bazel-build-system) %standard-phases)
+          (add-after 'unpack 'patch-python-build-system
+            (lambda _
+              (substitute* "pyproject.toml"
+                (("oldest-supported-numpy") "numpy"))
+              ;; This rule expects that
+              ;; _tensorstore.cpython-310-x86_64-linux-gnu.so exists,
+              ;; but we've only built _tensorstore.so.
+              (substitute* "setup.py"
+                (("os.path.basename\\(ext_full_path\\)")
+                 "'_tensorstore.so'"))))
+          (add-after 'build 'prepare-python
+            (lambda _
+              (setenv "TENSORSTORE_PREBUILT_DIR"
+                      (string-append (getcwd)
+                                     "/bazel-bin/python/"))))
+          (add-after 'prepare-python 'build-python
+            (assoc-ref pyproject:%standard-phases 'build))
+          (add-after 'build-python 'install-python
+            (assoc-ref pyproject:%standard-phases 'install))
+          (add-after 'install-python 'create-entrypoints
+            (assoc-ref pyproject:%standard-phases 'create-entrypoints))
+          (add-after 'create-entrypoints 'compile-bytecode
+            (assoc-ref pyproject:%standard-phases 'compile-bytecode)))))
     (propagated-inputs
      (list python-absl-py
            python-appdirs
@@ -414,7 +446,7 @@ a delightful developer experience.")
       lz4
       nasm
       nghttp2
-      ;;nlohmann-json
+      ;;nlohmann-json ;our version seems to be too old
       python-wrapper
       snappy
       xz
@@ -422,6 +454,9 @@ a delightful developer experience.")
     (native-inputs
      `(("pybind11" ,pybind11-2.10)
        ("python-pytest" ,python-pytest)
+       ("python-setuptools" ,python-setuptools)
+       ("python-setuptools-scm" ,python-setuptools-scm)
+       ("python-wheel" ,python-wheel)
        ("bazel-platforms"
         ,(origin
            (method git-fetch)
