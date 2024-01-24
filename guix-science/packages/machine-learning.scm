@@ -374,7 +374,9 @@ SavedModel format.")
               ;; but we've only built _tensorstore.so.
               (substitute* "setup.py"
                 (("os.path.basename\\(ext_full_path\\)")
-                 "'_tensorstore.so'"))))
+                 "'_tensorstore.so'")
+                (("'fallback_version': '0.0.0'")
+                 (string-append "'fallback_version': '" #$version "'")))))
           (add-after 'build 'prepare-python
             (lambda _
               (setenv "TENSORSTORE_PREBUILT_DIR"
