@@ -55,10 +55,7 @@
 (define-public python-flax
   (package
     (name "python-flax")
-    ;; Any version after this depends on a feature
-    ;; (restore_with_serialized_types) that is not included in the
-    ;; latest release of python-orbax-checkpoint.
-    (version "0.6.11")
+    (version "0.8.0")
     (source
      (origin
        (method git-fetch)
@@ -67,7 +64,7 @@
              (commit (string-append "v" version))))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "1f1r9r5w6kh3ncp07i5x9w1yr004zhxqx2kpyzzmzm7dhq4ryff7"))))
+        (base32 "1yqi7b8wmnvz0kgbb0pn1iwjr0l72crxfbch37b315g08wkwcn3z"))))
     (build-system pyproject-build-system)
     (arguments
      (list
