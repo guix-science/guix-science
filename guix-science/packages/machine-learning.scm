@@ -147,20 +147,19 @@ developed with a focus on enabling fast experimentation and providing
 a delightful developer experience.")
     (license license:asl2.0)))
 
-;; orbax-checkpoint is the name on Pypi.
 (define-public python-orbax-checkpoint
   (package
     (name "python-orbax-checkpoint")
-    (version "0.1.7")
+    (version "0.4.5")
     (source
      (origin
        (method git-fetch)
        (uri (git-reference
              (url "https://github.com/google/orbax")
-             (commit (string-append "v" version))))
+             (commit "e68a1cd8c997caccc87fc5c1134847294be45ead")))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "1vd94ibf1yrpgdsdpyrmh01w6q8jaq3frl82sgnniww0yip62kv6"))))
+        (base32 "02njj5jkcg5j58krj6z2y6sfi49zd9ic8r7v34fnbgkr648ay87q"))))
     (build-system pyproject-build-system)
     (arguments
      (list
@@ -174,17 +173,9 @@ a delightful developer experience.")
       ;; One can only hope.
       #:tests? #false
       #:phases
-      '(modify-phases %standard-phases
-         ;; See https://github.com/google/jax/blob/\
-         ;; 7e61479f537d418115ec4a66dfa40676cf470746/CHANGELOG.md?plain=1#L122
-         (add-after 'unpack 'jax-compatibility
-           (lambda _
-             (substitute* '("orbax/checkpoint/async_checkpointer.py"
-                            "orbax/checkpoint/checkpoint_manager.py"
-                            "orbax/checkpoint/type_handlers.py"
-                            "orbax/checkpoint/pytree_checkpoint_handler.py")
-               (("gda_serialization")
-                "array_serialization")))))))
+      #~(modify-phases %standard-phases
+          (add-after 'unpack 'chdir
+            (lambda _ (chdir "checkpoint"))))))
     (propagated-inputs
      (list python-absl-py
            python-cached-property
