@@ -85,6 +85,69 @@ developed with a focus on enabling fast experimentation and providing
 a delightful developer experience.")
     (license license:asl2.0)))
 
+;; orbax-checkpoint is the name on Pypi.
+(define-public python-orbax-checkpoint
+  (package
+    (name "python-orbax-checkpoint")
+    (version "0.1.7")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/google/orbax")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "1vd94ibf1yrpgdsdpyrmh01w6q8jaq3frl82sgnniww0yip62kv6"))))
+    (build-system pyproject-build-system)
+    (arguments
+     (list
+      ;; Tests require flax, but flax needs orbax.  Luckily there's a
+      ;; goal to remove the dependency on flax as evidenced by this
+      ;; comment in utils_test.py:
+      ;;
+      ;;    # TODO(b/275613424): Eliminate flax dependency in Orbax
+      ;;    test suite.
+      ;;
+      ;; One can only hope.
+      #:tests? #false
+      #:phases
+      '(modify-phases %standard-phases
+         ;; See https://github.com/google/jax/blob/\
+         ;; 7e61479f537d418115ec4a66dfa40676cf470746/CHANGELOG.md?plain=1#L122
+         (add-after 'unpack 'jax-compatibility
+           (lambda _
+             (substitute* '("orbax/checkpoint/async_checkpointer.py"
+                            "orbax/checkpoint/checkpoint_manager.py"
+                            "orbax/checkpoint/type_handlers.py"
+                            "orbax/checkpoint/pytree_checkpoint_handler.py")
+               (("gda_serialization")
+                "array_serialization")))))))
+    (propagated-inputs
+     (list python-absl-py
+           python-cached-property
+           python-etils
+           python-importlib-resources
+           python-jax
+           python-jaxlib
+           python-msgpack
+           python-nest-asyncio
+           python-numpy
+           python-pyyaml
+           python-tensorstore
+           python-typing-extensions))
+    (native-inputs
+     (list python-flit-core
+           python-pytest
+           python-pytest-xdist))
+    (home-page "https://github.com/google/orbax")
+    (synopsis "Utility libraries for JAX users")
+    (description "Orbax is a namespace providing common utility
+libraries for JAX users.  Orbax also includes a serialization library
+for JAX users, enabling the exporting of JAX models to the TensorFlow
+SavedModel format.")
+    (license license:asl2.0)))
+
 (define tensorstore-python-packages
   (list
    "absl_py"
