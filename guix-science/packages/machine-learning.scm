@@ -22,6 +22,8 @@
   #:use-module (gnu packages curl)
   #:use-module (gnu packages docker)
   #:use-module (gnu packages image)
+  #:use-module (gnu packages image-processing)
+  #:use-module (gnu packages jupyter)
   #:use-module (gnu packages libffi)
   #:use-module (gnu packages machine-learning)
   #:use-module (gnu packages protobuf)
@@ -49,6 +51,66 @@
   #:use-module (guix-science build-system bazel)
   #:use-module (guix-science packages bazel)
   #:use-module (guix-science packages python))
+
+(define-public python-flax
+  (package
+    (name "python-flax")
+    ;; Any version after this depends on a feature
+    ;; (restore_with_serialized_types) that is not included in the
+    ;; latest release of python-orbax-checkpoint.
+    (version "0.6.11")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/google/flax")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "1f1r9r5w6kh3ncp07i5x9w1yr004zhxqx2kpyzzmzm7dhq4ryff7"))))
+    (build-system pyproject-build-system)
+    (arguments
+     (list
+      #:test-flags
+      '(list "--pyargs" "tests"
+             ;; We don't have tensorboard
+             "--ignore=tests/tensorboard_test.py"
+             ;; These tests try to use a fixed number of CPUs that may
+             ;; exceed the number of CPUs available at build time.
+             "--ignore=tests/jax_utils_test.py")
+      #:phases
+      '(modify-phases %standard-phases
+         (add-after 'unpack 'ignore-deprecations
+           (lambda _
+             (substitute* "pyproject.toml"
+               (("\"error\",") "")))))))
+    (propagated-inputs
+     (list python-einops
+           python-jax
+           python-optax
+           python-orbax-checkpoint
+           python-msgpack
+           python-numpy
+           python-pyyaml
+           python-rich
+           python-tensorstore
+           python-typing-extensions))
+    (native-inputs
+     (list opencv
+           python-nbstripout
+           python-ml-collections
+           python-mypy
+           python-pytorch
+           python-pytest
+           python-pytest-cov
+           python-pytest-xdist
+           python-setuptools-scm
+           python-tensorflow))
+    (home-page "https://github.com/google/flax")
+    (synopsis "Neural network library for JAX designed for flexibility")
+    (description "Flax is a neural network library for JAX that is
+designed for flexibility.")
+    (license license:asl2.0)))
 
 ;; Keep in sync with tensorflow!
 (define-public python-keras-for-tensorflow
