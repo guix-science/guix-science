@@ -101,6 +101,34 @@
 utilities.")
     (license license:asl2.0)))
 
+(define-public python-simple-parsing
+  (package
+    (name "python-simple-parsing")
+    (version "0.1.4")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "simple_parsing" version))
+       (sha256
+        (base32 "1s0s6hc6qz66x4rzfrnshf5vwdfk7d1015a1nrhyn2wgglr008ri"))))
+    (build-system pyproject-build-system)
+    ;; TODO: There is some sort of path issue, because most tests fail
+    ;; outright with this error: ImportError: attempted relative
+    ;; import with no known parent package
+    (arguments (list #:tests? #false))
+    (propagated-inputs
+     (list python-docstring-parser python-typing-extensions))
+    (native-inputs
+     (list python-numpy python-pytest python-pytest-benchmark
+           python-pytest-regressions python-pytest-xdist))
+    (home-page "https://github.com/lebrice/SimpleParsing")
+    (synopsis
+     "Utility for simplifying and cleaning up argument parsing scripts")
+    (description
+     "This package provides a small utility for simplifying and
+cleaning up argument parsing scripts.")
+    (license license:expat)))
+
 (define-public python-morfessor
   (package
     (name "python-morfessor")
