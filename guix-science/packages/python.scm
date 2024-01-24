@@ -654,6 +654,34 @@ arbitrarily to any order.")
    "wrapt"
    "zlib"))
 
+(define-public python-jmp
+  (package
+    (name "python-jmp")
+    (version "0.0.4")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "jmp" version))
+       (sha256
+        (base32 "0c0p7srwx19lzwvl0by016l35bmz1jfsn2pz1ykp57vsgkyv1zjx"))))
+    (build-system pyproject-build-system)
+    (arguments
+     (list
+      #:test-flags
+      ;; This test fails. The error is "Unable to resolve runtime symbol:
+      ;; `truncsfhf2', which looks more like a toolchain error.
+      '(list "--ignore=jmp/_src/policy_test.py")))
+    (propagated-inputs (list python-absl-py python-dataclasses python-jax
+                             python-jaxlib python-numpy))
+    (native-inputs (list python-pytest))
+    (home-page "https://github.com/google-deepmind/jmp")
+    (synopsis "JMP is a mixed precision library for JAX")
+    (description
+     "This library implements support for mixed precision training in JAX.
+It provides two key abstractions.  These abstractions are mixed
+precision policies and loss scaling.")
+    (license license:asl2.0)))
+
 (define-public static-protobuf
   (package
     (inherit protobuf)
