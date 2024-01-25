@@ -44,6 +44,7 @@
   #:use-module (gnu packages perl-check)
   #:use-module (gnu packages pkg-config)
   #:use-module (gnu packages python)
+  #:use-module (gnu packages python-build)
   #:use-module (gnu packages python-crypto)
   #:use-module (gnu packages python-science)
   #:use-module (gnu packages python-web)
@@ -54,6 +55,7 @@
   #:use-module (gnu packages serialization)
   #:use-module (gnu packages time)
   #:use-module (gnu packages tls)
+  #:use-module (gnu packages version-control)
   #:use-module (gnu packages vim)
   #:use-module (gnu packages web)
   #:use-module (gnu packages wget)
@@ -70,7 +72,9 @@
   #:use-module (guix packages)
   #:use-module (guix utils)
   #:use-module (guix-science packages cran)
-  #:use-module (guix-science packages grid-engine))
+  #:use-module (guix-science packages grid-engine)
+  #:use-module (guix-science packages machine-learning)
+  #:use-module (guix-science packages python))
 
 (define-public spades
   (package
@@ -2375,3 +2379,101 @@ genome annotation.")
    (description "This package provides the reference implementation of CGP
 workflow for CaVEMan SNV analysis.")
    (license license:agpl3+)))
+
+(define-public python-scvi-tools
+  (package
+    (name "python-scvi-tools")
+    (version "1.0.4")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (pypi-uri "scvi_tools" version))
+       (sha256
+        (base32 "0h127ciddvbbknnvvz90m8hn9737lkqkvid8g191n866l4g25057"))))
+    (build-system pyproject-build-system)
+    (arguments
+     (list
+      #:test-flags
+      '(list "-k"
+             ;; This requires pymde
+             "not test_scvi"
+             ;; XXX: these two need ray
+             "--ignore=tests/autotune/test_tuner.py"
+             "--ignore=tests/autotune/test_manager.py"
+             ;; These require internet access
+             "--ignore=tests/hub/test_url.py")
+      #:phases
+      '(modify-phases %standard-phases
+         ;; Our version of Rich is just a bit too old to have
+         ;; Box.MARKDOWN.
+         (add-after 'unpack 'rich-compatibility
+           (lambda _
+             (substitute* "scvi/data/_manager.py"
+               (("from rich import box")
+                "from rich import box
+boxMARKDOWN = box.Box(
+    \"\"\"\\
+    
+| ||
+|-||
+| ||
+|-||
+|-||
+| ||
+    
+\"\"\",
+    ascii=True,
+)")
+               (("box.MARKDOWN") "boxMARKDOWN"))))
+         ;; Numba needs a writable dir to cache functions.
+         (add-before 'check 'set-numba-cache-dir
+           (lambda _
+             (setenv "NUMBA_CACHE_DIR" "/tmp")))
+         ;; Some tests require write access to HOME.
+         (add-before 'check 'pre-check
+           (lambda _
+             (setenv "HOME" "/tmp"))))))
+    (propagated-inputs
+     (list python-anndata
+           python-chex
+           python-docrep
+           python-flax
+           python-h5py
+           python-huggingface-hub
+           python-jax
+           python-jaxlib
+           python-ml-collections
+           python-mudata
+           python-numpy
+           python-numpyro
+           python-optax
+           python-pandas
+           python-pyro-ppl
+           python-pytorch-lightning
+           python-rich ;our version is a little old
+           python-scikit-learn
+           python-scipy
+           python-sparse
+           python-pytorch
+           python-torchmetrics
+           python-tqdm
+           python-xarray))
+    (native-inputs
+     (list python-black
+           python-flake8
+           python-genomepy
+           python-hatchling
+           python-loompy
+           python-nbconvert
+           python-nbformat
+           python-pre-commit
+           ;;python-pymde
+           python-pytest
+           python-pytest-cov
+           python-scanpy))
+    (home-page "http://scvi-tools.org/")
+    (synopsis "Deep probabilistic analysis of single-cell omics data.")
+    (description "scvi-tools (single-cell variational inference tools)
+is a package for probabilistic modeling and analysis of single-cell
+omics data, built on top of PyTorch and AnnData.")
+    (license license:bsd-3)))
