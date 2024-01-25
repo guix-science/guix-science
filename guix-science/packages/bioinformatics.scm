@@ -511,6 +511,100 @@ communication (CCC).  It achieves this without requiring subsampling
 or aggregation.")
       (license license:expat))))
 
+;; This package contains some minified JavaScript.
+(define-public rsat
+  (package
+    (name "rsat")
+    (version "2022-06-26")
+    (source (origin
+              (method git-fetch)
+              (uri (git-reference
+                    (url "https://github.com/rsa-tools/rsat-code")
+                    (commit version)))
+              (file-name (git-file-name name version))
+              (sha256
+               (base32
+                "1ks5bsnbvxv0w77s9zc0hrp6m0g8mdyc07xa4xv58dxs5p6krh4c"))))
+    (build-system gnu-build-system)
+    (arguments
+     (list
+      #:tests? #false                   ;no test target
+      #:imported-modules `(,@%gnu-build-system-modules
+                           (guix build python-build-system))
+      #:modules '((guix build gnu-build-system)
+                  ((guix build python-build-system) #:prefix python:)
+                  (guix build utils))
+      #:phases
+      #~(modify-phases %standard-phases
+          (replace 'configure
+            (lambda _
+              (let ((share (string-append #$output "/share/rsat")))
+                ;; Ensure that we can override the target directory
+                (substitute* "perl-scripts/configure_rsat.pl"
+                  (("\\$rsat_parent_path = .*;")
+                   (string-append "$rsat_parent_path = \""
+                                  (dirname share) "\";")))
+                ;; Patch CFLAGS
+                (substitute* '("contrib/compare-matrices-quick/makefile"
+                               "contrib/count-words/Makefile"
+                               "contrib/purgatory_c/REA/Makefile"
+                               "contrib/purgatory_c/kwalks/src/Makefile"
+                               "contrib/retrieve-variation-seq/Makefile"
+                               "contrib/variation-scan/Makefile"
+                               "src/word-analysis/Makefile")
+                  (("CFLAGS ?=")
+                   "CFLAGS = -fcommon "))
+                ;; Don't include the C stuff
+                (substitute* "contrib/count-words/main.c"
+                  (("#include \"(count|main|utils).c\"")
+                   ""))
+                ;; Override the target directory
+                (setenv "RSAT" share)
+
+                ;; Remove symlinks that would lead us to
+                ;; $out/share/rsat/share/rsat.
+                (for-each delete-file
+                          '("share/rsat/perl-scripts"
+                            "share/rsat/python-scripts"
+                            "share/rsat/bin"))
+                (rename-file "share/rsat/rsat.yaml" "rsat.yaml")
+
+                ;; Target directory must exist
+                (mkdir-p share)
+                (copy-recursively "." share)
+                (invoke "perl" "perl-scripts/configure_rsat.pl"))))
+          (replace 'build
+            (lambda _
+              (let ((share (string-append #$output "/share/rsat")))
+                ;; FIXME: this first step is pretty useless, because it
+                ;; creates directories not in the install location but in
+                ;; the build directory.
+                (with-directory-excursion share
+                  (invoke "make" "-f" "makefiles/init_rsat.mk" "init")
+                  (invoke "make" "-f" "makefiles/init_rsat.mk" "compile_all")))))
+          (replace 'install
+            (lambda _
+              (copy-recursively "bin" (string-append #$output "/bin"))))
+          (add-after 'install 'wrap-programs
+            (lambda* (#:key inputs outputs #:allow-other-keys)
+              (let* ((site (python:site-packages inputs outputs))
+                     (pythonpath (getenv "GUIX_PYTHONPATH"))
+                     (script (string-append #$output "/bin/rsat")))
+                (chmod script #o555)
+                (wrap-program script
+                  `("GUIX_PYTHONPATH" ":" prefix (,site ,pythonpath)))))))))
+    (inputs
+     (list perl
+           python
+           python-pyyaml))
+    (native-inputs
+     (list perl rsync))
+    (home-page "https://rsat.france-bioinformatique.fr/teaching/RSAT_portal.html")
+    (synopsis "Regulatory sequence analysis tools")
+    (description "This package provides a subset of the Regulatory
+Sequence Analysis Tools (RSAT).")
+    (license license:agpl3+)))
+
 ;; Seqan 3.0.3 removed a few deprecated features.
 (define-public seqan-3.0.2
   (package
