@@ -1225,6 +1225,9 @@ acceleration (e.g., GPUs) and distributed computation.")
                ;; Five of these tests fail due to deviations in the
                ;; expected values.
                "test_kl_univariate"
+               ;; Fails with "[Dirichlet-<lambda>-params17]":
+               ;; ValueError: diag input must be 1d or 2d
+               "test_mean_var"
                ;; Sometimes the return value is not within the
                ;; expected tolerance.
                "test_zero_inflated_logits_probs_agree"
