@@ -548,7 +548,7 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
 (define python-jaxlib/wheel
   (package
     (name "python-jaxlib")
-    (version "0.4.18")
+    (version "0.4.20")
     (source
      (origin
        (method git-fetch)
@@ -557,7 +557,7 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
              (commit (string-append "jaxlib-v" version))))
        (file-name (git-file-name name version))
        (sha256
-        (base32 "1pfk7z3kkair6xi92yn0pvs3zlaxajhmk6r2yq020q13mwfxcfxc"))))
+        (base32 "15dmxmfjybg1289v822cmk9raagl9mcbkjk990xa0f91sx91gdjq"))))
     (build-system bazel-build-system)
     (arguments
      (list
@@ -587,13 +587,17 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
                             (_                "UNSUPPORTED"))))
       #:bazel-arguments
       #~(list "-c" "opt"
+              ;; We need a more recent version of platforms, because the
+              ;; included cpu package does not define cpu:wasm32.
+              (string-append "--override_repository=platforms="
+                             #$(this-package-native-input "bazel-platforms"))
               "--config=mkl_open_source_only"
               (string-append "--define="
                              "PROTOBUF_INCLUDE_PATH="
                              #$static-protobuf
                              "/include"))
       #:vendored-inputs-hash
-      "1k9zwarax0654dr4swb394n47ia22ixdpl4214jys5jg6xzpivxq"
+      "1fa4f8qx0765zdwmqaz1jnc60nvb3j4qxqy0mxrpqj58qdclycfs"
       #:phases
       #~(modify-phases %standard-phases
           (add-after 'unpack-vendored-inputs 'configure
@@ -604,6 +608,7 @@ NumPy @code{dtype} extensions used in machine learning libraries, including:
               ;; doesn't help us.
               (let ((bazel-out
                      (string-append (getenv "NIX_BUILD_TOP") "/output")))
+                #;
                 (substitute* (string-append bazel-out "/external/xla/third_party/systemlibs/protobuf.BUILD")
                   (("-lprotobuf") "-l:libprotobuf.a")
                   (("-lprotoc") "-l:libprotoc.a"))
@@ -673,9 +678,19 @@ build --local_cpu_resources=HOST_CPUS*.75
            python-protobuf-for-tensorflow-2
            python-scipy))
     (native-inputs
-     (list python-pypa-build
-           python-setuptools
-           python-wheel))
+     `(("python-pypa-build" ,python-pypa-build)
+       ("python-setuptools" ,python-setuptools)
+       ("python-wheel" ,python-wheel)
+       ("bazel-platforms"
+        ,(origin
+           (method git-fetch)
+           (uri (git-reference
+                 (url "https://github.com/bazelbuild/platforms")
+                 (commit "0.0.8")))
+           (file-name (git-file-name "bazel-platforms" "0.0.8"))
+           (sha256
+            (base32
+             "1wx2348w49vxr3z9kjfls5zsrwr0div6r3irbvdlawan87sx5yfs"))))))
     (home-page "https://github.com/google/jax")
     (synopsis "Differentiate, compile, and transform Numpy code.")
     (description "JAX is Autograd and XLA, brought together for
@@ -712,13 +727,13 @@ arbitrarily to any order.")
 (define-public python-jax
   (package
     (name "python-jax")
-    (version "0.4.18")
+    (version "0.4.20")
     (source
      (origin
        (method url-fetch)
        (uri (pypi-uri "jax" version))
        (sha256
-        (base32 "0cl1j8y7664i0rn7ckixk7372wkjm88azya5izlh620hj0wg6v3p"))))
+        (base32 "1b6j3svq35f06iygc8nh3k862d0nvss9l5fi7533gadim1isg5pa"))))
     (build-system pyproject-build-system)
     (arguments
      (list #:tests? #false))   ;unclear how to run them
