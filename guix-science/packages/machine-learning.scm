@@ -72,6 +72,12 @@
       '(list "--pyargs" "tests"
              ;; We don't have tensorboard
              "--ignore=tests/tensorboard_test.py"
+             ;; These tests are failing bacause flax might only work
+             ;; on CPUs that have AVX support.
+             "--ignore=tests/serialization_test.py"
+             "--ignore=tests/linen/linen_test.py"
+             "--ignore=tests/linen/linen_recurrent_test.py"
+             "--ignore=tests/linen/linen_dtypes_test.py"
              ;; These tests try to use a fixed number of CPUs that may
              ;; exceed the number of CPUs available at build time.
              "--ignore=tests/jax_utils_test.py")
