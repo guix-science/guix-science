@@ -116,6 +116,54 @@
 designed for flexibility.")
     (license license:asl2.0)))
 
+(define-public python-dm-haiku
+  (package
+    (name "python-dm-haiku")
+    (version "0.0.11")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/google-deepmind/dm-haiku")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "0qmnzxb7i8826im3ns8dwpga9x1k60xrnwsv3nzjwf0mvfybbxy6"))))
+    (build-system pyproject-build-system)
+    (arguments
+     (list
+      #:test-flags
+      '(list "--ignore-glob=examples/**"
+             ;; These fail because we don't use tf-nightly.
+             "--ignore=haiku/_src/integration/jax2tf_test.py"
+             ;; extendhfsf2 not found due to the mismatch in serialization version.
+             "--ignore=haiku/_src/mixed_precision_test.py"
+             ;; truncsfhf2 not found, which looks more like a toolchain error.
+             "--ignore=haiku/_src/reshape_test.py"
+             ;; Disable doctests with unreasonable requirements on tf-nightly
+             "--ignore=haiku/_src/integration/doctest_test.py")))
+    (propagated-inputs (list python-absl-py
+                             python-chex
+                             python-cloudpickle
+                             python-dill
+                             python-dm-tree
+                             python-flax
+                             python-jax
+                             python-jaxlib
+                             python-jmp
+                             python-numpy
+                             python-optax
+                             python-tabulate
+                             python-tensorflow
+                             python-virtualenv))
+    (native-inputs (list python-mock python-pytest-xdist))
+    (home-page "https://github.com/google-deepmind/dm-haiku")
+    (synopsis "Sonnet for JAX")
+    (description "Haiku is a simple neural network library for JAX.
+It is developed by some of the authors of Sonnet, a neural network
+library for TensorFlow.")
+    (license license:asl2.0)))
+
 ;; Keep in sync with tensorflow!
 (define-public python-keras-for-tensorflow
   (package
