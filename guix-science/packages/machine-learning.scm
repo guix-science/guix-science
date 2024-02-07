@@ -1,4 +1,5 @@
 ;;; Copyright © 2023, 2024 Ricardo Wurmus <rekado@elephly.net>
+;;; Copyright © 2024 Navid Afkhami <navid.afkhami@mdc-berlin.de>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU General Public License as published by
@@ -72,6 +73,12 @@
       '(list "--pyargs" "tests"
              ;; We don't have tensorboard
              "--ignore=tests/tensorboard_test.py"
+             ;; These tests are failing bacause flax might only work
+             ;; on CPUs that have AVX support.
+             "--ignore=tests/serialization_test.py"
+             "--ignore=tests/linen/linen_test.py"
+             "--ignore=tests/linen/linen_recurrent_test.py"
+             "--ignore=tests/linen/linen_dtypes_test.py"
              ;; These tests try to use a fixed number of CPUs that may
              ;; exceed the number of CPUs available at build time.
              "--ignore=tests/jax_utils_test.py")
