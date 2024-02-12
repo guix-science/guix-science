@@ -18,7 +18,9 @@
   #:use-module (guix packages)
   #:use-module (guix gexp)
   #:use-module (guix download)
+  #:use-module (guix git-download)
   #:use-module (guix build-system gnu)
+  #:use-module (guix utils)
   #:use-module (gnu packages)
   #:use-module (gnu packages base)
   #:use-module (gnu packages bash)
@@ -316,6 +318,161 @@ supports projects in multiple languages and builds outputs for
 multiple platforms.  Bazel supports large codebases across multiple
 repositories, and large numbers of users.")
     (license license:asl2.0)))
+
+(define-public bazel-6.1
+  (package
+    (inherit bazel-6)
+    (name "bazel")
+    (version "6.1.0")
+    (source (origin
+              (inherit (package-source bazel-6))
+              (uri (string-append "https://github.com/bazelbuild/bazel/"
+                                  "releases/download/" version
+                                  "/bazel-" version "-dist.zip"))
+              (sha256
+               (base32
+                "0ci99xmwl82gg9hl6wjj087grifnznbl0lbirgknxxhwaismdf64"))))
+    (arguments
+     (substitute-keyword-arguments (package-arguments bazel-6)
+       ((#:phases phases)
+        #~(modify-phases #$phases
+            (replace 'build
+              (lambda _
+                ;; Use local JDK only
+                (setenv "EXTRA_BAZEL_ARGS"
+                        (string-append
+                         "\
+--tool_java_runtime_version=local_jdk \
+--noremote_accept_cached \
+--verbose_failures \
+--subcommands \
+--action_env=PATH \
+--action_env=LIBRARY_PATH \
+--action_env=C_INCLUDE_PATH \
+--action_env=CPLUS_INCLUDE_PATH \
+--action_env=GUIX_LOCPATH \
+--host_action_env=PATH \
+--host_action_env=LIBRARY_PATH \
+--host_action_env=C_INCLUDE_PATH \
+--host_action_env=CPLUS_INCLUDE_PATH \
+--host_action_env=GUIX_LOCPATH \
+--define=distribution=debian
+--override_repository=com_google_protobuf=" (getcwd) "/tools/distributions/debian/protobuf \
+--override_repository=remote_java_tools_linux=" (getcwd) "/mock_repos/remote_java_tools_linux \
+--override_repository=io_bazel_skydoc=" (getcwd) "/mock_repos/bazel_skydoc \
+--override_repository=rules_cc=" (getcwd) "/mock_repos/rules_cc \
+--override_repository=rules_java=" (getcwd) "/mock_repos/rules_java \
+--override_repository=rules_proto=" (getcwd) "/mock_repos/rules_proto \
+--override_repository=platforms=" #$(this-package-native-input "bazel-platforms")))
+                (substitute* "third_party/py/mock/setup.py"
+                  (("#! /usr/bin/env python")
+                   (string-append "#!" (which "python"))))
+                (substitute* "tools/distributions/debian/deps.bzl"
+                  (("/usr/include/google/protobuf")
+                   (string-append #$(this-package-native-input "protobuf")
+                                  "/include/google/protobuf"))
+                  ;; TODO: /usr/bin/grpc_java_plugin
+                  ;; TODO: add all the java things
+                  (("\"grpc_java_plugin.*") "")
+                  (("/usr/bin/protoc")
+                   (string-append #$(this-package-native-input "protobuf")
+                                  "/bin/protoc"))
+                  (("/usr/bin/grpc_cpp_plugin")
+                   (string-append #$(this-package-input "grpc")
+                                  "/bin/grpc_cpp_plugin"))
+                  ;; Symlink the bundled jars in derived/jars to where
+                  ;; we can use them in debian_java.BUILD.
+                  (("\"java\": \"/usr/share/java\",")
+                   (string-append "\"jars\": \"" (getcwd)
+                                  "/derived/jars\",")))
+                ;; XXX: do not override any jar locations, because we
+                ;; don't have all of them and we don't have any of them
+                ;; in the locations that debian uses.
+                (substitute* "tools/distributions/distribution_rules.bzl"
+                  (("if \"debian\"")
+                   "if \"shmebian\""))
+                ;; Make this work with our version of protobuf.
+                (substitute* "third_party/grpc-java/compiler/src/java_plugin/cpp/java_generator.cpp"
+                  (("google/protobuf/compiler/java/java_names.h")
+                   "google/protobuf/compiler/java/names.h"))
+                ;; XXX: override the overrides for protobuf-util.jar and
+                ;; protobuf.jar, because we don't have them.
+                (substitute* "tools/distributions/debian/debian_java.BUILD"
+                  (("\"java/protobuf-util.jar\",")
+                   (string-append "\""
+                                  "jars/com_google_protobuf/java/util/libutil.jar"
+                                  "\","))
+                  (("\"java/protobuf.jar\",")
+                   (string-append "\""
+                                  "jars/com_google_protobuf/java/core/libcore.jar"
+                                  "\","))
+                  (("jars = \\[\"java/protobuf-util.jar\"")
+                   (string-append "jars = [\""
+                                  "jars/com_google_protobuf/java/util/libutil.jar"
+                                  "\""))
+                  (("jars = \\[\"java/protobuf.jar\"")
+                   (string-append "jars = [\""
+                                  "jars/com_google_protobuf/java/core/libcore.jar"
+                                  "\", \""
+                                  "jars/com_google_protobuf/java/core/liblite.jar"
+                                  "\",")))
+                ;; Make sure that "cp" is found.
+                (substitute* "third_party/grpc/build_defs.bzl"
+                  (("command = \"cp" m)
+                   (string-append "use_default_shell_env = True,\n" m)))
+                ;; XXX: we don't have a BUILD file in protobuf:/java/util
+                (substitute* "src/main/java/com/google/devtools/build/lib/BUILD"
+                  (("\"@com_google_protobuf//java/util\",") ""))
+                ;; Ensure that "cat" can be found.
+                (substitute* "src/main/java/com/google/devtools/build/lib/runtime/commands/license/merge_licenses.bzl"
+                  (("\"OUT\": ctx.outputs.out.path," m)
+                   (string-append m "\n\"PATH\": \"" (getenv "PATH") "\",")))
+                (substitute* "scripts/bootstrap/compile.sh"
+                  (("#!/bin/sh")
+                   (string-append "#!" (which "sh"))))
+
+                ;; Do not force the use of /bin/bash for users of bazel.
+                ;; Users cannot override this, so we do that here.
+                (substitute* '("src/main/java/com/google/devtools/build/lib/analysis/BashCommandConstructor.java"
+                               "tools/build_rules/java_rules_skylark.bzl"
+                               "tools/build_rules/test_rules.bzl"
+                               "tools/android/android_sdk_repository_template.bzl")
+                  (("#!/bin/bash")
+                   (string-append "#!" (which "bash"))))
+                (substitute* '("src/main/java/com/google/devtools/build/lib/analysis/CommandHelper.java"
+                               "src/main/java/com/google/devtools/build/lib/analysis/ShellConfiguration.java"
+                               "src/main/java/com/google/devtools/build/lib/bazel/rules/BazelRuleClassProvider.java"
+                               "src/main/java/com/google/devtools/build/lib/bazel/rules/sh/BazelShRuleClasses.java"
+                               "src/main/java/com/google/devtools/build/lib/util/CommandBuilder.java")
+                  (("\"/bin/bash\"")
+                   (string-append "\"" (which "bash") "\"")))
+
+                ;; Same story for /usr/bin/env...
+                (substitute* '("src/main/java/com/google/devtools/build/lib/bazel/rules/python/BazelPythonSemantics.java"
+                               "src/main/java/com/google/devtools/build/lib/starlarkbuildapi/python/PyRuntimeInfoApi.java"
+                               "src/main/java/com/google/devtools/build/lib/bazel/rules/java/java_stub_template.txt"
+                               "src/test/java/com/google/devtools/build/lib/standalone/StandaloneSpawnStrategyTest.java"
+                               "src/test/java/com/google/devtools/build/lib/bazel/rules/python/BazelPyBinaryConfiguredTargetTest.java"
+                               "tools/python/toolchain.bzl")
+                  (("/usr/bin/env") (which "env")))
+                (invoke "bash" "compile.sh")))))))
+    (native-inputs
+     `(("protobuf" ,protobuf)
+       ("unzip" ,unzip)
+       ("util-linux" ,util-linux)
+       ("python-wrapper" ,python-wrapper)
+       ("which" ,which)
+       ("zip" ,zip)
+       ("bazel-platforms"
+        ,(origin
+           (method git-fetch)
+           (uri (git-reference
+                 (url "https://github.com/bazelbuild/platforms")
+                 (commit "0.0.8")))
+           (file-name (git-file-name "bazel-platforms" "0.0.8"))
+           (sha256
+            (base32
+             "1wx2348w49vxr3z9kjfls5zsrwr0div6r3irbvdlawan87sx5yfs"))))))))
 
 (define-public bazel-6.4
   (package
