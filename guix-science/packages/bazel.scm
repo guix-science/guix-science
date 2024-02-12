@@ -174,6 +174,9 @@
 --override_repository=rules_proto=" (getcwd) "/mock_repos/rules_proto \
 --override_repository=platforms=" (getcwd) "/mock_repos/platforms \
 "))
+              (substitute* "third_party/py/mock/setup.py"
+                (("#! /usr/bin/env python")
+                 (string-append "#!" (which "python"))))
               (substitute* "tools/distributions/debian/deps.bzl"
                 (("/usr/include/google/protobuf")
                  (string-append #$(this-package-native-input "protobuf")
@@ -267,19 +270,7 @@
                              "src/test/java/com/google/devtools/build/lib/bazel/rules/python/BazelPyBinaryConfiguredTargetTest.java"
                              "tools/python/toolchain.bzl")
                 (("/usr/bin/env") (which "env")))
-
-              ;; XXX: We need to have /bin/bash and /usr/bin/env.  We
-              ;; can't easily override this, so we run everything
-              ;; inside of proot.
-              (invoke "proot" "-b"
-                      (string-append
-                       #$static-bash "/bin/bash"
-                       ":/bin/bash")
-                      "-b"
-                      (string-append
-                       #$coreutils "/bin/env"
-                       ":/usr/bin/env")
-                      "bash" "compile.sh")))
+              (invoke "bash" "compile.sh")))
           (replace 'install
             (lambda _
               (install-file "output/bazel"
@@ -310,10 +301,10 @@
 
            zlib))
     (native-inputs
-     (list proot ;yikes!
-           protobuf
+     (list protobuf
            unzip
            util-linux
+           python-wrapper ;instead of python
            which
            zip))
     (home-page "https://bazel.build")
