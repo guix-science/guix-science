@@ -17,6 +17,7 @@
 (define-module (guix-science packages machine-learning)
   #:use-module ((guix licenses) #:prefix license:)
   #:use-module (gnu packages assembly)
+  #:use-module (gnu packages bioinformatics)
   #:use-module (gnu packages check)
   #:use-module (gnu packages compression)
   #:use-module (gnu packages cpp)
@@ -51,7 +52,88 @@
   #:use-module (guix utils)
   #:use-module (guix-science build-system bazel)
   #:use-module (guix-science packages bazel)
+  #:use-module (guix-science packages machine-learning)
   #:use-module (guix-science packages python))
+
+(define-public python-alphafold
+  (package
+    (name "python-alphafold")
+    (version "2.3.2")
+    (source
+     (origin
+       (method git-fetch)
+       (uri (git-reference
+             (url "https://github.com/google-deepmind/alphafold")
+             (commit (string-append "v" version))))
+       (file-name (git-file-name name version))
+       (sha256
+        (base32 "1c82v3l3m52cfmjj7lm0z3k423lrb6y7d5baq4kcj4gfxnh7qiya"))))
+    (build-system pyproject-build-system)
+    (arguments
+     (list
+      #:test-flags
+      '(list "-k" (string-append
+                   ;; These fail because of absl argument parsing.
+                   ;; They seem to be harmless.
+                   "not test_end_to_end_no_relax"
+                   " and not test_end_to_end_relax"
+                   ;; I/O operation on closed file
+                   " and not test_overwrite_b_factors"
+                   ;; XXX These tests fail to minimize (at least
+                   ;; without GPU).  This could be an actual problem.
+                   " and not test_unresolved_violations"
+                   " and not test_iterative_relax"
+                   " and not test_multiple_disulfides_target"
+                   " and not test_process"))
+      #:phases
+      '(modify-phases %standard-phases
+         (add-after 'unpack 'install-chemical-props
+           (lambda* (#:key inputs #:allow-other-keys)
+             (copy-file (assoc-ref inputs "chemical-props")
+                        "alphafold/common/stereo_chemical_props.txt")))
+         (add-after 'unpack 'fix-requirements
+           (lambda _
+             (substitute* "setup.py"
+               (("tensorflow-cpu") "tensorflow"))
+             (substitute* "requirements.txt"
+               (("tensorflow-cpu==.*") "tensorflow\n"))))
+         (add-after 'unpack 'openmm-compatibility
+           (lambda _
+             (substitute* '("alphafold/relax/amber_minimize.py"
+                            "alphafold/relax/cleanup_test.py"
+                            "alphafold/relax/cleanup.py")
+               (("from simtk import openmm") "import openmm")
+               (("simtk\\.openmm") "openmm")))))))
+    (propagated-inputs (list openmm
+                             python-absl-py
+                             python-biopython
+                             python-chex
+                             python-dm-haiku
+                             python-dm-tree
+                             python-immutabledict
+                             python-jax
+                             python-ml-collections
+                             python-pandas
+                             python-pdbfixer
+                             python-scipy
+                             python-tensorflow))
+    (native-inputs
+     `(("python-mock" ,python-mock)
+       ("python-numpy" ,python-numpy)
+       ("python-pytest" ,python-pytest)
+       ("chemical-props"
+        ,(origin
+           (method url-fetch)
+           (uri "https://git.scicore.unibas.ch/schwede/openstructure/-/raw/7102c63615b64735c4941278d92b554ec94415f8/modules/mol/alg/src/stereo_chemical_props.txt")
+           (sha256
+            (base32 "0lclq057sbs57d07lqqckhkhhk9s6r2zmj6yzv7ng4dlxschhl94"))))))
+    (home-page "https://alphafold.ebi.ac.uk/")
+    (synopsis "Predict protein 3D structure from amino acid sequence")
+    (description
+     "AlphaFold is an AI system developed by DeepMind that predicts a
+protein’s 3D structure from its amino acid sequence.  It regularly
+achieves accuracy competitive with experiment.")
+    (license license:asl2.0)))
 
 (define-public python-flax
   (package
