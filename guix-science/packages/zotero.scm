@@ -10,7 +10,7 @@
   #:use-module (gnu packages xorg)
   #:use-module (gnu packages glib)
   #:use-module (ice-9 regex))
-;;(define-public zotero
+(define-public zotero
   (package
     (name "zotero")
     (version "6.0.26")
@@ -34,8 +34,8 @@
                       (substitute* "zotero"
                         ((,(regexp-quote
                                          "$(dirname \"$(readlink -f \"$0\")\")"))
-                         (string-append (assoc-ref outputs
-                                         "out") "/opt/zotero")))))
+                         (string-append (assoc-ref outputs "out")
+                                        "/opt/zotero")))))
                   (add-after 'install 'install-bin
                     (lambda* (#:key outputs #:allow-other-keys)
                       (mkdir-p (string-append (assoc-ref outputs "out") "/bin"))
@@ -49,16 +49,15 @@
                                               "/opt/zotero/zotero.desktop")
                                (string-append (assoc-ref outputs "out")
                                 "/share/applications/zotero.desktop")))))))
-  (inputs `(("coreutils" ,coreutils)
-                ("gcc:lib" ,gcc "lib")
-                ("gtk+" ,gtk+)
-                ("libx11" ,libx11)
-                ("libgthread", glib)
-                ("libxt" ,libxt)
-                ("dbus-glib" ,dbus-glib)))
+    (inputs `(("coreutils" ,coreutils)
+              ("gcc:lib" ,gcc "lib")
+              ("gtk+" ,gtk+)
+              ("libx11" ,libx11)
+              ("libgthread" ,glib)
+              ("libxt" ,libxt)
+              ("dbus-glib" ,dbus-glib)))
     (synopsis "Your personal research assistant.")
     (description
      "Zotero is a free, easy-to-use tool to help you collect, organize, annotate, cite, and share research.")
     (home-page "https://www.zotero.org/")
-    (license license:agpl3))
-;;)
+    (license license:agpl3)))
