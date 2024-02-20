@@ -247,19 +247,19 @@ web browser.")
 
 (define-public rstudio-server
   ;; Latest commit of the guix-science-v<version> branch.
-  (let ((commit "547dcf861cac0253a8abb52c135e44e02ba407a1"))
+  (let ((commit "cd7011dce393115d3a7c3db799dda4b1c7e88711"))
     (package
       (name "rstudio-server")
-      (version "2023.06.1+524")
+      (version "2023.09.1+494")
       (source (origin
         (method git-fetch)
         (uri (git-reference
-              (url "https://github.com/guix-science/rstudio.git")
+              (url "https://github.com/rstudio/rstudio.git")
               (commit commit)))
         (file-name (git-file-name "rstudio" version))
         (sha256
          (base32
-          "09ndvzdql6vyr2rcm979ibq5hwwzqzsw4fijf4vwcd77lvkvhwmr"))
+          "1njvvpbg7pcvh6ffqy1ixc85ingxg2g5daz4sd6b8y5pww9rzvyi"))
         (modules '((guix build utils)))
         (snippet
          '(for-each delete-file-recursively
@@ -300,6 +300,24 @@ web browser.")
                 (substitute* "src/gwt/build.xml"
                   (("target name=\"panmirror\"" m)
                    (string-append m " if=\"false\"")))
+                (let ((node-version #$(package-version (this-package-input "node"))))
+                  (substitute* "src/gwt/build.xml"
+                    (("name=\"node.version\" value=\"16.20.2\"")
+                     (string-append "name=\"node.version\" value=\""
+                                    node-version "\"")))
+                  (substitute* '("src/node/CMakeNodeTools.txt"
+                                 "CMakeGlobals.txt")
+                    (("RSTUDIO_NODE_VERSION \"16.20.2\"")
+                     (string-append "RSTUDIO_NODE_VERSION \"" node-version "\"")))
+                  (substitute* "package/linux/make-package"
+                    (("RSTUDIO_NODE_VERSION=16.20.2")
+                     (string-append "RSTUDIO_NODE_VERSION=" node-version "")))
+                  (substitute* "src/cpp/server/CMakeLists.txt"
+                    (("\"\\$\\{RSTUDIO_DEPENDENCIES_DIR\\}/common/node/\\$\\{RSTUDIO_NODE_VERSION\\}/\"")
+                     (string-append "\"" #$(this-package-input "node") "\"")))
+                  (substitute* "src/cpp/session/SessionOptions.cpp"
+                    (("\"../../dependencies/common/node/16.20.2\"")
+                     (string-append "\"" #$(this-package-input "node") "\""))))
                 (substitute* "src/cpp/session/CMakeLists.txt"
                   (("\\$\\{RSTUDIO_DEPENDENCIES_DIR\\}/mathjax-27")
                    (assoc-ref inputs "mathjax"))
@@ -376,6 +394,7 @@ web browser.")
          ("jq" ,jq)))
       (inputs
        `(("boost" ,boost)
+         ("node" ,node-lts)
          ("zlib" ,zlib)
          ("linux-pam" ,linux-pam)
          ("yaml-cpp" ,yaml-cpp)
