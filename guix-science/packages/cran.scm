@@ -364,20 +364,23 @@ objects to @code{SVG}.")
 (define-public r-lavaanplot
   (package
     (name "r-lavaanplot")
-    (version "0.6.2")
+    (version "0.8.1")
     (source
      (origin
        (method url-fetch)
        (uri (cran-uri "lavaanPlot" version))
        (sha256
         (base32
-         "03icyydr6sv4jkdfdjchsdrscr9lz9q74x5q17cx2iw3383j6lz5"))))
+         "08isy888r5ispw2i74arnkc52qdba28yl6mzypx6j33rkbnbxrai"))))
     (properties `((upstream-name . "lavaanPlot")))
     (build-system r-build-system)
     (propagated-inputs
      (list r-diagrammer
+           r-dplyr
            r-lavaan
            r-magrittr
+           r-purrr
+           r-rlang
            r-stringr))
     (native-inputs (list r-knitr))
     (home-page "https://github.com/alishinski/lavaanPlot")
