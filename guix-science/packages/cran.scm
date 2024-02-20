@@ -233,14 +233,14 @@ that dynamically generate beautiful documentation from a
 (define-public r-diagrammer
   (package
     (name "r-diagrammer")
-    (version "1.0.10")
+    (version "1.0.11")
     (source
      (origin
        (method url-fetch)
        (uri (cran-uri "DiagrammeR" version))
        (sha256
         (base32
-         "147q7zgwhd7vc0l134sqkkf6n6s6bznxvcmsrdx2f5df12bsixkj"))
+         "1py4yii88lsyj8y71d2v0rb9lk5hvhfh0q8n2q4288wqw7bf6wz8"))
        (snippet
         '(for-each delete-file
                    (list "inst/htmlwidgets/lib/d3/d3.min.js"
@@ -274,7 +274,7 @@ that dynamically generate beautiful documentation from a
                    (,(search-input-file inputs "/dist/mermaid.slim.js")
                     . "mermaid/dist/mermaid.slim.min.js")))))))))
     (propagated-inputs
-     (list r-downloader
+     (list r-cli
            r-dplyr
            r-glue
            r-htmltools
@@ -290,7 +290,7 @@ that dynamically generate beautiful documentation from a
            r-stringr
            r-tibble
            r-tidyr
-           r-viridis
+           r-viridislite
            r-visnetwork))
     (native-inputs
      `(("esbuild" ,esbuild)
