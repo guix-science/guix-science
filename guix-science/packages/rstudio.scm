@@ -270,9 +270,10 @@ web browser.")
                       "src/cpp/server/include/server/ServerOptions.gen.hpp")))))
       (build-system cmake-build-system)
       (arguments
-       `(#:out-of-source? #f              ; required by 'make-writable
-         #:configure-flags
-         (list
+       (list
+        #:out-of-source? #f              ; required by 'make-writable
+        #:configure-flags
+        '(list
           "-DRSTUDIO_TARGET=Server"
           "-DCMAKE_BUILD_TYPE=Release"
           "-DRSTUDIO_USE_SYSTEM_YAML_CPP=1"
@@ -281,84 +282,84 @@ web browser.")
           "-DQUARTO_ENABLED=0"
           ;; auto-detection seems to be broken with boost 1.72
           "-DRSTUDIO_BOOST_SIGNALS_VERSION=2")
-         #:tests? #f                      ; no tests exist
-         #:modules ((guix build cmake-build-system)
+        #:tests? #f                      ; no tests exist
+        #:modules '((guix build cmake-build-system)
                     (guix build utils)
                     (ice-9 match))
-         #:phases
-         (modify-phases %standard-phases
-           (add-after 'unpack 'unpack-dictionary
-             (lambda* (#:key inputs native-inputs #:allow-other-keys)
-               (let ((dict-dir "dependencies/dictionaries"))
-                 (mkdir dict-dir)
-                 (invoke "unzip" "-qd" dict-dir (assoc-ref inputs "dict-source-tarball")))))
-           ;; change the default paths for mathjax and pandoc and a hardcoded call to `which`
-           (add-after 'unpack 'patch-paths
-             (lambda* (#:key inputs outputs #:allow-other-keys)
-               ;; Don't build panmirror.  We already got it.
-               (substitute* "src/gwt/build.xml"
-                 (("target name=\"panmirror\"" m)
-                  (string-append m " if=\"false\"")))
-               (substitute* "src/cpp/session/CMakeLists.txt"
-                 (("\\$\\{RSTUDIO_DEPENDENCIES_DIR\\}/mathjax-27")
-                  (assoc-ref inputs "mathjax"))
-                 (("set\\(RSTUDIO_DEPENDENCIES_PANDOC_DIR.*")
-                  (string-append "set(RSTUDIO_DEPENDENCIES_PANDOC_DIR "
-                                 (assoc-ref inputs "pandoc") ")\n"))
-                 (("DESTINATION \"\\$\\{RSTUDIO_INSTALL_BIN\\}/pandoc\"")
-                  (string-append "DESTINATION \""(assoc-ref outputs "out") "/share/pandoc\"")))
-               (install-file (search-input-file inputs "/include/catch2/catch.hpp")
-                             "src/cpp/tests/cpp/tests/vendor/")
-               (substitute* "src/cpp/session/session-options.json"
-                 (("resources/mathjax-27") (assoc-ref inputs "mathjax")))
-               (substitute* "src/cpp/session/include/session/SessionConstants.hpp"
-                 ;; XXX: It looks like there’s a bug in RStudio right now, which
-                 ;; appends the binary name “pandoc” to this path, if it is an
-                 ;; absolute path.
-                 (("bin/pandoc") (string-append (assoc-ref inputs "pandoc") "/bin")))
-               (substitute* "src/cpp/core/r_util/REnvironmentPosix.cpp"
-                 (("runCommand\\(\"which") (string-append "runCommand(\"" (assoc-ref inputs "which") "/bin/which")))
-               (substitute* "src/cpp/session/modules/clang/CodeCompletion.cpp"
-                 (("/usr/bin/which") (string-append (assoc-ref inputs "which") "/bin/which")))
-               (substitute* '("src/cpp/session/SessionConsoleProcess.cpp" "src/cpp/session/modules/SessionTerminalShell.cpp")
-                 (("/usr/bin/env") (string-append (assoc-ref inputs "coreutils") "/bin/env")))
-               (substitute* '("src/cpp/session/modules/SessionFiles.R")
-                 (("\"zip\"") (string-append "\"" (assoc-ref inputs "zip") "/bin/zip\"")))
-               (substitute* '("src/cpp/session/modules/SessionFiles.cpp")
-                 (("/usr/bin/unzip") (string-append (assoc-ref inputs "unzip") "/bin/unzip")))
-               (substitute* "src/cpp/core/system/Architecture.cpp"
-                 (("/usr/bin/uname") (string-append (assoc-ref inputs "coreutils") "/bin/uname")))
-               (substitute* "src/cpp/session/SessionModuleContext.cpp"
-                 (("cmd\\(\"file\"\\)") (string-append "cmd(\"" (assoc-ref inputs "file") "/bin/file\")")))
-               (substitute* "src/cpp/session/modules/SessionGit.cpp"
-                 (("\"ssh-add") (string-append "\"" (assoc-ref inputs "openssh") "/bin/ssh-add"))
-                 (("\"ssh-agent") (string-append "\"" (assoc-ref inputs "openssh") "/bin/ssh-agent")))
-               (substitute* "src/cpp/session/modules/SessionSVN.cpp"
-                 (("\"patch\"") (string-append "\"" (assoc-ref inputs "patch") "/bin/patch\"")))))
-           (add-after 'unpack 'set-environment-variables
-             (lambda* (#:key inputs #:allow-other-keys)
-               (setenv "JAVA_HOME" (assoc-ref inputs "jdk"))
-               ;; set proper version information
-               (match (string-split ,version (char-set #\. #\+))
-                 ((major minor patch suffix)
-                  (setenv "RSTUDIO_VERSION_MAJOR" major)
-                  (setenv "RSTUDIO_VERSION_MINOR" minor)
-                  (setenv "RSTUDIO_VERSION_PATCH" patch)
-                  (setenv "RSTUDIO_VERSION_SUFFIX" (string-append "+" suffix))))
-               (setenv "PACKAGE_OS" "GNU Guix")))
-           ;; Must be run after patch-source-shebangs, which changes
-           ;; report-option.sh’s interpreter line.
-           (add-before 'configure 'generate-server-options
-             (lambda _
-               ;; Generate *.gen.hpp files deleted by source snippet.
-               (with-directory-excursion "src/cpp"
-                 (invoke "./generate-options.R"))))
-           (add-after 'install 'install-panmirror
-             (lambda* (#:key inputs outputs #:allow-other-keys)
-               (let ((panmirror (string-append (assoc-ref inputs "js-panmirror")
-                                                "/share/javascript/panmirror"))
-                     (out (assoc-ref outputs "out")))
-               (copy-recursively panmirror (string-append out "/www/js/panmirror"))))))))
+        #:phases
+        #~(modify-phases %standard-phases
+            (add-after 'unpack 'unpack-dictionary
+              (lambda* (#:key inputs native-inputs #:allow-other-keys)
+                (let ((dict-dir "dependencies/dictionaries"))
+                  (mkdir dict-dir)
+                  (invoke "unzip" "-qd" dict-dir (assoc-ref inputs "dict-source-tarball")))))
+            ;; change the default paths for mathjax and pandoc and a hardcoded call to `which`
+            (add-after 'unpack 'patch-paths
+              (lambda* (#:key inputs outputs #:allow-other-keys)
+                ;; Don't build panmirror.  We already got it.
+                (substitute* "src/gwt/build.xml"
+                  (("target name=\"panmirror\"" m)
+                   (string-append m " if=\"false\"")))
+                (substitute* "src/cpp/session/CMakeLists.txt"
+                  (("\\$\\{RSTUDIO_DEPENDENCIES_DIR\\}/mathjax-27")
+                   (assoc-ref inputs "mathjax"))
+                  (("set\\(RSTUDIO_DEPENDENCIES_PANDOC_DIR.*")
+                   (string-append "set(RSTUDIO_DEPENDENCIES_PANDOC_DIR "
+                                  (assoc-ref inputs "pandoc") ")\n"))
+                  (("DESTINATION \"\\$\\{RSTUDIO_INSTALL_BIN\\}/pandoc\"")
+                   (string-append "DESTINATION \"" #$output "/share/pandoc\"")))
+                (install-file (search-input-file inputs "/include/catch2/catch.hpp")
+                              "src/cpp/tests/cpp/tests/vendor/")
+                (substitute* "src/cpp/session/session-options.json"
+                  (("resources/mathjax-27") (assoc-ref inputs "mathjax")))
+                (substitute* "src/cpp/session/include/session/SessionConstants.hpp"
+                  ;; XXX: It looks like there’s a bug in RStudio right now, which
+                  ;; appends the binary name “pandoc” to this path, if it is an
+                  ;; absolute path.
+                  (("bin/pandoc") (string-append (assoc-ref inputs "pandoc") "/bin")))
+                (substitute* "src/cpp/core/r_util/REnvironmentPosix.cpp"
+                  (("runCommand\\(\"which") (string-append "runCommand(\"" (assoc-ref inputs "which") "/bin/which")))
+                (substitute* "src/cpp/session/modules/clang/CodeCompletion.cpp"
+                  (("/usr/bin/which") (string-append (assoc-ref inputs "which") "/bin/which")))
+                (substitute* '("src/cpp/session/SessionConsoleProcess.cpp" "src/cpp/session/modules/SessionTerminalShell.cpp")
+                  (("/usr/bin/env") (string-append (assoc-ref inputs "coreutils") "/bin/env")))
+                (substitute* '("src/cpp/session/modules/SessionFiles.R")
+                  (("\"zip\"") (string-append "\"" (assoc-ref inputs "zip") "/bin/zip\"")))
+                (substitute* '("src/cpp/session/modules/SessionFiles.cpp")
+                  (("/usr/bin/unzip") (string-append (assoc-ref inputs "unzip") "/bin/unzip")))
+                (substitute* "src/cpp/core/system/Architecture.cpp"
+                  (("/usr/bin/uname") (string-append (assoc-ref inputs "coreutils") "/bin/uname")))
+                (substitute* "src/cpp/session/SessionModuleContext.cpp"
+                  (("cmd\\(\"file\"\\)") (string-append "cmd(\"" (assoc-ref inputs "file") "/bin/file\")")))
+                (substitute* "src/cpp/session/modules/SessionGit.cpp"
+                  (("\"ssh-add") (string-append "\"" (assoc-ref inputs "openssh") "/bin/ssh-add"))
+                  (("\"ssh-agent") (string-append "\"" (assoc-ref inputs "openssh") "/bin/ssh-agent")))
+                (substitute* "src/cpp/session/modules/SessionSVN.cpp"
+                  (("\"patch\"") (string-append "\"" (assoc-ref inputs "patch") "/bin/patch\"")))))
+            (add-after 'unpack 'set-environment-variables
+              (lambda* (#:key inputs #:allow-other-keys)
+                (setenv "JAVA_HOME" (assoc-ref inputs "jdk"))
+                ;; set proper version information
+                (match (string-split #$version (char-set #\. #\+))
+                  ((major minor patch suffix)
+                   (setenv "RSTUDIO_VERSION_MAJOR" major)
+                   (setenv "RSTUDIO_VERSION_MINOR" minor)
+                   (setenv "RSTUDIO_VERSION_PATCH" patch)
+                   (setenv "RSTUDIO_VERSION_SUFFIX" (string-append "+" suffix))))
+                (setenv "PACKAGE_OS" "GNU Guix")))
+            ;; Must be run after patch-source-shebangs, which changes
+            ;; report-option.sh’s interpreter line.
+            (add-before 'configure 'generate-server-options
+              (lambda _
+                ;; Generate *.gen.hpp files deleted by source snippet.
+                (with-directory-excursion "src/cpp"
+                  (invoke "./generate-options.R"))))
+            (add-after 'install 'install-panmirror
+              (lambda* (#:key inputs #:allow-other-keys)
+                (let ((panmirror (string-append (assoc-ref inputs "js-panmirror")
+                                                "/share/javascript/panmirror")))
+                  (copy-recursively panmirror
+                                    (string-append #$output "/www/js/panmirror"))))))))
       (native-inputs
        `(("unzip" ,unzip)
          ("catch2" ,catch2)
@@ -451,29 +452,27 @@ user's @file{~/.local/share/rstudio/r-versions}.")))
     (arguments
      (substitute-keyword-arguments (package-arguments rstudio-server)
        ((#:configure-flags flags)
-        '(list "-DRSTUDIO_TARGET=Desktop"
-               "-DCMAKE_BUILD_TYPE=Release"
-               "-DRSTUDIO_USE_SYSTEM_YAML_CPP=1"
-               "-DRSTUDIO_USE_SYSTEM_BOOST=1"
-               "-DRSTUDIO_USE_SYSTEM_SOCI=1"
-               "-DQUARTO_ENABLED=0"
-               ;; auto-detection seems to be broken with boost 1.72
-               "-DRSTUDIO_BOOST_SIGNALS_VERSION=2"
-               (string-append "-DQT_QMAKE_EXECUTABLE="
-                              (assoc-ref %build-inputs "qtbase")
-                              "/bin/qmake")))
+        #~(list "-DRSTUDIO_TARGET=Desktop"
+                "-DCMAKE_BUILD_TYPE=Release"
+                "-DRSTUDIO_USE_SYSTEM_YAML_CPP=1"
+                "-DRSTUDIO_USE_SYSTEM_BOOST=1"
+                "-DRSTUDIO_USE_SYSTEM_SOCI=1"
+                "-DQUARTO_ENABLED=0"
+                ;; auto-detection seems to be broken with boost 1.72
+                "-DRSTUDIO_BOOST_SIGNALS_VERSION=2"
+                (string-append "-DQT_QMAKE_EXECUTABLE="
+                               #$(this-package-input "qtbase")
+                               "/bin/qmake")))
        ((#:phases phases)
-        `(modify-phases ,phases
-           (add-after 'install 'wrap-program
-             (lambda* (#:key inputs outputs #:allow-other-keys)
-               (let* ((out (assoc-ref outputs "out"))
-                      (bin (string-append out "/bin"))
+        #~(modify-phases #$phases
+            (add-after 'install 'wrap-program
+              (lambda* (#:key inputs #:allow-other-keys)
+                (let ((bin (string-append #$output "/bin"))
                       (qtwebengine-path (string-append
-                                         (assoc-ref inputs "qtwebengine")
+                                         #$(this-package-input "qtwebengine")
                                          "/lib/qt5/libexec/QtWebEngineProcess")))
-                 (wrap-program (string-append bin "/rstudio")
-                   `("QTWEBENGINEPROCESS_PATH" ":" = (,qtwebengine-path))))
-               #t))))))
+                  (wrap-program (string-append bin "/rstudio")
+                    `("QTWEBENGINEPROCESS_PATH" ":" = (,qtwebengine-path))))))))))
     (inputs
      (modify-inputs (package-inputs rstudio-server)
        (prepend qtbase-5
