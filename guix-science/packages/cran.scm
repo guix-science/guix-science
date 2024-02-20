@@ -177,13 +177,13 @@ Argon.")
 (define-public r-bs4dash
   (package
     (name "r-bs4dash")
-    (version "2.3.0")
+    (version "2.3.3")
     (source (origin
               (method url-fetch)
               (uri (cran-uri "bs4Dash" version))
               (sha256
                (base32
-                "09dzcpqzlkak9ilx79h2hpad20ck6857middbkn7j3mhrbqq0m51"))))
+                "1vhjrgy3344fgbqxadj16sncrgkkcy1xrg69nmjizn9s757gyvri"))))
     (properties `((upstream-name . "bs4Dash")))
     (build-system r-build-system)
     (propagated-inputs (list r-bslib
@@ -195,7 +195,7 @@ Argon.")
                              r-lifecycle
                              r-shiny
                              r-waiter))
-    (native-inputs (list r-knitr))
+    (native-inputs (list esbuild r-knitr))
     (home-page "https://rinterface.github.io/bs4Dash/index.html")
     (synopsis "Bootstrap 4 version of shinydashboard")
     (description
