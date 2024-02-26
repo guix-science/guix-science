@@ -27,7 +27,7 @@
 (define-public google-cloud-sdk
   (package
     (name "google-cloud-sdk")
-    (version "337.0.0")
+    (version "465.0.0")
     (source (origin
              (method url-fetch)
              ;; A starting point for a proper package is here:
@@ -37,7 +37,7 @@
                    "https://dl.google.com/dl/cloudsdk/channels/rapid/downloads/"
                    "google-cloud-sdk-" version "-linux-x86_64.tar.gz"))
              (sha256
-              (base32 "179hf34ld2qb7ll7qzflnci7bi6qyzsjszvryv8ml08vpmj510q4"))))
+              (base32 "0mp71q62yj6xmf1n94myq6dzvpjmxc5fikd9gkvh28hwx7q8w2by"))))
     ;; We use the GNU build system mainly for its patch-shebang phases.
     (build-system gnu-build-system)
     (arguments
