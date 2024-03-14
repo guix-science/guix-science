@@ -1070,6 +1070,7 @@ subclassing API with an imperative style for advanced research.")
                 ;; Versions above 0.4 break tests, but that's okay
                 ;; because we aren't running them.
                 (("gast >= 0.2.1, <= 0.4.0") "gast >= 0.2.1")
+                (("'typing_extensions>=3.6.6,<4.6.0'") "'typing_extensions>=3.6.6'")
                 ;; Drop all of tensorboard and tensorflow_estimator
                 (("'(tensorboard|tensorflow_estimator) >.*',") " None,")
                 ;; Our clang bindings have a different name.
