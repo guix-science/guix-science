@@ -472,7 +472,14 @@ SavedModel format.")
               (file-name (git-file-name name version))
               (sha256
                (base32
-                "1hapkxnxcmn90xnk9ldb6nkszbnmb5zyw8x4m10wd605zxapmlhd"))))
+                "1hapkxnxcmn90xnk9ldb6nkszbnmb5zyw8x4m10wd605zxapmlhd"))
+              (modules '((guix build utils)))
+              (snippet
+               ;; We need to patch the build system to avoid embedding
+               ;; /gnu/store locations for a handful of numpy headers.
+               '(substitute* "third_party/python/python_configure.bzl"
+                  (("numpy_include = _get_numpy_include.*")
+                   "numpy_include = \"/tmp/numpy-include\"\n")))))
     (build-system bazel-build-system)
     (arguments
      (list
@@ -490,10 +497,23 @@ SavedModel format.")
       #:build-targets
       '(list "//python/tensorstore:_tensorstore__shared_objects")
       #:bazel-configuration
-      ;; You can get the list of possible values by searching the
-      ;; tensorstore checkout for system_build_file.  Any match is a
-      ;; possible replacement.
       #~(begin
+          ;; Make numpy headers available at expected location.  See
+          ;; snippet above for more information.
+          (let ((python-version #$(version-major+minor
+                                   (package-version
+                                    (this-package-input "python-wrapper")))))
+            (copy-recursively
+             (string-append #$(this-package-input "python-numpy")
+                            "/lib/python"
+                            python-version
+                            "/site-packages/numpy/core/include/numpy")
+             "/tmp/numpy-include"))
+          ;; You can get the list of possible values of
+          ;; TENSORSTORE_SYSTEM_PYTHON_LIBS and
+          ;; TENSORSTORE_SYSTEM_LIBS by searching the tensorstore
+          ;; checkout for system_build_file.  Any match is a possible
+          ;; replacement.
           (setenv "TENSORSTORE_SYSTEM_PYTHON_LIBS"
                   (string-join '#$tensorstore-python-packages
                                ","))
@@ -549,7 +569,7 @@ SavedModel format.")
                         #$(this-package-input "python-wrapper")
                         "/bin/python"))
       #:vendored-inputs-hash
-      "02z84x7az26wp45k3mrk2cxgx0j3a2k7hfj08zv3mhkysck6jxfr"
+      "1sdwk3fnf0gfk1h2fb5082r87ahzhswznj21p9d1y0g0x97hw6zk"
       #:phases
       #~(modify-phases (@ (guix-science build bazel-build-system) %standard-phases)
           (add-after 'unpack 'patch-python-build-system
@@ -563,7 +583,18 @@ SavedModel format.")
                 (("os.path.basename\\(ext_full_path\\)")
                  "'_tensorstore.so'")
                 (("'fallback_version': '0.0.0'")
-                 (string-append "'fallback_version': '" #$version "'")))))
+                 (string-append "'fallback_version': '" #$version "'")))
+              ;; Make numpy headers available at expected location.  See
+              ;; snippet above for more information.
+              (let ((python-version #$(version-major+minor
+                                       (package-version
+                                        (this-package-input "python-wrapper")))))
+                (copy-recursively
+                 (string-append #$(this-package-input "python-numpy")
+                                "/lib/python"
+                                python-version
+                                "/site-packages/numpy/core/include/numpy")
+                 "/tmp/numpy-include"))))
           (add-after 'build 'prepare-python
             (lambda _
               (setenv "TENSORSTORE_PREBUILT_DIR"
