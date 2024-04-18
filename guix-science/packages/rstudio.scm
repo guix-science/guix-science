@@ -1,7 +1,7 @@
 ;;;
 ;;; Copyright © 2019, 2020 Lars-Dominik Braun <ldb@leibniz-psychology.org>
 ;;; Copyright © 2020 Roel Janssen <roel@gnu.org>
-;;; Copyright © 2023 Ricardo Wurmus <rekado@elephly.net>
+;;; Copyright © 2023, 2024 Ricardo Wurmus <rekado@elephly.net>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU General Public License as published by
@@ -479,7 +479,7 @@ user's @file{~/.local/share/rstudio/r-versions}.")))
                 qtdeclarative-5
                 qtlocation
                 qtsvg-5
-                qtsensors
+                qtsensors-5
                 qtxmlpatterns
                 qtwebchannel-5
                 qtwebengine-5)))
