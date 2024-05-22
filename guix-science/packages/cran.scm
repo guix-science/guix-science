@@ -727,27 +727,3 @@ the React Table JavaScript library.  It provides an HTML widget that
 can be used in R Markdown documents and Shiny applications, or viewed
 from an R console.")
     (license license:expat)))
-
-;; TODO: unbundle minified javascript.  Sources are in the git repo,
-;; but they use webpack to minify.  See
-;; https://github.com/JohnCoene/waiter/blob/master/package.json
-(define-public r-waiter
-  (package
-    (name "r-waiter")
-    (version "0.2.5")
-    (source (origin
-              (method url-fetch)
-              (uri (cran-uri "waiter" version))
-              (sha256
-               (base32
-                "0ya92qr25ssfkzn888b7rr8rn0304f3gz4h4pnc2a95rknbmxhls"))))
-    (properties `((upstream-name . "waiter")))
-    (build-system r-build-system)
-    (propagated-inputs (list r-htmltools r-r6 r-shiny))
-    (native-inputs (list r-knitr))
-    (home-page "https://waiter.john-coene.com/")
-    (synopsis "Loading screen for Shiny")
-    (description
-     "This package provides full screen and partial loading screens
-for Shiny with spinners, progress bars, and notifications.")
-    (license license:expat)))
