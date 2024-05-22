@@ -519,13 +519,13 @@ something is happening (send notifications, reports, ...).")
 (define-public r-shinywidgets
   (package
     (name "r-shinywidgets")
-    (version "0.8.3")
+    (version "0.8.6")
     (source
      (origin
        (method url-fetch)
        (uri (cran-uri "shinyWidgets" version))
        (sha256
-        (base32 "02z8fwvnmi6lacqi6ryxssm1w3mh4vfphjrp3v1d6dij3s3l6z0q"))))
+        (base32 "1dv0bwp3rxc1c3n05sczvshg5i9mffqxb61r1z2radwmj5c28g46"))))
     (properties `((upstream-name . "shinyWidgets")))
     (build-system r-build-system)
     (propagated-inputs
