@@ -1,6 +1,6 @@
-;;;
 ;;; Copyright © 2020, 2021 Lars-Dominik Braun <ldb@leibniz-psychology.org>
 ;;; Copyright © 2022-2024, Ricardo Wurmus <rekado@elephly.net>
+;;; Copyright © 2024 Marco Baggio <guix@mawumag.com>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU General Public License as published by
@@ -463,6 +463,30 @@ coefficients, query-based prediction and indirect effects.")
 serve an HTTP API from R functions using the annotations in the R
 documentation around your functions.")
     (license license:expat)))
+
+;; Contains a lot of minified JavaScript
+(define-public r-shinybusy
+  (package
+    (name "r-shinybusy")
+    (version "0.3.3")
+    (source
+     (origin
+       (method url-fetch)
+       (uri (cran-uri "shinybusy" version))
+       (sha256
+        (base32 "1bjfi5xdidj8n84mylghvrncvcyg625kj8pnizl59m649k3n10v2"))))
+    (properties `((upstream-name . "shinybusy")))
+    (build-system r-build-system)
+    (propagated-inputs (list r-htmltools r-htmlwidgets r-jsonlite r-shiny))
+    (native-inputs (list esbuild r-knitr))
+    (home-page "https://github.com/dreamRs/shinybusy")
+    (synopsis "Busy indicators and notifications for Shiny applications")
+    (description
+     "This package adds indicators (spinner, progress bar, gif) that
+you can use in your Shiny applications to show the user that the
+server is busy.  It also provides other tools to let your users know
+something is happening (send notifications, reports, ...).")
+    (license license:gpl3)))
 
 ;; This contains a lot of minified JavaScript with no obvious source
 ;; files.
