@@ -1,5 +1,6 @@
 ;;; Copyright © 2016-2021 Roel Janssen <roel@gnu.org>
 ;;; Copyright © 2022-2024 Ricardo Wurmus <rekado@elephly.net>
+;;; Copyright © 2024 Marco Baggio <guix@mawumag.com>
 ;;;
 ;;; This program is free software; you can redistribute it and/or modify it
 ;;; under the terms of the GNU General Public License as published by
@@ -337,6 +338,82 @@ minimization functions originally developed for the CodeAxe phylogenetic
 analysis package.")
    ;; MIT license.
    (license license:expat)))
+
+(define-public r-mcview
+  (let ((commit "85a61fe6efa241ac72f79fb965c3227538ead518")
+        (revision "1"))
+    (package
+      (name "r-mcview")
+      (version (git-version "0.2.28" revision commit))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url "https://github.com/tanaylab/MCView")
+               (commit commit)))
+         (file-name (git-file-name name version))
+         (sha256
+          (base32 "187q6qy8ss0g6h3c0ckw9ypq8615bk5yypfl5l4rq6dzaflm4iba"))))
+      (properties `((upstream-name . "MCView")))
+      (build-system r-build-system)
+      (propagated-inputs (list r-anndata
+                               r-cachem
+                               r-chameleon
+                               r-circlize
+                               r-cli
+                               r-colourpicker
+                               r-cowplot
+                               r-dplyr
+                               r-dt
+                               r-fastcluster
+                               r-forcats
+                               r-fs
+                               r-furrr
+                               r-future
+                               r-gert
+                               r-ggplot2
+                               r-ggtext
+                               r-glue
+                               r-golem
+                               r-htmltools
+                               r-markdown
+                               r-matrix
+                               r-matrixstats
+                               r-pkgload
+                               r-plotly
+                               r-promises
+                               r-purrr
+                               r-qs
+                               r-rintrojs
+                               r-rlang
+                               r-rmarkdown
+                               r-scales
+                               r-shiny
+                               r-shinybusy
+                               r-shinycssloaders
+                               r-shinydashboard
+                               r-shinydashboardplus
+                               r-shinyjqui
+                               r-shinyjs
+                               r-shinywidgets
+                               r-slanter
+                               r-tglkmeans
+                               r-tgstat
+                               r-tgutil
+                               r-tibble
+                               r-tidyr
+                               r-umap
+                               r-viridis
+                               r-waiter
+                               r-yaml
+                               r-zip))
+      (native-inputs (list r-knitr))
+      (home-page "https://github.com/tanaylab/MCView")
+      (synopsis "Shiny app for Metacell analysis")
+      (description
+       "MCView creates a Shiny app facilitating interactive exploration and
+annotation of Metacell models.")
+      (license license:expat))))
 
 (define-public r-music
   (let ((commit "0a3e3af45d4bd018939013660a3e83e580fa3bac")
