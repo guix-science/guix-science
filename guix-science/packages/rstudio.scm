@@ -477,7 +477,7 @@ user's @file{~/.local/share/rstudio/r-versions}.")))
      (modify-inputs (package-inputs rstudio-server)
        (prepend qtbase-5
                 qtdeclarative-5
-                qtlocation
+                qtlocation-5
                 qtsvg-5
                 qtsensors-5
                 qtxmlpatterns
