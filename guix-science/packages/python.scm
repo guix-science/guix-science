@@ -964,7 +964,7 @@ Cflags: -I~a/include/tensorflow
     (inputs
      (list curl
            double-conversion
-           flatbuffers-next
+           flatbuffers-23.1
            giflib
            grpc
            hwloc
