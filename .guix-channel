@@ -1,3 +1,4 @@
 (channel
   (version 0)
+  (news-file "NEWS")
   (url "https://codeberg.org/guix-science/guix-science")) ;the primary URL
