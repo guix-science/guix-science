@@ -1,3 +1,4 @@
 (channel
   (version 0)
-  (url "https://github.com/guix-science/guix-science.git"))
+  (news-file "NEWS")
+  (url "https://codeberg.org/guix-science/guix-science")) ;the primary URL

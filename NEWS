@@ -1,0 +1,28 @@
+;; -*- Scheme -*-
+;;
+;; This file contains Guix channel news.
+
+(channel-news
+ (version 0)
+
+ (entry (commit "21287ed8d49715994f6b1543966eca74407e112a")
+        (title
+         (en "Guix-Science has migrated to Codeberg.org"))
+        (body
+         (en "The Guix-Science channel has left GitHub for a new home,
+@url{https://codeberg.org/guix-science/guix-science}.  We felt that hosting
+on Codeberg was more in line with our values---Codeberg itself is free
+software, run by a non-profit, and does not use the repositories it hosts as
+training data for its large language models.
+
+As a user, please update your @file{channels.scm} files to refer to the new
+URL.  As a channel author, please update the dependencies in the
+@file{.guix-channel} file of your channel.
+
+The repository at @uref{https://github.com/guix-science/guix-science} remains
+available as an archive.  This means that references to previous commits at
+this URL will still work.
+
+Codeberg offers a workflow based on pull requests and an interface similar to
+that of GitHub.  Please email @email{guix-science@@gnu.org} for comments and
+questions."))))
