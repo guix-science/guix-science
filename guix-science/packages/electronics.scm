@@ -123,3 +123,61 @@
      "This package gathers GNAT binaries from FSF GCC releases of the Alire
 Project.")
     (license (list license:expat)))) ; MIT license
+
+(define-public ghdl-clang
+  (let ((commit "eeab69c29b68eb3f7fd51e6337eedb924d7be829")
+        (revision "0"))
+    (package
+      (name "ghdl-clang")
+      (version (git-version "4.1.0" revision commit))
+      (source
+       (origin
+         (method git-fetch)
+         (uri (git-reference
+               (url "https://github.com/ghdl/ghdl")
+               (commit commit)))
+         (file-name (git-file-name name version))
+         (sha256
+          (base32 "1p495ax8cxspb13kbnfy0ba1s5kid7f9hmscdv30lf8y22plawb3"))))
+      (build-system gnu-build-system)
+      (arguments
+       (list
+        ;; XXX: This would check DT_RUNPATH, but patchelf populate DT_RPATH,
+        ;; not DT_RUNPATH.
+        #:validate-runpath? #f
+        #:phases #~(modify-phases %standard-phases
+                     (replace 'configure
+                       (lambda* (#:key inputs #:allow-other-keys)
+                         (let ((libc (assoc-ref inputs "libc")))
+                           (mkdir "build")
+                           (chdir "build")
+                           (setenv "LIBRARY_PATH"
+                                   (string-append (string-append libc "/lib")
+                                                  (getenv "LIBRARY_PATH")))
+                           (setenv "LD_LIBRARY_PATH"
+                                   (string-append (string-append libc "/lib")
+                                                  (getenv "LIBRARY_PATH")))
+                           (invoke "../configure"
+                                   "--with-llvm-config"
+                                   "--enable-libghdl"
+                                   "--enable-synth"
+                                   "--disable-gplcompat"
+                                   (string-append "--prefix="
+                                                  #$output)))))
+                     (delete 'check)
+                     (replace 'build
+                       (lambda* (#:key inputs #:allow-other-keys)
+                         (invoke "make" "ghdl_llvm" "-j 8")
+                         (invoke "patchelf" "--set-interpreter"
+                                 (search-input-file inputs
+                                                    #$(glibc-dynamic-linker))
+                                 "ghdl_llvm")
+                         (invoke "make" "-j 8"))))))
+      (propagated-inputs (list clang-toolchain))
+      (inputs (list patchelf gnat))
+      (home-page "https://github.com/ghdl/ghdl")
+      (synopsis "Compiler for VHDL code using clang backend")
+      (description
+       "GHDL analyses, elaborates and simulates VHDL sources.  It may also be
+used as an experimental synthesizer backend.")
+      (license license:lgpl2.0))))
